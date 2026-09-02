@@ -1,0 +1,21 @@
+AMF Re-allocation Experiment Summary
+======================================================================
+
+Run 1: mode=n14-mobility, target=amf2
+  reallocation_latency_ms: mean=3083.0ms, std=786.0ms, min=2063.3ms, max=4154.3ms, p95=4154.3ms, cv=0.255 (n=6)
+  registration_latency_ms: mean=33.3ms, std=3.2ms, min=30.0ms, max=39.0ms, p95=39.0ms, cv=0.096 (n=6)
+  rrc_latency_ms: mean=0.0ms, std=0.0ms, min=0.0ms, max=0.0ms, p95=0.0ms, cv=0.000 (n=6)
+  Recovered: 6/6
+  IP changed: 0
+  Mobility registrations (N14 path): 6
+  Initial-registration fallbacks: 0
+  Session continuity (no PDU re-establishment): 6
+  N14 UEContextTransfer evidence: True
+
+    ue1: realloc=3281.29296875ms, reg=30.0ms, sess=Nonems, rrc=0.0ms, post_restart=Nonems, recovered=True, ip_changed=False
+    ue2: realloc=3715.29296875ms, reg=31.0ms, sess=Nonems, rrc=0.0ms, post_restart=Nonems, recovered=True, ip_changed=False
+    ue3: realloc=4154.29296875ms, reg=32.0ms, sess=Nonems, rrc=0.0ms, post_restart=Nonems, recovered=True, ip_changed=False
+    ue4: realloc=2063.29296875ms, reg=39.0ms, sess=Nonems, rrc=0.0ms, post_restart=Nonems, recovered=True, ip_changed=False
+    ue5: realloc=2450.29296875ms, reg=34.0ms, sess=Nonems, rrc=0.0ms, post_restart=Nonems, recovered=True, ip_changed=False
+    ue6: realloc=2833.29296875ms, reg=34.0ms, sess=Nonems, rrc=0.0ms, post_restart=Nonems, recovered=True, ip_changed=False
+

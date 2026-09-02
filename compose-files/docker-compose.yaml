@@ -1,0 +1,1376 @@
+services:
+  db:
+    container_name: db
+    image: "mongo:${MONGODB_VERSION}"
+    command: "mongod --bind_ip 0.0.0.0 --port 27017"
+    networks:
+      open5gs:
+        aliases:
+          - db.open5gs.org
+    volumes:
+      - db_data:/data/db
+      - db_config:/data/configdb
+    environment:
+      - GLIBC_TUNABLES=glibc.pthread.rseq=1
+    ports:
+      - "0.0.0.0:27017:27017/tcp"
+
+  webui:
+    container_name: webui
+    image: "ghcr.io/borjis131/webui:${OPEN5GS_VERSION}"
+    networks:
+      open5gs:
+        aliases:
+          - webui.open5gs.org
+    ports:
+      - "0.0.0.0:3000:9999/tcp"
+    environment:
+      - DB_URI=mongodb://db.open5gs.org:27017/open5gs
+    depends_on:
+      - db
+
+  sctp-proxy:
+    container_name: sctp-proxy
+    build:
+      context: ../../sctp_proxy
+      dockerfile: Dockerfile
+#    command: "tail -f /dev/null"
+    command: "python3 /app/sctp_proxy_v5.py"  # ← Auto-start the proxy
+    networks:
+      open5gs:
+        aliases:
+          - proxy.open5gs.org
+    ports:
+      - "38412:38412/sctp"
+      - "9999:9999/udp"
+      - "9100:9100/tcp"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock  # Required for container control
+    environment:
+      - DISABLE_AUTO_RESTART=1
+#    healthcheck:
+#      # If re-enabled, probe the TCP metrics port — never the SCTP data plane
+#      # (an SCTP probe creates a real association + backend AMF connection
+#      # every interval, flooding proxy/AMF logs).
+#      test: ["CMD", "python3", "-c", "import socket; s=socket.create_connection(('127.0.0.1', 9100), timeout=2); s.close()"]
+#      interval: 10s
+#      timeout: 3s
+#      retries: 5
+#      start_period: 5s
+    depends_on:
+      - amf1
+      - amf2
+
+  sctp-proxy2:
+    container_name: sctp-proxy2
+    build:
+      context: ../../sctp_proxy
+      dockerfile: Dockerfile
+    command: "python3 /app/sctp_proxy_v5.py"
+    networks:
+      open5gs:
+        aliases:
+          - proxy2.open5gs.org
+    ports:
+      - "38413:38413/sctp"
+      - "9998:9998/udp"
+      - "9101:9100/tcp"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - PROXY_LISTEN_PORT=38413
+      - PROXY_CONTROL_PORT=9998
+      - PROXY_METRICS_PORT=9100
+      - DISABLE_AUTO_RESTART=1
+    healthcheck:
+      # Probe the TCP metrics port, NOT the SCTP data plane. The old SCTP probe
+      # opened a full association every 2 s, and the proxy dutifully opened a
+      # backend association to the current AMF for each one — flooding the
+      # proxy and AMF logs with setup/teardown noise (~1000 cycles per run).
+      test: ["CMD", "python3", "-c", "import socket; s=socket.create_connection(('127.0.0.1', 9100), timeout=2); s.close()"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
+    depends_on:
+      - amf1
+      - amf2
+
+#  sctp-proxy:
+#    container_name: sctp-proxy
+#    image: python:3.11-slim
+#    # Keep container alive for debugging; we'll override command later
+#    command: "tail -f /dev/null"
+#    networks:
+#      open5gs:
+#        aliases:
+#          - proxy.open5gs.org
+#    ports:
+#      - "38412:38412/sctp"
+#      - "9999:9999/udp"
+#    volumes:
+#      - ../../sctp_proxy:/app
+#      - /var/run/docker.sock:/var/run/docker.sock  # Required for container control
+#    depends_on:
+#      - amf1
+#      - amf2
+
+  nrf:
+    container_name: nrf
+    image: "ghcr.io/borjis131/nrf:${OPEN5GS_VERSION}"
+    command: "-c /etc/open5gs/custom/nrf.yaml"
+    networks:
+      open5gs:
+        aliases:
+          - nrf.open5gs.org
+    configs:
+      - source: nrf_config
+        target: /etc/open5gs/custom/nrf.yaml
+#    healthcheck:
+#      test: ["CMD", "sh", "-c", "ss -tlnp | grep -q ':80'"]
+#      interval: 5s
+#      timeout: 3s
+#      retries: 5
+
+#  nrf1:
+#    container_name: nrf1
+#    image: "ghcr.io/borjis131/nrf:${OPEN5GS_VERSION}"
+#    command: "-c /etc/open5gs/custom/nrf1.yaml"
+#    networks:
+#      open5gs:
+#        aliases:
+#          - nrf1.open5gs.org
+#    configs:
+#      - source: nrf1_config
+#        target: /etc/open5gs/custom/nrf1.yaml
+
+  ausf:
+    container_name: ausf
+    image: "ghcr.io/borjis131/ausf:${OPEN5GS_VERSION}"
+    command: "-c /etc/open5gs/custom/ausf.yaml"
+    networks:
+      open5gs:
+        aliases:
+          - ausf.open5gs.org
+    configs:
+      - source: ausf_config
+        target: /etc/open5gs/custom/ausf.yaml
+    depends_on:
+      - nrf
+#      - nrf1
+
+  udm:
+    container_name: udm
+    image: "ghcr.io/borjis131/udm:${OPEN5GS_VERSION}"
+    command: "-c /etc/open5gs/custom/udm.yaml"
+    networks:
+      open5gs:
+        aliases:
+          - udm.open5gs.org
+    configs:
+      - source: udm_config
+        target: /etc/open5gs/custom/udm.yaml
+    depends_on:
+      - nrf
+#      - nrf1
+
+  udr:
+    container_name: udr
+    image: "ghcr.io/borjis131/udr:${OPEN5GS_VERSION}"
+    command: "-c /etc/open5gs/custom/udr.yaml"
+    restart: unless-stopped
+    networks:
+      open5gs:
+        aliases:
+          - udr.open5gs.org
+    configs:
+      - source: udr_config
+        target: /etc/open5gs/custom/udr.yaml
+    depends_on:
+      - db
+      - nrf
+#      - nrf1
+
+  nssf:
+    container_name: nssf
+    image: "ghcr.io/borjis131/nssf:${OPEN5GS_VERSION}"
+    command: "-c /etc/open5gs/custom/nssf.yaml"
+    networks:
+      open5gs:
+        aliases:
+          - nssf.open5gs.org
+    configs:
+      - source: nssf_config
+        target: /etc/open5gs/custom/nssf.yaml
+    depends_on:
+      - nrf
+#      - nrf1
+
+  bsf:
+    container_name: bsf
+    image: "ghcr.io/borjis131/bsf:${OPEN5GS_VERSION}"
+    command: "-c /etc/open5gs/custom/bsf.yaml"
+    networks:
+      open5gs:
+        aliases:
+          - bsf.open5gs.org
+    configs:
+      - source: bsf_config
+        target: /etc/open5gs/custom/bsf.yaml
+    depends_on:
+      - nrf
+#      - nrf1
+
+  pcf:
+    container_name: pcf
+    image: "ghcr.io/borjis131/pcf:${OPEN5GS_VERSION}"
+    command: "-c /etc/open5gs/custom/pcf.yaml"
+    restart: unless-stopped
+    networks:
+      open5gs:
+        aliases:
+          - pcf.open5gs.org
+    configs:
+      - source: pcf_config
+        target: /etc/open5gs/custom/pcf.yaml
+    depends_on:
+      - db
+      - nrf
+#      - nrf1
+
+  amf1:
+    container_name: amf1
+    image: "ghcr.io/borjis131/amf:${OPEN5GS_VERSION}"
+    command: "-c /etc/open5gs/custom/amf1.yaml"
+    networks:
+      open5gs:
+        aliases:
+          - amf1.open5gs.org
+    configs:
+      - source: amf1_config
+        target: /etc/open5gs/custom/amf1.yaml
+#    volumes: # DeepSeek suggestion
+#      - ../../configs/network-slicing/amf1.yaml:/etc/open5gs/custom/amf1.yaml
+    depends_on:
+      - nrf
+      - ausf
+      - udm
+      - pcf
+
+  amf2:
+    container_name: amf2
+    image: "ghcr.io/borjis131/amf:${OPEN5GS_VERSION}"
+    command: "-c /etc/open5gs/custom/amf2.yaml"
+    networks:
+      open5gs:
+        aliases:
+          - amf2.open5gs.org
+    configs:
+      - source: amf2_config
+        target: /etc/open5gs/custom/amf2.yaml
+#    volumes: # DeepSeek suggestion
+#      - ../../configs/network-slicing/amf2.yaml:/etc/open5gs/custom/amf2.yaml
+    depends_on:
+      - nrf
+      - ausf
+      - udm
+      - pcf
+      
+  smf1:
+    container_name: smf1
+    image: "ghcr.io/borjis131/smf:${OPEN5GS_VERSION}"
+    command: "-c /etc/open5gs/custom/smf1.yaml"
+    networks:
+      open5gs:
+        aliases:
+          - smf1.open5gs.org
+    configs:
+      - source: smf1_config
+        target: /etc/open5gs/custom/smf1.yaml
+    depends_on:
+      - nrf
+      - upf1
+
+  smf2:
+    container_name: smf2
+    image: "ghcr.io/borjis131/smf:${OPEN5GS_VERSION}"
+    command: "-c /etc/open5gs/custom/smf2.yaml"
+    networks:
+      open5gs:
+        aliases:
+          - smf2.open5gs.org
+    configs:
+      - source: smf2_config
+        target: /etc/open5gs/custom/smf2.yaml
+    depends_on:
+      - nrf
+      - upf2
+
+  upf1:
+    container_name: upf1
+    image: "ghcr.io/borjis131/upf:${OPEN5GS_VERSION}"
+    command: "-c /etc/open5gs/custom/upf1.yaml"
+    networks:
+      open5gs:
+        aliases:
+          - upf1.open5gs.org
+    configs:
+      - source: upf1_config
+        target: /etc/open5gs/custom/upf1.yaml
+    privileged: true
+    cap_add:
+      - NET_ADMIN
+
+  upf2:
+    container_name: upf2
+    image: "ghcr.io/borjis131/upf:${OPEN5GS_VERSION}"
+    command: "-c /etc/open5gs/custom/upf2.yaml"
+    networks:
+      open5gs:
+        aliases:
+          - upf2.open5gs.org
+    configs:
+      - source: upf2_config
+        target: /etc/open5gs/custom/upf2.yaml
+    privileged: true
+    cap_add:
+      - NET_ADMIN
+
+  gnb1:
+    container_name: gnb1
+    image: "local/gnb:v3.2.7-exp8"
+    restart: unless-stopped
+    command: "-c /UERANSIM/config/gnb1.yaml"
+    networks:
+      open5gs:
+        aliases:
+          - gnb1.ueransim.org
+    configs:
+      - source: gnb1_config
+        target: /UERANSIM/config/gnb1.yaml
+#    volumes:
+#      - ./configs/network-slicing/gnb1.yaml:/etc/ueransim/gnb.yaml:ro
+#    entrypoint: ["/bin/sh", "-c", "sleep 3 && /UERANSIM/build/nr-gnb -c /UERANSIM/config/gnb1.yaml"]
+#    restart: unless-stopped
+    depends_on:
+      - amf1
+#      - amf2
+#      - smf1
+#      - smf2
+#      - pcf
+#      - udr
+      - sctp-proxy
+
+  gnb2:
+    container_name: gnb2
+    image: "local/gnb:v3.2.7-exp8"
+    restart: unless-stopped
+    command: "-c /UERANSIM/config/gnb2.yaml"
+    networks:
+      open5gs:
+        aliases:
+          - gnb2.ueransim.org
+    configs:
+      - source: gnb2_config
+        target: /UERANSIM/config/gnb2.yaml
+#    volumes:
+#      - ./configs/network-slicing/gnb2.yaml:/etc/ueransim/gnb.yaml:ro
+    depends_on:
+#      - amf1
+#      - amf2
+#      - smf1
+#      - smf2
+#      - pcf
+#      - udr
+      sctp-proxy2:
+        condition: service_healthy
+
+  ue1:
+    container_name: ue1
+    image: "ghcr.io/borjis131/ue:v3.2.7"
+    command: "-c /UERANSIM/config/ue1.yaml"
+    networks:
+      open5gs:
+        aliases:
+          - ue1.ueransim.org
+#    configs:
+#      - source: ue1_config
+#        target: /UERANSIM/config/ue1.yaml
+    volumes:
+#      - ../../configs/network-slicing/:/UERANSIM/config/
+      - ../../configs/network-slicing/ue1.yaml:/UERANSIM/config/ue1.yaml:rw
+    privileged: true
+    cap_add:
+      - NET_ADMIN
+    depends_on:
+      - gnb1
+#      - gnb2
+
+  ue2:
+    container_name: ue2
+    image: "ghcr.io/borjis131/ue:v3.2.7"
+    command: "-c /UERANSIM/config/ue2.yaml"
+    networks:
+      open5gs:
+        aliases:
+          - ue2.ueransim.org
+#    configs:
+#      - source: ue2_config
+#        target: /UERANSIM/config/ue2.yaml
+    volumes:
+#      - ../../configs/network-slicing/:/UERANSIM/config/
+      - ../../configs/network-slicing/ue2.yaml:/UERANSIM/config/ue2.yaml:rw
+    privileged: true
+    cap_add:
+      - NET_ADMIN
+    depends_on:
+      - gnb1
+#      - gnb2
+
+  ue3:
+    container_name: ue3
+    image: "ghcr.io/borjis131/ue:v3.2.7"
+    command: "-c /UERANSIM/config/ue3.yaml"
+    networks:
+      open5gs:
+        aliases:
+          - ue3.ueransim.org
+#    configs:
+#      - source: ue3_config
+#        target: /UERANSIM/config/ue3.yaml
+    volumes:
+#      - ../../configs/network-slicing/:/UERANSIM/config/
+      - ../../configs/network-slicing/ue3.yaml:/UERANSIM/config/ue3.yaml:rw
+    privileged: true
+    cap_add:
+      - NET_ADMIN
+    depends_on:
+      - gnb1
+#      - gnb2
+
+  ue4:
+    container_name: ue4
+    image: "ghcr.io/borjis131/ue:v3.2.7"
+    command: "-c /UERANSIM/config/ue4.yaml"
+    networks:
+      open5gs:
+        aliases:
+          - ue4.ueransim.org
+#    configs:
+#      - source: ue4_config
+#        target: /UERANSIM/config/ue4.yaml
+    volumes:
+#      - ../../configs/network-slicing/:/UERANSIM/config/
+      - ../../configs/network-slicing/ue4.yaml:/UERANSIM/config/ue4.yaml:rw
+    privileged: true
+    cap_add:
+      - NET_ADMIN
+    depends_on:
+      - gnb1
+#      - gnb2
+
+  ue5:
+    container_name: ue5
+    image: "ghcr.io/borjis131/ue:v3.2.7"
+    command: "-c /UERANSIM/config/ue5.yaml"
+    networks:
+      open5gs:
+        aliases:
+          - ue5.ueransim.org
+#    configs:
+#      - source: ue5_config
+#        target: /UERANSIM/config/ue5.yaml
+    volumes:
+#      - ../../configs/network-slicing/:/UERANSIM/config/
+      - ../../configs/network-slicing/ue5.yaml:/UERANSIM/config/ue5.yaml:rw
+    privileged: true
+    cap_add:
+      - NET_ADMIN
+    depends_on:
+      - gnb1
+#      - gnb2
+
+  ue6:
+    container_name: ue6
+    image: "ghcr.io/borjis131/ue:v3.2.7"
+    command: "-c /UERANSIM/config/ue6.yaml"
+    networks:
+      open5gs:
+        aliases:
+          - ue6.ueransim.org
+#    configs:
+#      - source: ue6_config
+#        target: /UERANSIM/config/ue6.yaml
+    volumes:
+#      - ../../configs/network-slicing/:/UERANSIM/config/
+      - ../../configs/network-slicing/ue6.yaml:/UERANSIM/config/ue6.yaml:rw
+    privileged: true
+    cap_add:
+      - NET_ADMIN
+    depends_on:
+      - gnb1
+#      - gnb2
+
+  ue7:
+    container_name: ue7
+    image: "ghcr.io/borjis131/ue:v3.2.7"
+    command: "-c /UERANSIM/config/ue7.yaml"
+    networks:
+      open5gs:
+        aliases:
+          - ue7.ueransim.org
+    configs:
+      - source: ue7_config
+        target: /UERANSIM/config/ue7.yaml
+    privileged: true
+    cap_add:
+      - NET_ADMIN
+    depends_on:
+      - gnb1
+
+  ue8:
+    container_name: ue8
+    image: "ghcr.io/borjis131/ue:v3.2.7"
+    command: "-c /UERANSIM/config/ue8.yaml"
+    networks:
+      open5gs:
+        aliases:
+          - ue8.ueransim.org
+    configs:
+      - source: ue8_config
+        target: /UERANSIM/config/ue8.yaml
+    privileged: true
+    cap_add:
+      - NET_ADMIN
+    depends_on:
+      - gnb1
+
+  ue9:
+    container_name: ue9
+    image: "ghcr.io/borjis131/ue:v3.2.7"
+    command: "-c /UERANSIM/config/ue9.yaml"
+    networks:
+      open5gs:
+        aliases:
+          - ue9.ueransim.org
+    configs:
+      - source: ue9_config
+        target: /UERANSIM/config/ue9.yaml
+    privileged: true
+    cap_add:
+      - NET_ADMIN
+    depends_on:
+      - gnb1
+
+  ue10:
+    container_name: ue10
+    image: "ghcr.io/borjis131/ue:v3.2.7"
+    command: "-c /UERANSIM/config/ue10.yaml"
+    networks:
+      open5gs:
+        aliases:
+          - ue10.ueransim.org
+    configs:
+      - source: ue10_config
+        target: /UERANSIM/config/ue10.yaml
+    privileged: true
+    cap_add:
+      - NET_ADMIN
+    depends_on:
+      - gnb1
+
+  ue11:
+    container_name: ue11
+    image: "ghcr.io/borjis131/ue:v3.2.7"
+    command: "-c /UERANSIM/config/ue11.yaml"
+    networks:
+      open5gs:
+        aliases:
+          - ue11.ueransim.org
+    configs:
+      - source: ue11_config
+        target: /UERANSIM/config/ue11.yaml
+    privileged: true
+    cap_add:
+      - NET_ADMIN
+    depends_on:
+      - gnb1
+
+  ue12:
+    container_name: ue12
+    image: "ghcr.io/borjis131/ue:v3.2.7"
+    command: "-c /UERANSIM/config/ue12.yaml"
+    networks:
+      open5gs:
+        aliases:
+          - ue12.ueransim.org
+    configs:
+      - source: ue12_config
+        target: /UERANSIM/config/ue12.yaml
+    privileged: true
+    cap_add:
+      - NET_ADMIN
+    depends_on:
+      - gnb1
+
+  ue13:
+    container_name: ue13
+    image: "ghcr.io/borjis131/ue:v3.2.7"
+    command: "-c /UERANSIM/config/ue13.yaml"
+    networks:
+      open5gs:
+        aliases:
+          - ue13.ueransim.org
+    configs:
+      - source: ue13_config
+        target: /UERANSIM/config/ue13.yaml
+    privileged: true
+    cap_add:
+      - NET_ADMIN
+    depends_on:
+      - gnb1
+
+  ue14:
+    container_name: ue14
+    image: "ghcr.io/borjis131/ue:v3.2.7"
+    command: "-c /UERANSIM/config/ue14.yaml"
+    networks:
+      open5gs:
+        aliases:
+          - ue14.ueransim.org
+    configs:
+      - source: ue14_config
+        target: /UERANSIM/config/ue14.yaml
+    privileged: true
+    cap_add:
+      - NET_ADMIN
+    depends_on:
+      - gnb1
+
+  ue15:
+    container_name: ue15
+    image: "ghcr.io/borjis131/ue:v3.2.7"
+    command: "-c /UERANSIM/config/ue15.yaml"
+    networks:
+      open5gs:
+        aliases:
+          - ue15.ueransim.org
+    configs:
+      - source: ue15_config
+        target: /UERANSIM/config/ue15.yaml
+    privileged: true
+    cap_add:
+      - NET_ADMIN
+    depends_on:
+      - gnb1
+
+  ue16:
+    container_name: ue16
+    image: "ghcr.io/borjis131/ue:v3.2.7"
+    command: "-c /UERANSIM/config/ue16.yaml"
+    networks:
+      open5gs:
+        aliases:
+          - ue16.ueransim.org
+    configs:
+      - source: ue16_config
+        target: /UERANSIM/config/ue16.yaml
+    privileged: true
+    cap_add:
+      - NET_ADMIN
+    depends_on:
+      - gnb1
+
+  ue17:
+    container_name: ue17
+    image: "ghcr.io/borjis131/ue:v3.2.7"
+    command: "-c /UERANSIM/config/ue17.yaml"
+    networks:
+      open5gs:
+        aliases:
+          - ue17.ueransim.org
+    configs:
+      - source: ue17_config
+        target: /UERANSIM/config/ue17.yaml
+    privileged: true
+    cap_add:
+      - NET_ADMIN
+    depends_on:
+      - gnb1
+
+  ue18:
+    container_name: ue18
+    image: "ghcr.io/borjis131/ue:v3.2.7"
+    command: "-c /UERANSIM/config/ue18.yaml"
+    networks:
+      open5gs:
+        aliases:
+          - ue18.ueransim.org
+    configs:
+      - source: ue18_config
+        target: /UERANSIM/config/ue18.yaml
+    privileged: true
+    cap_add:
+      - NET_ADMIN
+    depends_on:
+      - gnb1
+
+  ue19:
+    container_name: ue19
+    image: "ghcr.io/borjis131/ue:v3.2.7"
+    command: "-c /UERANSIM/config/ue19.yaml"
+    networks:
+      open5gs:
+        aliases:
+          - ue19.ueransim.org
+    configs:
+      - source: ue19_config
+        target: /UERANSIM/config/ue19.yaml
+    privileged: true
+    cap_add:
+      - NET_ADMIN
+    depends_on:
+      - gnb1
+
+  ue20:
+    container_name: ue20
+    image: "ghcr.io/borjis131/ue:v3.2.7"
+    command: "-c /UERANSIM/config/ue20.yaml"
+    networks:
+      open5gs:
+        aliases:
+          - ue20.ueransim.org
+    configs:
+      - source: ue20_config
+        target: /UERANSIM/config/ue20.yaml
+    privileged: true
+    cap_add:
+      - NET_ADMIN
+    depends_on:
+      - gnb1
+
+  ue21:
+    container_name: ue21
+    image: "ghcr.io/borjis131/ue:v3.2.7"
+    command: "-c /UERANSIM/config/ue21.yaml"
+    networks:
+      open5gs:
+        aliases:
+          - ue21.ueransim.org
+    configs:
+      - source: ue21_config
+        target: /UERANSIM/config/ue21.yaml
+    privileged: true
+    cap_add:
+      - NET_ADMIN
+    depends_on:
+      - gnb1
+
+  ue22:
+    container_name: ue22
+    image: "ghcr.io/borjis131/ue:v3.2.7"
+    command: "-c /UERANSIM/config/ue22.yaml"
+    networks:
+      open5gs:
+        aliases:
+          - ue22.ueransim.org
+    configs:
+      - source: ue22_config
+        target: /UERANSIM/config/ue22.yaml
+    privileged: true
+    cap_add:
+      - NET_ADMIN
+    depends_on:
+      - gnb1
+
+  ue23:
+    container_name: ue23
+    image: "ghcr.io/borjis131/ue:v3.2.7"
+    command: "-c /UERANSIM/config/ue23.yaml"
+    networks:
+      open5gs:
+        aliases:
+          - ue23.ueransim.org
+    configs:
+      - source: ue23_config
+        target: /UERANSIM/config/ue23.yaml
+    privileged: true
+    cap_add:
+      - NET_ADMIN
+    depends_on:
+      - gnb1
+
+  ue24:
+    container_name: ue24
+    image: "ghcr.io/borjis131/ue:v3.2.7"
+    command: "-c /UERANSIM/config/ue24.yaml"
+    networks:
+      open5gs:
+        aliases:
+          - ue24.ueransim.org
+    configs:
+      - source: ue24_config
+        target: /UERANSIM/config/ue24.yaml
+    privileged: true
+    cap_add:
+      - NET_ADMIN
+    depends_on:
+      - gnb1
+
+  ue25:
+    container_name: ue25
+    image: "ghcr.io/borjis131/ue:v3.2.7"
+    command: "-c /UERANSIM/config/ue25.yaml"
+    networks:
+      open5gs:
+        aliases:
+          - ue25.ueransim.org
+    configs:
+      - source: ue25_config
+        target: /UERANSIM/config/ue25.yaml
+    privileged: true
+    cap_add:
+      - NET_ADMIN
+    depends_on:
+      - gnb1
+
+  ue26:
+    container_name: ue26
+    image: "ghcr.io/borjis131/ue:v3.2.7"
+    command: "-c /UERANSIM/config/ue26.yaml"
+    networks:
+      open5gs:
+        aliases:
+          - ue26.ueransim.org
+    configs:
+      - source: ue26_config
+        target: /UERANSIM/config/ue26.yaml
+    privileged: true
+    cap_add:
+      - NET_ADMIN
+    depends_on:
+      - gnb1
+
+  ue27:
+    container_name: ue27
+    image: "ghcr.io/borjis131/ue:v3.2.7"
+    command: "-c /UERANSIM/config/ue27.yaml"
+    networks:
+      open5gs:
+        aliases:
+          - ue27.ueransim.org
+    configs:
+      - source: ue27_config
+        target: /UERANSIM/config/ue27.yaml
+    privileged: true
+    cap_add:
+      - NET_ADMIN
+    depends_on:
+      - gnb1
+
+  ue28:
+    container_name: ue28
+    image: "ghcr.io/borjis131/ue:v3.2.7"
+    command: "-c /UERANSIM/config/ue28.yaml"
+    networks:
+      open5gs:
+        aliases:
+          - ue28.ueransim.org
+    configs:
+      - source: ue28_config
+        target: /UERANSIM/config/ue28.yaml
+    privileged: true
+    cap_add:
+      - NET_ADMIN
+    depends_on:
+      - gnb1
+
+  ue29:
+    container_name: ue29
+    image: "ghcr.io/borjis131/ue:v3.2.7"
+    command: "-c /UERANSIM/config/ue29.yaml"
+    networks:
+      open5gs:
+        aliases:
+          - ue29.ueransim.org
+    configs:
+      - source: ue29_config
+        target: /UERANSIM/config/ue29.yaml
+    privileged: true
+    cap_add:
+      - NET_ADMIN
+    depends_on:
+      - gnb1
+
+  ue30:
+    container_name: ue30
+    image: "ghcr.io/borjis131/ue:v3.2.7"
+    command: "-c /UERANSIM/config/ue30.yaml"
+    networks:
+      open5gs:
+        aliases:
+          - ue30.ueransim.org
+    configs:
+      - source: ue30_config
+        target: /UERANSIM/config/ue30.yaml
+    privileged: true
+    cap_add:
+      - NET_ADMIN
+    depends_on:
+      - gnb1
+
+  ue31:
+    container_name: ue31
+    image: "ghcr.io/borjis131/ue:v3.2.7"
+    command: "-c /UERANSIM/config/ue31.yaml"
+    networks:
+      open5gs:
+        aliases:
+          - ue31.ueransim.org
+    configs:
+      - source: ue31_config
+        target: /UERANSIM/config/ue31.yaml
+    privileged: true
+    cap_add:
+      - NET_ADMIN
+    depends_on:
+      - gnb1
+
+  ue32:
+    container_name: ue32
+    image: "ghcr.io/borjis131/ue:v3.2.7"
+    command: "-c /UERANSIM/config/ue32.yaml"
+    networks:
+      open5gs:
+        aliases:
+          - ue32.ueransim.org
+    configs:
+      - source: ue32_config
+        target: /UERANSIM/config/ue32.yaml
+    privileged: true
+    cap_add:
+      - NET_ADMIN
+    depends_on:
+      - gnb1
+
+  ue33:
+    container_name: ue33
+    image: "ghcr.io/borjis131/ue:v3.2.7"
+    command: "-c /UERANSIM/config/ue33.yaml"
+    networks:
+      open5gs:
+        aliases:
+          - ue33.ueransim.org
+    configs:
+      - source: ue33_config
+        target: /UERANSIM/config/ue33.yaml
+    privileged: true
+    cap_add:
+      - NET_ADMIN
+    depends_on:
+      - gnb1
+
+  ue34:
+    container_name: ue34
+    image: "ghcr.io/borjis131/ue:v3.2.7"
+    command: "-c /UERANSIM/config/ue34.yaml"
+    networks:
+      open5gs:
+        aliases:
+          - ue34.ueransim.org
+    configs:
+      - source: ue34_config
+        target: /UERANSIM/config/ue34.yaml
+    privileged: true
+    cap_add:
+      - NET_ADMIN
+    depends_on:
+      - gnb1
+
+  ue35:
+    container_name: ue35
+    image: "ghcr.io/borjis131/ue:v3.2.7"
+    command: "-c /UERANSIM/config/ue35.yaml"
+    networks:
+      open5gs:
+        aliases:
+          - ue35.ueransim.org
+    configs:
+      - source: ue35_config
+        target: /UERANSIM/config/ue35.yaml
+    privileged: true
+    cap_add:
+      - NET_ADMIN
+    depends_on:
+      - gnb1
+
+  ue36:
+    container_name: ue36
+    image: "ghcr.io/borjis131/ue:v3.2.7"
+    command: "-c /UERANSIM/config/ue36.yaml"
+    networks:
+      open5gs:
+        aliases:
+          - ue36.ueransim.org
+    configs:
+      - source: ue36_config
+        target: /UERANSIM/config/ue36.yaml
+    privileged: true
+    cap_add:
+      - NET_ADMIN
+    depends_on:
+      - gnb1
+
+  ue37:
+    container_name: ue37
+    image: "ghcr.io/borjis131/ue:v3.2.7"
+    command: "-c /UERANSIM/config/ue37.yaml"
+    networks:
+      open5gs:
+        aliases:
+          - ue37.ueransim.org
+    configs:
+      - source: ue37_config
+        target: /UERANSIM/config/ue37.yaml
+    privileged: true
+    cap_add:
+      - NET_ADMIN
+    depends_on:
+      - gnb1
+
+  ue38:
+    container_name: ue38
+    image: "ghcr.io/borjis131/ue:v3.2.7"
+    command: "-c /UERANSIM/config/ue38.yaml"
+    networks:
+      open5gs:
+        aliases:
+          - ue38.ueransim.org
+    configs:
+      - source: ue38_config
+        target: /UERANSIM/config/ue38.yaml
+    privileged: true
+    cap_add:
+      - NET_ADMIN
+    depends_on:
+      - gnb1
+
+  ue39:
+    container_name: ue39
+    image: "ghcr.io/borjis131/ue:v3.2.7"
+    command: "-c /UERANSIM/config/ue39.yaml"
+    networks:
+      open5gs:
+        aliases:
+          - ue39.ueransim.org
+    configs:
+      - source: ue39_config
+        target: /UERANSIM/config/ue39.yaml
+    privileged: true
+    cap_add:
+      - NET_ADMIN
+    depends_on:
+      - gnb1
+
+  ue40:
+    container_name: ue40
+    image: "ghcr.io/borjis131/ue:v3.2.7"
+    command: "-c /UERANSIM/config/ue40.yaml"
+    networks:
+      open5gs:
+        aliases:
+          - ue40.ueransim.org
+    configs:
+      - source: ue40_config
+        target: /UERANSIM/config/ue40.yaml
+    privileged: true
+    cap_add:
+      - NET_ADMIN
+    depends_on:
+      - gnb1
+
+  ue41:
+    container_name: ue41
+    image: "ghcr.io/borjis131/ue:v3.2.7"
+    command: "-c /UERANSIM/config/ue41.yaml"
+    networks:
+      open5gs:
+        aliases:
+          - ue41.ueransim.org
+    configs:
+      - source: ue41_config
+        target: /UERANSIM/config/ue41.yaml
+    privileged: true
+    cap_add:
+      - NET_ADMIN
+    depends_on:
+      - gnb1
+
+  ue42:
+    container_name: ue42
+    image: "ghcr.io/borjis131/ue:v3.2.7"
+    command: "-c /UERANSIM/config/ue42.yaml"
+    networks:
+      open5gs:
+        aliases:
+          - ue42.ueransim.org
+    configs:
+      - source: ue42_config
+        target: /UERANSIM/config/ue42.yaml
+    privileged: true
+    cap_add:
+      - NET_ADMIN
+    depends_on:
+      - gnb1
+
+  ue43:
+    container_name: ue43
+    image: "ghcr.io/borjis131/ue:v3.2.7"
+    command: "-c /UERANSIM/config/ue43.yaml"
+    networks:
+      open5gs:
+        aliases:
+          - ue43.ueransim.org
+    configs:
+      - source: ue43_config
+        target: /UERANSIM/config/ue43.yaml
+    privileged: true
+    cap_add:
+      - NET_ADMIN
+    depends_on:
+      - gnb1
+
+  ue44:
+    container_name: ue44
+    image: "ghcr.io/borjis131/ue:v3.2.7"
+    command: "-c /UERANSIM/config/ue44.yaml"
+    networks:
+      open5gs:
+        aliases:
+          - ue44.ueransim.org
+    configs:
+      - source: ue44_config
+        target: /UERANSIM/config/ue44.yaml
+    privileged: true
+    cap_add:
+      - NET_ADMIN
+    depends_on:
+      - gnb1
+
+  ue45:
+    container_name: ue45
+    image: "ghcr.io/borjis131/ue:v3.2.7"
+    command: "-c /UERANSIM/config/ue45.yaml"
+    networks:
+      open5gs:
+        aliases:
+          - ue45.ueransim.org
+    configs:
+      - source: ue45_config
+        target: /UERANSIM/config/ue45.yaml
+    privileged: true
+    cap_add:
+      - NET_ADMIN
+    depends_on:
+      - gnb1
+
+  ue46:
+    container_name: ue46
+    image: "ghcr.io/borjis131/ue:v3.2.7"
+    command: "-c /UERANSIM/config/ue46.yaml"
+    networks:
+      open5gs:
+        aliases:
+          - ue46.ueransim.org
+    configs:
+      - source: ue46_config
+        target: /UERANSIM/config/ue46.yaml
+    privileged: true
+    cap_add:
+      - NET_ADMIN
+    depends_on:
+      - gnb1
+
+  ue47:
+    container_name: ue47
+    image: "ghcr.io/borjis131/ue:v3.2.7"
+    command: "-c /UERANSIM/config/ue47.yaml"
+    networks:
+      open5gs:
+        aliases:
+          - ue47.ueransim.org
+    configs:
+      - source: ue47_config
+        target: /UERANSIM/config/ue47.yaml
+    privileged: true
+    cap_add:
+      - NET_ADMIN
+    depends_on:
+      - gnb1
+
+  ue48:
+    container_name: ue48
+    image: "ghcr.io/borjis131/ue:v3.2.7"
+    command: "-c /UERANSIM/config/ue48.yaml"
+    networks:
+      open5gs:
+        aliases:
+          - ue48.ueransim.org
+    configs:
+      - source: ue48_config
+        target: /UERANSIM/config/ue48.yaml
+    privileged: true
+    cap_add:
+      - NET_ADMIN
+    depends_on:
+      - gnb1
+
+networks:
+  open5gs:
+    name: open5gs
+    driver: bridge
+    driver_opts:
+      com.docker.network.bridge.name: br-ogs
+    ipam:
+      config:
+        - subnet: 10.33.33.0/24
+
+volumes:
+  db_data:
+    name: open5gs_db_data
+    labels:
+      org.open5gs.mongodb_version: ${MONGODB_VERSION}
+  db_config:
+    name: open5gs_db_config
+    labels:
+      org.open5gs.mongodb_version: ${MONGODB_VERSION}
+
+configs:
+  nrf_config:
+    file: ../../configs/network-slicing/nrf.yaml
+  nrf1_config:
+    file: ../../configs/network-slicing/nrf1.yaml
+  ausf_config:
+    file: ../../configs/network-slicing/ausf.yaml
+  udm_config:
+    file: ../../configs/network-slicing/udm.yaml
+  udr_config:
+    file: ../../configs/network-slicing/udr.yaml
+  nssf_config:
+    file: ../../configs/network-slicing/nssf.yaml
+  bsf_config:
+    file: ../../configs/network-slicing/bsf.yaml
+  pcf_config:
+    file: ../../configs/network-slicing/pcf.yaml
+  amf1_config:
+    file: ../../configs/network-slicing/amf1.yaml
+  amf2_config:
+    file: ../../configs/network-slicing/amf2.yaml
+  smf1_config:
+    file: ../../configs/network-slicing/smf1.yaml
+  smf2_config:
+    file: ../../configs/network-slicing/smf2.yaml
+  upf1_config:
+    file: ../../configs/network-slicing/upf1.yaml
+  upf2_config:
+    file: ../../configs/network-slicing/upf2.yaml
+  gnb1_config:
+    file: ../../configs/network-slicing/gnb1.yaml
+  gnb2_config:
+    file: ../../configs/network-slicing/gnb2.yaml
+  ue1_config:
+    file: ../../configs/network-slicing/ue1.yaml
+  ue2_config:
+    file: ../../configs/network-slicing/ue2.yaml
+  ue3_config:
+    file: ../../configs/network-slicing/ue3.yaml
+  ue4_config:
+    file: ../../configs/network-slicing/ue4.yaml
+  ue5_config:
+    file: ../../configs/network-slicing/ue5.yaml
+  ue6_config:
+    file: ../../configs/network-slicing/ue6.yaml
+  ue7_config:
+    file: ../../configs/network-slicing/ue7.yaml
+  ue8_config:
+    file: ../../configs/network-slicing/ue8.yaml
+  ue9_config:
+    file: ../../configs/network-slicing/ue9.yaml
+  ue10_config:
+    file: ../../configs/network-slicing/ue10.yaml
+  ue11_config:
+    file: ../../configs/network-slicing/ue11.yaml
+  ue12_config:
+    file: ../../configs/network-slicing/ue12.yaml
+  ue13_config:
+    file: ../../configs/network-slicing/ue13.yaml
+  ue14_config:
+    file: ../../configs/network-slicing/ue14.yaml
+  ue15_config:
+    file: ../../configs/network-slicing/ue15.yaml
+  ue16_config:
+    file: ../../configs/network-slicing/ue16.yaml
+  ue17_config:
+    file: ../../configs/network-slicing/ue17.yaml
+  ue18_config:
+    file: ../../configs/network-slicing/ue18.yaml
+  ue19_config:
+    file: ../../configs/network-slicing/ue19.yaml
+  ue20_config:
+    file: ../../configs/network-slicing/ue20.yaml
+  ue21_config:
+    file: ../../configs/network-slicing/ue21.yaml
+  ue22_config:
+    file: ../../configs/network-slicing/ue22.yaml
+  ue23_config:
+    file: ../../configs/network-slicing/ue23.yaml
+  ue24_config:
+    file: ../../configs/network-slicing/ue24.yaml
+  ue25_config:
+    file: ../../configs/network-slicing/ue25.yaml
+  ue26_config:
+    file: ../../configs/network-slicing/ue26.yaml
+  ue27_config:
+    file: ../../configs/network-slicing/ue27.yaml
+  ue28_config:
+    file: ../../configs/network-slicing/ue28.yaml
+  ue29_config:
+    file: ../../configs/network-slicing/ue29.yaml
+  ue30_config:
+    file: ../../configs/network-slicing/ue30.yaml
+  ue31_config:
+    file: ../../configs/network-slicing/ue31.yaml
+  ue32_config:
+    file: ../../configs/network-slicing/ue32.yaml
+  ue33_config:
+    file: ../../configs/network-slicing/ue33.yaml
+  ue34_config:
+    file: ../../configs/network-slicing/ue34.yaml
+  ue35_config:
+    file: ../../configs/network-slicing/ue35.yaml
+  ue36_config:
+    file: ../../configs/network-slicing/ue36.yaml
+  ue37_config:
+    file: ../../configs/network-slicing/ue37.yaml
+  ue38_config:
+    file: ../../configs/network-slicing/ue38.yaml
+  ue39_config:
+    file: ../../configs/network-slicing/ue39.yaml
+  ue40_config:
+    file: ../../configs/network-slicing/ue40.yaml
+  ue41_config:
+    file: ../../configs/network-slicing/ue41.yaml
+  ue42_config:
+    file: ../../configs/network-slicing/ue42.yaml
+  ue43_config:
+    file: ../../configs/network-slicing/ue43.yaml
+  ue44_config:
+    file: ../../configs/network-slicing/ue44.yaml
+  ue45_config:
+    file: ../../configs/network-slicing/ue45.yaml
+  ue46_config:
+    file: ../../configs/network-slicing/ue46.yaml
+  ue47_config:
+    file: ../../configs/network-slicing/ue47.yaml
+  ue48_config:
+    file: ../../configs/network-slicing/ue48.yaml

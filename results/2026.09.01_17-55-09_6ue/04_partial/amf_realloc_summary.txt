@@ -1,0 +1,19 @@
+AMF Re-allocation Experiment Summary
+======================================================================
+
+Run 1: mode=partial, target=amf2
+  reallocation_latency_ms: mean=4758.3ms, std=912.3ms, min=3088.0ms, max=5731.0ms, p95=5731.0ms, cv=0.192 (n=6)
+  registration_latency_ms: mean=142.7ms, std=113.2ms, min=14.0ms, max=227.0ms, p95=227.0ms, cv=0.794 (n=3)
+  session_setup_latency_ms: mean=397.7ms, std=69.0ms, min=318.0ms, max=438.0ms, p95=438.0ms, cv=0.174 (n=3)
+  rrc_latency_ms: mean=0.0ms, std=0.0ms, min=0.0ms, max=0.0ms, p95=0.0ms, cv=0.000 (n=3)
+  post_restart_latency_ms: mean=356.6ms, std=114.2ms, min=226.8ms, max=441.8ms, p95=441.8ms, cv=0.320 (n=3)
+  Recovered: 3/6
+  IP changed: 3
+
+    ue1: realloc=4566.0ms, reg=14.0ms, sess=437.0ms, rrc=0.0ms, post_restart=226.785888671875ms, recovered=True, ip_changed=True
+    ue2: realloc=5207.0ms, reg=187.0ms, sess=318.0ms, rrc=0.0ms, post_restart=401.156005859375ms, recovered=True, ip_changed=True
+    ue3: realloc=5731.0ms, reg=227.0ms, sess=438.0ms, rrc=0.0ms, post_restart=441.810791015625ms, recovered=True, ip_changed=True
+    ue4: realloc=4767.0ms, reg=Nonems, sess=Nonems, rrc=Nonems, post_restart=Nonems, recovered=False, ip_changed=False
+    ue5: realloc=5191.0ms, reg=Nonems, sess=Nonems, rrc=Nonems, post_restart=Nonems, recovered=False, ip_changed=False
+    ue6: realloc=3088.0ms, reg=Nonems, sess=Nonems, rrc=Nonems, post_restart=Nonems, recovered=False, ip_changed=False
+

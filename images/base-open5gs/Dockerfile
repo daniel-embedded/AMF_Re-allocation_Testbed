@@ -18,6 +18,8 @@ RUN apt-get update && apt-get install python3-pip python3-setuptools python3-whe
 
 # clone the specific open5gs version
 RUN git clone --depth 1 --branch=${OPEN5GS_VERSION} https://github.com/open5gs/open5gs
+COPY open5gs_cleartext_fix.patch /tmp/fix.patch
+RUN cd open5gs && git apply /tmp/fix.patch && grep -n "tolerated" src/amf/gmm-handler.c
 
 # install open5gs
 RUN cd open5gs && meson build --prefix=`pwd`/install && ninja -j $(nproc) -C build \

@@ -1,0 +1,19 @@
+AMF Re-allocation Experiment Summary
+======================================================================
+
+Run 1: mode=split-gnb-simultaneous, target=amf2
+  reallocation_latency_ms: mean=11067.8ms, std=1912.7ms, min=8787.0ms, max=13267.0ms, p95=13267.0ms, cv=0.173 (n=6)
+  registration_latency_ms: mean=149.7ms, std=101.5ms, min=19.0ms, max=231.0ms, p95=231.0ms, cv=0.678 (n=6)
+  session_setup_latency_ms: mean=370.0ms, std=95.5ms, min=239.0ms, max=435.0ms, p95=435.0ms, cv=0.258 (n=6)
+  rrc_latency_ms: mean=0.0ms, std=0.0ms, min=0.0ms, max=0.0ms, p95=0.0ms, cv=0.000 (n=6)
+  post_restart_latency_ms: mean=350.4ms, std=93.2ms, min=231.2ms, max=431.5ms, p95=431.5ms, cv=0.266 (n=6)
+  Recovered: 6/6
+  IP changed: 6
+
+    ue1: realloc=8787.0ms, reg=19.0ms, sess=426.0ms, rrc=0.0ms, post_restart=231.5419921875ms, recovered=True, ip_changed=True
+    ue2: realloc=9443.0ms, reg=209.0ms, sess=255.0ms, rrc=0.0ms, post_restart=400.177001953125ms, recovered=True, ip_changed=True
+    ue3: realloc=9917.0ms, reg=231.0ms, sess=433.0ms, rrc=0.0ms, post_restart=431.5ms, recovered=True, ip_changed=True
+    ue4: realloc=12175.0ms, reg=20.0ms, sess=432.0ms, rrc=0.0ms, post_restart=231.201904296875ms, recovered=True, ip_changed=True
+    ue5: realloc=12818.0ms, reg=196.0ms, sess=239.0ms, rrc=0.0ms, post_restart=391.281005859375ms, recovered=True, ip_changed=True
+    ue6: realloc=13267.0ms, reg=223.0ms, sess=435.0ms, rrc=0.0ms, post_restart=416.52587890625ms, recovered=True, ip_changed=True
+

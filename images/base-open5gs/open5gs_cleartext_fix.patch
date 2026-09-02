@@ -1,0 +1,18 @@
+--- a/src/amf/gmm-handler.c	2025-07-19 01:32:41.000000000 +0000
++++ b/src/amf/gmm-handler.c	2026-08-27 21:36:22.268815791 +0000
+@@ -114,9 +114,13 @@
+     if (ngap_code == NGAP_ProcedureCode_id_InitialUEMessage &&
+         registration_request->presencemask &
+         ~OGS_REGISTRATION_CLEARTEXT_PRESENT) {
+-        ogs_error("Non cleartext IEs is included [0x%llx]",
++        if (registration_type->value == OGS_NAS_5GS_REGISTRATION_TYPE_INITIAL) {
++            ogs_error("Non cleartext IEs is included [0x%llx]",
++                    (long long)registration_request->presencemask);
++            return OGS_5GMM_CAUSE_SEMANTICALLY_INCORRECT_MESSAGE;
++        }
++        ogs_warn("Non cleartext IEs tolerated [0x%llx] (mobility/periodic update)",
+                 (long long)registration_request->presencemask);
+-        return OGS_5GMM_CAUSE_SEMANTICALLY_INCORRECT_MESSAGE;
+     }
+ 
+     if (!h.integrity_protected &&

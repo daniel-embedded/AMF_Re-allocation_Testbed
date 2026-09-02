@@ -1,0 +1,28 @@
+mcc: '001'
+mnc: '01'
+
+nci: '0x000000011'
+gNBId: 2
+idLength: 32
+#tac: 1
+tac: 2
+
+linkIp: gnb2.ueransim.org
+ngapIp: gnb2.ueransim.org
+gtpIp: gnb2.ueransim.org
+
+amfConfigs:
+  - address: proxy2.open5gs.org
+    port: 38413
+#  - address: amf1.open5gs.org
+#    port: 38412
+#  - address: amf2.open5gs.org
+#    port: 38413
+
+slices:
+  - sst: 1
+    sd: 0x000001
+  - sst: 1
+    sd: 0x000002
+
+ignoreStreamIds: true

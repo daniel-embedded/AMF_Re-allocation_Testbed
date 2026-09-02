@@ -1,0 +1,25 @@
+AMF Re-allocation Experiment Summary
+======================================================================
+
+Run 1: mode=concurrent, target=amf2
+  reallocation_latency_ms: mean=6789.9ms, std=1543.5ms, min=4060.0ms, max=8896.0ms, p95=8896.0ms, cv=0.227 (n=12)
+  registration_latency_ms: mean=430.3ms, std=272.3ms, min=12.0ms, max=1034.0ms, p95=1034.0ms, cv=0.633 (n=12)
+  session_setup_latency_ms: mean=339.3ms, std=220.8ms, min=14.0ms, max=646.0ms, p95=646.0ms, cv=0.651 (n=12)
+  rrc_latency_ms: mean=0.0ms, std=0.0ms, min=0.0ms, max=0.0ms, p95=0.0ms, cv=0.000 (n=12)
+  post_restart_latency_ms: mean=628.0ms, std=274.7ms, min=207.3ms, max=1235.3ms, p95=1235.3ms, cv=0.437 (n=12)
+  Recovered: 12/12
+  IP changed: 12
+
+    ue1: realloc=4060.0ms, reg=12.0ms, sess=422.0ms, rrc=0.0ms, post_restart=207.326904296875ms, recovered=True, ip_changed=True
+    ue2: realloc=4696.0ms, reg=227.0ms, sess=428.0ms, rrc=0.0ms, post_restart=415.2841796875ms, recovered=True, ip_changed=True
+    ue3: realloc=5327.0ms, reg=434.0ms, sess=423.0ms, rrc=0.0ms, post_restart=626.009033203125ms, recovered=True, ip_changed=True
+    ue4: realloc=5963.0ms, reg=626.0ms, sess=423.0ms, rrc=0.0ms, post_restart=844.3701171875ms, recovered=True, ip_changed=True
+    ue5: realloc=6377.0ms, reg=632.0ms, sess=611.0ms, rrc=0.0ms, post_restart=830.0380859375ms, recovered=True, ip_changed=True
+    ue6: realloc=7193.0ms, reg=1034.0ms, sess=14.0ms, rrc=0.0ms, post_restart=1235.345947265625ms, recovered=True, ip_changed=True
+    ue7: realloc=7194.0ms, reg=619.0ms, sess=14.0ms, rrc=0.0ms, post_restart=813.583984375ms, recovered=True, ip_changed=True
+    ue8: realloc=7196.0ms, reg=220.0ms, sess=14.0ms, rrc=0.0ms, post_restart=411.074951171875ms, recovered=True, ip_changed=True
+    ue9: realloc=7633.0ms, reg=248.0ms, sess=425.0ms, rrc=0.0ms, post_restart=448.283935546875ms, recovered=True, ip_changed=True
+    ue10: realloc=8271.0ms, reg=441.0ms, sess=411.0ms, rrc=0.0ms, post_restart=646.781005859375ms, recovered=True, ip_changed=True
+    ue11: realloc=8673.0ms, reg=447.0ms, sess=241.0ms, rrc=0.0ms, post_restart=621.52294921875ms, recovered=True, ip_changed=True
+    ue12: realloc=8896.0ms, reg=224.0ms, sess=646.0ms, rrc=0.0ms, post_restart=436.00390625ms, recovered=True, ip_changed=True
+
