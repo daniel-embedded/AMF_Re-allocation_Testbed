@@ -1,0 +1,15 @@
+AMF Re-allocation Experiment Summary
+======================================================================
+
+Run 1: mode=isolate-gnb, target=amf2
+  reallocation_latency_ms: mean=3758.0ms, std=892.0ms, min=2885.0ms, max=5279.0ms, p95=5279.0ms, cv=0.237 (n=6)
+  Recovered: 6/6
+  IP changed: 0
+
+    ue1: realloc=5279.0ms, reg=Nonems, sess=Nonems, rrc=Nonems, post_restart=Nonems, recovered=True, ip_changed=False
+    ue2: realloc=2885.0ms, reg=Nonems, sess=Nonems, rrc=Nonems, post_restart=Nonems, recovered=True, ip_changed=False
+    ue3: realloc=3604.0ms, reg=Nonems, sess=Nonems, rrc=Nonems, post_restart=Nonems, recovered=True, ip_changed=False
+    ue4: realloc=2885.0ms, reg=Nonems, sess=Nonems, rrc=Nonems, post_restart=Nonems, recovered=True, ip_changed=False
+    ue5: realloc=3797.0ms, reg=Nonems, sess=Nonems, rrc=Nonems, post_restart=Nonems, recovered=True, ip_changed=False
+    ue6: realloc=4098.0ms, reg=Nonems, sess=Nonems, rrc=Nonems, post_restart=Nonems, recovered=True, ip_changed=False
+

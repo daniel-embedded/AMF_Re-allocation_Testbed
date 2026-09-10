@@ -1,7 +1,0 @@
-run_mode,target_amf,ue,recovered,realloc_lat_ms,reg_lat_ms,sess_lat_ms,rrc_lat_ms,post_restart_lat_ms,ip_changed,old_ip,new_ip,gnb2_selected,mobility_reg,initial_fallback,session_continuity,n14_context_transfer,agg_realloc_mean,agg_realloc_std,agg_realloc_p95,agg_recovered,timestamp
-n14-mobility,amf2,ue1,True,3245.875,33.0,,0.0,,False,10.45.0.8,10.45.0.8,True,True,False,True,True,2217.7083333333335,775.2961799639327,3245.875,6,2026-09-01T11:43:14.317819
-n14-mobility,amf2,ue2,True,1200.875,54.0,,0.0,,False,10.45.0.9,10.45.0.9,True,True,False,True,True,2217.7083333333335,775.2961799639327,3245.875,6,2026-09-01T11:43:14.317819
-n14-mobility,amf2,ue3,True,1578.875,34.0,,0.0,,False,10.45.0.10,10.45.0.10,True,True,False,True,True,2217.7083333333335,775.2961799639327,3245.875,6,2026-09-01T11:43:14.317819
-n14-mobility,amf2,ue4,True,1992.875,33.0,,0.0,,False,10.45.0.11,10.45.0.11,True,True,False,True,True,2217.7083333333335,775.2961799639327,3245.875,6,2026-09-01T11:43:14.317819
-n14-mobility,amf2,ue5,True,2428.875,35.0,,0.0,,False,10.45.0.12,10.45.0.12,True,True,False,True,True,2217.7083333333335,775.2961799639327,3245.875,6,2026-09-01T11:43:14.317819
-n14-mobility,amf2,ue6,True,2858.875,35.0,,0.0,,False,10.45.0.13,10.45.0.13,True,True,False,True,True,2217.7083333333335,775.2961799639327,3245.875,6,2026-09-01T11:43:14.317819

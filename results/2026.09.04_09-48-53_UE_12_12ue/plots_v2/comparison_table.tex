@@ -1,0 +1,28 @@
+\begin{table}[ht]
+\centering
+\caption{Comparison of Sequential vs. Concurrent AMF Re-allocation (6 UEs)}
+\label{tab:comparison}
+\begin{tabular}{|l|c|c|c|c|c|c|}
+\hline
+UE & \multicolumn{2}{c|}{Re-allocation Latency (s)} & Speedup & \multicolumn{2}{c|}{Registration (ms)} \\
+     & Sequential & Concurrent & ($\times$) & Sequential & Concurrent \\
+\hline
+ue1 & 3.60 & 4.27 & \textbf{0.84} & 14 & 11 \\
+ue10 & 69.62 & 7.22 & \textbf{9.65} & 11 & 227 \\
+ue11 & 76.94 & 7.80 & \textbf{9.86} & 10 & 509 \\
+ue12 & 84.30 & 7.81 & \textbf{10.80} & 12 & 219 \\
+ue2 & 10.95 & 4.78 & \textbf{2.29} & 11 & 219 \\
+ue3 & 18.28 & 5.39 & \textbf{3.39} & 11 & 532 \\
+ue4 & 25.62 & 5.39 & \textbf{4.75} & 11 & 223 \\
+ue5 & 32.96 & 5.98 & \textbf{5.51} & 9 & 509 \\
+ue6 & 40.28 & 5.98 & \textbf{6.73} & 10 & 222 \\
+ue7 & 47.62 & 6.59 & \textbf{7.22} & 11 & 525 \\
+ue8 & 54.95 & 6.59 & \textbf{8.33} & 10 & 227 \\
+ue9 & 62.28 & 7.21 & \textbf{8.63} & 11 & 523 \\
+\hline
+\textbf{Mean} & \textbf{43.95} & \textbf{6.25} & \textbf{\textcolor{blue}{7.03}} & 11 & 329 \\
+Std. Dev. & 26.44 & 1.15 & — & 1 & 179 \\
+\textbf{Makespan} & \textbf{84.30} & \textbf{7.81} & \textbf{\textcolor{red}{10.80}} & — & — \\
+\hline
+\end{tabular}
+\end{table}

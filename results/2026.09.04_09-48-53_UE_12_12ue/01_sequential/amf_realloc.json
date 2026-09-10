@@ -1,0 +1,1655 @@
+[
+  {
+    "mode": "sequential",
+    "target_amf": "amf2",
+    "switch_time_ms": 1788526154000.0,
+    "ue_results": [
+      {
+        "ue": "ue1",
+        "switch_time_ms": 1788526154000.0,
+        "restart_time_ms": 1788526157429.511,
+        "reallocation_latency_ms": 3602.0,
+        "registration_latency_ms": 14.0,
+        "session_setup_latency_ms": 427.0,
+        "rrc_latency_ms": 0.0,
+        "post_restart_latency_ms": 172.489013671875,
+        "ip_changed": true,
+        "old_ip": "10.45.0.13",
+        "new_ip": "10.45.0.14",
+        "recovered": true,
+        "events": [
+          {
+            "timestamp": "2026-09-04 12:46:48.285",
+            "source": "ue1",
+            "event": "mm_deregistered",
+            "line": "[2026-09-04 12:46:48.285] [nas] [info] UE switches to state [MM-DEREGISTERED/PLMN-SEARCH]"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.286",
+            "source": "ue1",
+            "event": "mm_deregistered",
+            "line": "[2026-09-04 12:46:48.286] [nas] [info] UE switches to state [MM-DEREGISTERED/PS]"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.286",
+            "source": "ue1",
+            "event": "mm_deregistered",
+            "line": "[2026-09-04 12:46:48.286] [nas] [info] UE switches to state [MM-DEREGISTERED/NORMAL-SERVICE]"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.286",
+            "source": "ue1",
+            "event": "initial_registration",
+            "line": "[2026-09-04 12:46:48.286] [nas] [debug] Sending Initial Registration"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.286",
+            "source": "ue1",
+            "event": "rrc_connected",
+            "line": "[2026-09-04 12:46:48.286] [rrc] [info] UE switches to state [RRC-CONNECTED]"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.822",
+            "source": "ue1",
+            "event": "mm_registered",
+            "line": "[2026-09-04 12:46:48.822] [nas] [info] UE switches to state [MM-REGISTERED/NORMAL-SERVICE]"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.822",
+            "source": "ue1",
+            "event": "registration_success",
+            "line": "[2026-09-04 12:46:48.822] [nas] [info] Initial Registration is successful"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.840",
+            "source": "ue1",
+            "event": "pdu_session_success",
+            "line": "[2026-09-04 12:46:48.840] [nas] [info] PDU Session establishment is successful PSI[1]"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.847",
+            "source": "ue1",
+            "event": "tun_up",
+            "line": "[2026-09-04 12:46:48.847] [app] [info] Connection setup for PDU session[1] is successful, TUN interface[uesimtun0, 10.45.0.13] is up.",
+            "ip": "10.45.0.13"
+          },
+          {
+            "timestamp": "2026-09-04 12:49:16.126",
+            "source": "ue1",
+            "event": "mm_registered",
+            "line": "[2026-09-04 12:49:16.126] [nas] [info] UE switches to state [MM-REGISTERED/NORMAL-SERVICE]"
+          },
+          {
+            "timestamp": "2026-09-04 12:49:17.587",
+            "source": "ue1",
+            "event": "mm_deregistered",
+            "line": "[2026-09-04 12:49:17.587] [nas] [info] UE switches to state [MM-DEREGISTERED/PLMN-SEARCH]"
+          },
+          {
+            "timestamp": "2026-09-04 12:49:17.588",
+            "source": "ue1",
+            "event": "mm_deregistered",
+            "line": "[2026-09-04 12:49:17.588] [nas] [info] UE switches to state [MM-DEREGISTERED/PS]"
+          },
+          {
+            "timestamp": "2026-09-04 12:49:17.588",
+            "source": "ue1",
+            "event": "mm_deregistered",
+            "line": "[2026-09-04 12:49:17.588] [nas] [info] UE switches to state [MM-DEREGISTERED/NORMAL-SERVICE]"
+          },
+          {
+            "timestamp": "2026-09-04 12:49:17.588",
+            "source": "ue1",
+            "event": "initial_registration",
+            "line": "[2026-09-04 12:49:17.588] [nas] [debug] Sending Initial Registration"
+          },
+          {
+            "timestamp": "2026-09-04 12:49:17.588",
+            "source": "ue1",
+            "event": "rrc_connected",
+            "line": "[2026-09-04 12:49:17.588] [rrc] [info] UE switches to state [RRC-CONNECTED]"
+          },
+          {
+            "timestamp": "2026-09-04 12:49:17.602",
+            "source": "ue1",
+            "event": "mm_registered",
+            "line": "[2026-09-04 12:49:17.602] [nas] [info] UE switches to state [MM-REGISTERED/NORMAL-SERVICE]"
+          },
+          {
+            "timestamp": "2026-09-04 12:49:17.602",
+            "source": "ue1",
+            "event": "registration_success",
+            "line": "[2026-09-04 12:49:17.602] [nas] [info] Initial Registration is successful"
+          },
+          {
+            "timestamp": "2026-09-04 12:49:18.020",
+            "source": "ue1",
+            "event": "pdu_session_success",
+            "line": "[2026-09-04 12:49:18.020] [nas] [info] PDU Session establishment is successful PSI[1]"
+          },
+          {
+            "timestamp": "2026-09-04 12:49:18.029",
+            "source": "ue1",
+            "event": "tun_up",
+            "line": "[2026-09-04 12:49:18.029] [app] [info] Connection setup for PDU session[1] is successful, TUN interface[uesimtun0, 10.45.0.14] is up.",
+            "ip": "10.45.0.14"
+          }
+        ],
+        "recovery_type": "re-registration"
+      },
+      {
+        "ue": "ue2",
+        "switch_time_ms": 1788526154000.0,
+        "restart_time_ms": 1788526164779.153,
+        "reallocation_latency_ms": 10945.0,
+        "registration_latency_ms": 11.0,
+        "session_setup_latency_ms": 420.0,
+        "rrc_latency_ms": 0.0,
+        "post_restart_latency_ms": 165.846923828125,
+        "ip_changed": true,
+        "old_ip": "10.45.0.2",
+        "new_ip": "10.45.0.15",
+        "recovered": true,
+        "events": [
+          {
+            "timestamp": "2026-09-04 12:46:48.157",
+            "source": "ue2",
+            "event": "mm_deregistered",
+            "line": "[2026-09-04 12:46:48.157] [nas] [info] UE switches to state [MM-DEREGISTERED/PLMN-SEARCH]"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.157",
+            "source": "ue2",
+            "event": "mm_deregistered",
+            "line": "[2026-09-04 12:46:48.157] [nas] [info] UE switches to state [MM-DEREGISTERED/PS]"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.157",
+            "source": "ue2",
+            "event": "mm_deregistered",
+            "line": "[2026-09-04 12:46:48.157] [nas] [info] UE switches to state [MM-DEREGISTERED/NORMAL-SERVICE]"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.157",
+            "source": "ue2",
+            "event": "initial_registration",
+            "line": "[2026-09-04 12:46:48.157] [nas] [debug] Sending Initial Registration"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.157",
+            "source": "ue2",
+            "event": "rrc_connected",
+            "line": "[2026-09-04 12:46:48.157] [rrc] [info] UE switches to state [RRC-CONNECTED]"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.177",
+            "source": "ue2",
+            "event": "mm_registered",
+            "line": "[2026-09-04 12:46:48.177] [nas] [info] UE switches to state [MM-REGISTERED/NORMAL-SERVICE]"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.177",
+            "source": "ue2",
+            "event": "registration_success",
+            "line": "[2026-09-04 12:46:48.177] [nas] [info] Initial Registration is successful"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.589",
+            "source": "ue2",
+            "event": "pdu_session_success",
+            "line": "[2026-09-04 12:46:48.589] [nas] [info] PDU Session establishment is successful PSI[1]"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.606",
+            "source": "ue2",
+            "event": "tun_up",
+            "line": "[2026-09-04 12:46:48.606] [app] [info] Connection setup for PDU session[1] is successful, TUN interface[uesimtun0, 10.45.0.2] is up.",
+            "ip": "10.45.0.2"
+          },
+          {
+            "timestamp": "2026-09-04 12:49:18.217",
+            "source": "ue2",
+            "event": "mm_registered",
+            "line": "[2026-09-04 12:49:18.217] [nas] [info] UE switches to state [MM-REGISTERED/NORMAL-SERVICE]"
+          },
+          {
+            "timestamp": "2026-09-04 12:49:24.933",
+            "source": "ue2",
+            "event": "mm_deregistered",
+            "line": "[2026-09-04 12:49:24.933] [nas] [info] UE switches to state [MM-DEREGISTERED/PLMN-SEARCH]"
+          },
+          {
+            "timestamp": "2026-09-04 12:49:24.934",
+            "source": "ue2",
+            "event": "mm_deregistered",
+            "line": "[2026-09-04 12:49:24.934] [nas] [info] UE switches to state [MM-DEREGISTERED/PS]"
+          },
+          {
+            "timestamp": "2026-09-04 12:49:24.934",
+            "source": "ue2",
+            "event": "mm_deregistered",
+            "line": "[2026-09-04 12:49:24.934] [nas] [info] UE switches to state [MM-DEREGISTERED/NORMAL-SERVICE]"
+          },
+          {
+            "timestamp": "2026-09-04 12:49:24.934",
+            "source": "ue2",
+            "event": "initial_registration",
+            "line": "[2026-09-04 12:49:24.934] [nas] [debug] Sending Initial Registration"
+          },
+          {
+            "timestamp": "2026-09-04 12:49:24.934",
+            "source": "ue2",
+            "event": "rrc_connected",
+            "line": "[2026-09-04 12:49:24.934] [rrc] [info] UE switches to state [RRC-CONNECTED]"
+          },
+          {
+            "timestamp": "2026-09-04 12:49:24.945",
+            "source": "ue2",
+            "event": "mm_registered",
+            "line": "[2026-09-04 12:49:24.945] [nas] [info] UE switches to state [MM-REGISTERED/NORMAL-SERVICE]"
+          },
+          {
+            "timestamp": "2026-09-04 12:49:24.945",
+            "source": "ue2",
+            "event": "registration_success",
+            "line": "[2026-09-04 12:49:24.945] [nas] [info] Initial Registration is successful"
+          },
+          {
+            "timestamp": "2026-09-04 12:49:25.356",
+            "source": "ue2",
+            "event": "pdu_session_success",
+            "line": "[2026-09-04 12:49:25.356] [nas] [info] PDU Session establishment is successful PSI[1]"
+          },
+          {
+            "timestamp": "2026-09-04 12:49:25.365",
+            "source": "ue2",
+            "event": "tun_up",
+            "line": "[2026-09-04 12:49:25.365] [app] [info] Connection setup for PDU session[1] is successful, TUN interface[uesimtun0, 10.45.0.15] is up.",
+            "ip": "10.45.0.15"
+          }
+        ],
+        "recovery_type": "re-registration"
+      },
+      {
+        "ue": "ue3",
+        "switch_time_ms": 1788526154000.0,
+        "restart_time_ms": 1788526172110.508,
+        "reallocation_latency_ms": 18282.0,
+        "registration_latency_ms": 11.0,
+        "session_setup_latency_ms": 427.0,
+        "rrc_latency_ms": 0.0,
+        "post_restart_latency_ms": 171.491943359375,
+        "ip_changed": true,
+        "old_ip": "10.45.0.7",
+        "new_ip": "10.45.0.16",
+        "recovered": true,
+        "events": [
+          {
+            "timestamp": "2026-09-04 12:46:48.248",
+            "source": "ue3",
+            "event": "mm_deregistered",
+            "line": "[2026-09-04 12:46:48.248] [nas] [info] UE switches to state [MM-DEREGISTERED/PLMN-SEARCH]"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.249",
+            "source": "ue3",
+            "event": "mm_deregistered",
+            "line": "[2026-09-04 12:46:48.249] [nas] [info] UE switches to state [MM-DEREGISTERED/PS]"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.249",
+            "source": "ue3",
+            "event": "mm_deregistered",
+            "line": "[2026-09-04 12:46:48.249] [nas] [info] UE switches to state [MM-DEREGISTERED/NORMAL-SERVICE]"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.249",
+            "source": "ue3",
+            "event": "initial_registration",
+            "line": "[2026-09-04 12:46:48.249] [nas] [debug] Sending Initial Registration"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.249",
+            "source": "ue3",
+            "event": "rrc_connected",
+            "line": "[2026-09-04 12:46:48.249] [rrc] [info] UE switches to state [RRC-CONNECTED]"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.820",
+            "source": "ue3",
+            "event": "mm_registered",
+            "line": "[2026-09-04 12:46:48.820] [nas] [info] UE switches to state [MM-REGISTERED/NORMAL-SERVICE]"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.820",
+            "source": "ue3",
+            "event": "registration_success",
+            "line": "[2026-09-04 12:46:48.820] [nas] [info] Initial Registration is successful"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.835",
+            "source": "ue3",
+            "event": "pdu_session_success",
+            "line": "[2026-09-04 12:46:48.835] [nas] [info] PDU Session establishment is successful PSI[1]"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.847",
+            "source": "ue3",
+            "event": "tun_up",
+            "line": "[2026-09-04 12:46:48.847] [app] [info] Connection setup for PDU session[1] is successful, TUN interface[uesimtun0, 10.45.0.7] is up.",
+            "ip": "10.45.0.7"
+          },
+          {
+            "timestamp": "2026-09-04 12:49:16.126",
+            "source": "ue3",
+            "event": "mm_registered",
+            "line": "[2026-09-04 12:49:16.126] [nas] [info] UE switches to state [MM-REGISTERED/NORMAL-SERVICE]"
+          },
+          {
+            "timestamp": "2026-09-04 12:49:32.270",
+            "source": "ue3",
+            "event": "mm_deregistered",
+            "line": "[2026-09-04 12:49:32.270] [nas] [info] UE switches to state [MM-DEREGISTERED/PLMN-SEARCH]"
+          },
+          {
+            "timestamp": "2026-09-04 12:49:32.271",
+            "source": "ue3",
+            "event": "mm_deregistered",
+            "line": "[2026-09-04 12:49:32.271] [nas] [info] UE switches to state [MM-DEREGISTERED/PS]"
+          },
+          {
+            "timestamp": "2026-09-04 12:49:32.271",
+            "source": "ue3",
+            "event": "mm_deregistered",
+            "line": "[2026-09-04 12:49:32.271] [nas] [info] UE switches to state [MM-DEREGISTERED/NORMAL-SERVICE]"
+          },
+          {
+            "timestamp": "2026-09-04 12:49:32.271",
+            "source": "ue3",
+            "event": "initial_registration",
+            "line": "[2026-09-04 12:49:32.271] [nas] [debug] Sending Initial Registration"
+          },
+          {
+            "timestamp": "2026-09-04 12:49:32.271",
+            "source": "ue3",
+            "event": "rrc_connected",
+            "line": "[2026-09-04 12:49:32.271] [rrc] [info] UE switches to state [RRC-CONNECTED]"
+          },
+          {
+            "timestamp": "2026-09-04 12:49:32.282",
+            "source": "ue3",
+            "event": "mm_registered",
+            "line": "[2026-09-04 12:49:32.282] [nas] [info] UE switches to state [MM-REGISTERED/NORMAL-SERVICE]"
+          },
+          {
+            "timestamp": "2026-09-04 12:49:32.282",
+            "source": "ue3",
+            "event": "registration_success",
+            "line": "[2026-09-04 12:49:32.282] [nas] [info] Initial Registration is successful"
+          },
+          {
+            "timestamp": "2026-09-04 12:49:32.700",
+            "source": "ue3",
+            "event": "pdu_session_success",
+            "line": "[2026-09-04 12:49:32.700] [nas] [info] PDU Session establishment is successful PSI[1]"
+          },
+          {
+            "timestamp": "2026-09-04 12:49:32.709",
+            "source": "ue3",
+            "event": "tun_up",
+            "line": "[2026-09-04 12:49:32.709] [app] [info] Connection setup for PDU session[1] is successful, TUN interface[uesimtun0, 10.45.0.16] is up.",
+            "ip": "10.45.0.16"
+          }
+        ],
+        "recovery_type": "re-registration"
+      },
+      {
+        "ue": "ue4",
+        "switch_time_ms": 1788526154000.0,
+        "restart_time_ms": 1788526179445.533,
+        "reallocation_latency_ms": 25617.0,
+        "registration_latency_ms": 11.0,
+        "session_setup_latency_ms": 419.0,
+        "rrc_latency_ms": 0.0,
+        "post_restart_latency_ms": 171.467041015625,
+        "ip_changed": true,
+        "old_ip": "10.45.0.9",
+        "new_ip": "10.45.0.17",
+        "recovered": true,
+        "events": [
+          {
+            "timestamp": "2026-09-04 12:46:48.195",
+            "source": "ue4",
+            "event": "mm_deregistered",
+            "line": "[2026-09-04 12:46:48.195] [nas] [info] UE switches to state [MM-DEREGISTERED/PLMN-SEARCH]"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.197",
+            "source": "ue4",
+            "event": "mm_deregistered",
+            "line": "[2026-09-04 12:46:48.197] [nas] [info] UE switches to state [MM-DEREGISTERED/PS]"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.197",
+            "source": "ue4",
+            "event": "mm_deregistered",
+            "line": "[2026-09-04 12:46:48.197] [nas] [info] UE switches to state [MM-DEREGISTERED/NORMAL-SERVICE]"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.197",
+            "source": "ue4",
+            "event": "initial_registration",
+            "line": "[2026-09-04 12:46:48.197] [nas] [debug] Sending Initial Registration"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.197",
+            "source": "ue4",
+            "event": "rrc_connected",
+            "line": "[2026-09-04 12:46:48.197] [rrc] [info] UE switches to state [RRC-CONNECTED]"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.820",
+            "source": "ue4",
+            "event": "mm_registered",
+            "line": "[2026-09-04 12:46:48.820] [nas] [info] UE switches to state [MM-REGISTERED/NORMAL-SERVICE]"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.820",
+            "source": "ue4",
+            "event": "registration_success",
+            "line": "[2026-09-04 12:46:48.820] [nas] [info] Initial Registration is successful"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.836",
+            "source": "ue4",
+            "event": "pdu_session_success",
+            "line": "[2026-09-04 12:46:48.836] [nas] [info] PDU Session establishment is successful PSI[1]"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.846",
+            "source": "ue4",
+            "event": "tun_up",
+            "line": "[2026-09-04 12:46:48.846] [app] [info] Connection setup for PDU session[1] is successful, TUN interface[uesimtun0, 10.45.0.9] is up.",
+            "ip": "10.45.0.9"
+          },
+          {
+            "timestamp": "2026-09-04 12:49:16.125",
+            "source": "ue4",
+            "event": "mm_registered",
+            "line": "[2026-09-04 12:49:16.125] [nas] [info] UE switches to state [MM-REGISTERED/NORMAL-SERVICE]"
+          },
+          {
+            "timestamp": "2026-09-04 12:49:39.606",
+            "source": "ue4",
+            "event": "mm_deregistered",
+            "line": "[2026-09-04 12:49:39.606] [nas] [info] UE switches to state [MM-DEREGISTERED/PLMN-SEARCH]"
+          },
+          {
+            "timestamp": "2026-09-04 12:49:39.606",
+            "source": "ue4",
+            "event": "mm_deregistered",
+            "line": "[2026-09-04 12:49:39.606] [nas] [info] UE switches to state [MM-DEREGISTERED/PS]"
+          },
+          {
+            "timestamp": "2026-09-04 12:49:39.606",
+            "source": "ue4",
+            "event": "mm_deregistered",
+            "line": "[2026-09-04 12:49:39.606] [nas] [info] UE switches to state [MM-DEREGISTERED/NORMAL-SERVICE]"
+          },
+          {
+            "timestamp": "2026-09-04 12:49:39.606",
+            "source": "ue4",
+            "event": "initial_registration",
+            "line": "[2026-09-04 12:49:39.606] [nas] [debug] Sending Initial Registration"
+          },
+          {
+            "timestamp": "2026-09-04 12:49:39.606",
+            "source": "ue4",
+            "event": "rrc_connected",
+            "line": "[2026-09-04 12:49:39.606] [rrc] [info] UE switches to state [RRC-CONNECTED]"
+          },
+          {
+            "timestamp": "2026-09-04 12:49:39.617",
+            "source": "ue4",
+            "event": "mm_registered",
+            "line": "[2026-09-04 12:49:39.617] [nas] [info] UE switches to state [MM-REGISTERED/NORMAL-SERVICE]"
+          },
+          {
+            "timestamp": "2026-09-04 12:49:39.617",
+            "source": "ue4",
+            "event": "registration_success",
+            "line": "[2026-09-04 12:49:39.617] [nas] [info] Initial Registration is successful"
+          },
+          {
+            "timestamp": "2026-09-04 12:49:40.028",
+            "source": "ue4",
+            "event": "pdu_session_success",
+            "line": "[2026-09-04 12:49:40.028] [nas] [info] PDU Session establishment is successful PSI[1]"
+          },
+          {
+            "timestamp": "2026-09-04 12:49:40.036",
+            "source": "ue4",
+            "event": "tun_up",
+            "line": "[2026-09-04 12:49:40.036] [app] [info] Connection setup for PDU session[1] is successful, TUN interface[uesimtun0, 10.45.0.17] is up.",
+            "ip": "10.45.0.17"
+          }
+        ],
+        "recovery_type": "re-registration"
+      },
+      {
+        "ue": "ue5",
+        "switch_time_ms": 1788526154000.0,
+        "restart_time_ms": 1788526186791.5781,
+        "reallocation_latency_ms": 32957.0,
+        "registration_latency_ms": 9.0,
+        "session_setup_latency_ms": 424.0,
+        "rrc_latency_ms": 0.0,
+        "post_restart_latency_ms": 165.421875,
+        "ip_changed": true,
+        "old_ip": "10.45.0.5",
+        "new_ip": "10.45.0.18",
+        "recovered": true,
+        "events": [
+          {
+            "timestamp": "2026-09-04 12:46:48.277",
+            "source": "ue5",
+            "event": "mm_deregistered",
+            "line": "[2026-09-04 12:46:48.277] [nas] [info] UE switches to state [MM-DEREGISTERED/PLMN-SEARCH]"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.278",
+            "source": "ue5",
+            "event": "mm_deregistered",
+            "line": "[2026-09-04 12:46:48.278] [nas] [info] UE switches to state [MM-DEREGISTERED/PS]"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.278",
+            "source": "ue5",
+            "event": "mm_deregistered",
+            "line": "[2026-09-04 12:46:48.278] [nas] [info] UE switches to state [MM-DEREGISTERED/NORMAL-SERVICE]"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.278",
+            "source": "ue5",
+            "event": "initial_registration",
+            "line": "[2026-09-04 12:46:48.278] [nas] [debug] Sending Initial Registration"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.278",
+            "source": "ue5",
+            "event": "rrc_connected",
+            "line": "[2026-09-04 12:46:48.278] [rrc] [info] UE switches to state [RRC-CONNECTED]"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.818",
+            "source": "ue5",
+            "event": "mm_registered",
+            "line": "[2026-09-04 12:46:48.818] [nas] [info] UE switches to state [MM-REGISTERED/NORMAL-SERVICE]"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.818",
+            "source": "ue5",
+            "event": "registration_success",
+            "line": "[2026-09-04 12:46:48.818] [nas] [info] Initial Registration is successful"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.834",
+            "source": "ue5",
+            "event": "pdu_session_success",
+            "line": "[2026-09-04 12:46:48.834] [nas] [info] PDU Session establishment is successful PSI[1]"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.846",
+            "source": "ue5",
+            "event": "tun_up",
+            "line": "[2026-09-04 12:46:48.846] [app] [info] Connection setup for PDU session[1] is successful, TUN interface[uesimtun0, 10.45.0.5] is up.",
+            "ip": "10.45.0.5"
+          },
+          {
+            "timestamp": "2026-09-04 12:49:18.337",
+            "source": "ue5",
+            "event": "mm_registered",
+            "line": "[2026-09-04 12:49:18.337] [nas] [info] UE switches to state [MM-REGISTERED/NORMAL-SERVICE]"
+          },
+          {
+            "timestamp": "2026-09-04 12:49:46.947",
+            "source": "ue5",
+            "event": "mm_deregistered",
+            "line": "[2026-09-04 12:49:46.947] [nas] [info] UE switches to state [MM-DEREGISTERED/PLMN-SEARCH]"
+          },
+          {
+            "timestamp": "2026-09-04 12:49:46.948",
+            "source": "ue5",
+            "event": "mm_deregistered",
+            "line": "[2026-09-04 12:49:46.948] [nas] [info] UE switches to state [MM-DEREGISTERED/PS]"
+          },
+          {
+            "timestamp": "2026-09-04 12:49:46.948",
+            "source": "ue5",
+            "event": "mm_deregistered",
+            "line": "[2026-09-04 12:49:46.948] [nas] [info] UE switches to state [MM-DEREGISTERED/NORMAL-SERVICE]"
+          },
+          {
+            "timestamp": "2026-09-04 12:49:46.948",
+            "source": "ue5",
+            "event": "initial_registration",
+            "line": "[2026-09-04 12:49:46.948] [nas] [debug] Sending Initial Registration"
+          },
+          {
+            "timestamp": "2026-09-04 12:49:46.948",
+            "source": "ue5",
+            "event": "rrc_connected",
+            "line": "[2026-09-04 12:49:46.948] [rrc] [info] UE switches to state [RRC-CONNECTED]"
+          },
+          {
+            "timestamp": "2026-09-04 12:49:46.957",
+            "source": "ue5",
+            "event": "mm_registered",
+            "line": "[2026-09-04 12:49:46.957] [nas] [info] UE switches to state [MM-REGISTERED/NORMAL-SERVICE]"
+          },
+          {
+            "timestamp": "2026-09-04 12:49:46.957",
+            "source": "ue5",
+            "event": "registration_success",
+            "line": "[2026-09-04 12:49:46.957] [nas] [info] Initial Registration is successful"
+          },
+          {
+            "timestamp": "2026-09-04 12:49:47.372",
+            "source": "ue5",
+            "event": "pdu_session_success",
+            "line": "[2026-09-04 12:49:47.372] [nas] [info] PDU Session establishment is successful PSI[1]"
+          },
+          {
+            "timestamp": "2026-09-04 12:49:47.381",
+            "source": "ue5",
+            "event": "tun_up",
+            "line": "[2026-09-04 12:49:47.381] [app] [info] Connection setup for PDU session[1] is successful, TUN interface[uesimtun0, 10.45.0.18] is up.",
+            "ip": "10.45.0.18"
+          }
+        ],
+        "recovery_type": "re-registration"
+      },
+      {
+        "ue": "ue6",
+        "switch_time_ms": 1788526154000.0,
+        "restart_time_ms": 1788526194126.304,
+        "reallocation_latency_ms": 40282.0,
+        "registration_latency_ms": 10.0,
+        "session_setup_latency_ms": 427.0,
+        "rrc_latency_ms": 0.0,
+        "post_restart_latency_ms": 155.696044921875,
+        "ip_changed": true,
+        "old_ip": "10.45.0.11",
+        "new_ip": "10.45.0.19",
+        "recovered": true,
+        "events": [
+          {
+            "timestamp": "2026-09-04 12:46:48.218",
+            "source": "ue6",
+            "event": "mm_deregistered",
+            "line": "[2026-09-04 12:46:48.218] [nas] [info] UE switches to state [MM-DEREGISTERED/PLMN-SEARCH]"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.218",
+            "source": "ue6",
+            "event": "mm_deregistered",
+            "line": "[2026-09-04 12:46:48.218] [nas] [info] UE switches to state [MM-DEREGISTERED/PS]"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.218",
+            "source": "ue6",
+            "event": "mm_deregistered",
+            "line": "[2026-09-04 12:46:48.218] [nas] [info] UE switches to state [MM-DEREGISTERED/NORMAL-SERVICE]"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.218",
+            "source": "ue6",
+            "event": "initial_registration",
+            "line": "[2026-09-04 12:46:48.218] [nas] [debug] Sending Initial Registration"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.219",
+            "source": "ue6",
+            "event": "rrc_connected",
+            "line": "[2026-09-04 12:46:48.219] [rrc] [info] UE switches to state [RRC-CONNECTED]"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.821",
+            "source": "ue6",
+            "event": "mm_registered",
+            "line": "[2026-09-04 12:46:48.821] [nas] [info] UE switches to state [MM-REGISTERED/NORMAL-SERVICE]"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.821",
+            "source": "ue6",
+            "event": "registration_success",
+            "line": "[2026-09-04 12:46:48.821] [nas] [info] Initial Registration is successful"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.837",
+            "source": "ue6",
+            "event": "pdu_session_success",
+            "line": "[2026-09-04 12:46:48.837] [nas] [info] PDU Session establishment is successful PSI[1]"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.846",
+            "source": "ue6",
+            "event": "tun_up",
+            "line": "[2026-09-04 12:46:48.846] [app] [info] Connection setup for PDU session[1] is successful, TUN interface[uesimtun0, 10.45.0.11] is up.",
+            "ip": "10.45.0.11"
+          },
+          {
+            "timestamp": "2026-09-04 12:49:18.278",
+            "source": "ue6",
+            "event": "mm_registered",
+            "line": "[2026-09-04 12:49:18.278] [nas] [info] UE switches to state [MM-REGISTERED/NORMAL-SERVICE]"
+          },
+          {
+            "timestamp": "2026-09-04 12:49:54.272",
+            "source": "ue6",
+            "event": "mm_deregistered",
+            "line": "[2026-09-04 12:49:54.272] [nas] [info] UE switches to state [MM-DEREGISTERED/PLMN-SEARCH]"
+          },
+          {
+            "timestamp": "2026-09-04 12:49:54.272",
+            "source": "ue6",
+            "event": "mm_deregistered",
+            "line": "[2026-09-04 12:49:54.272] [nas] [info] UE switches to state [MM-DEREGISTERED/PS]"
+          },
+          {
+            "timestamp": "2026-09-04 12:49:54.272",
+            "source": "ue6",
+            "event": "mm_deregistered",
+            "line": "[2026-09-04 12:49:54.272] [nas] [info] UE switches to state [MM-DEREGISTERED/NORMAL-SERVICE]"
+          },
+          {
+            "timestamp": "2026-09-04 12:49:54.272",
+            "source": "ue6",
+            "event": "initial_registration",
+            "line": "[2026-09-04 12:49:54.272] [nas] [debug] Sending Initial Registration"
+          },
+          {
+            "timestamp": "2026-09-04 12:49:54.272",
+            "source": "ue6",
+            "event": "rrc_connected",
+            "line": "[2026-09-04 12:49:54.272] [rrc] [info] UE switches to state [RRC-CONNECTED]"
+          },
+          {
+            "timestamp": "2026-09-04 12:49:54.282",
+            "source": "ue6",
+            "event": "mm_registered",
+            "line": "[2026-09-04 12:49:54.282] [nas] [info] UE switches to state [MM-REGISTERED/NORMAL-SERVICE]"
+          },
+          {
+            "timestamp": "2026-09-04 12:49:54.282",
+            "source": "ue6",
+            "event": "registration_success",
+            "line": "[2026-09-04 12:49:54.282] [nas] [info] Initial Registration is successful"
+          },
+          {
+            "timestamp": "2026-09-04 12:49:54.700",
+            "source": "ue6",
+            "event": "pdu_session_success",
+            "line": "[2026-09-04 12:49:54.700] [nas] [info] PDU Session establishment is successful PSI[1]"
+          },
+          {
+            "timestamp": "2026-09-04 12:49:54.709",
+            "source": "ue6",
+            "event": "tun_up",
+            "line": "[2026-09-04 12:49:54.709] [app] [info] Connection setup for PDU session[1] is successful, TUN interface[uesimtun0, 10.45.0.19] is up.",
+            "ip": "10.45.0.19"
+          }
+        ],
+        "recovery_type": "re-registration"
+      },
+      {
+        "ue": "ue7",
+        "switch_time_ms": 1788526154000.0,
+        "restart_time_ms": 1788526201441.24,
+        "reallocation_latency_ms": 47618.0,
+        "registration_latency_ms": 11.0,
+        "session_setup_latency_ms": 426.0,
+        "rrc_latency_ms": 0.0,
+        "post_restart_latency_ms": 176.760009765625,
+        "ip_changed": true,
+        "old_ip": "10.45.0.3",
+        "new_ip": "10.45.0.20",
+        "recovered": true,
+        "events": [
+          {
+            "timestamp": "2026-09-04 12:46:48.209",
+            "source": "ue7",
+            "event": "mm_deregistered",
+            "line": "[2026-09-04 12:46:48.209] [nas] [info] UE switches to state [MM-DEREGISTERED/PLMN-SEARCH]"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.210",
+            "source": "ue7",
+            "event": "mm_deregistered",
+            "line": "[2026-09-04 12:46:48.210] [nas] [info] UE switches to state [MM-DEREGISTERED/PS]"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.210",
+            "source": "ue7",
+            "event": "mm_deregistered",
+            "line": "[2026-09-04 12:46:48.210] [nas] [info] UE switches to state [MM-DEREGISTERED/NORMAL-SERVICE]"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.210",
+            "source": "ue7",
+            "event": "initial_registration",
+            "line": "[2026-09-04 12:46:48.210] [nas] [debug] Sending Initial Registration"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.210",
+            "source": "ue7",
+            "event": "rrc_connected",
+            "line": "[2026-09-04 12:46:48.210] [rrc] [info] UE switches to state [RRC-CONNECTED]"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.813",
+            "source": "ue7",
+            "event": "mm_registered",
+            "line": "[2026-09-04 12:46:48.813] [nas] [info] UE switches to state [MM-REGISTERED/NORMAL-SERVICE]"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.813",
+            "source": "ue7",
+            "event": "registration_success",
+            "line": "[2026-09-04 12:46:48.813] [nas] [info] Initial Registration is successful"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.831",
+            "source": "ue7",
+            "event": "pdu_session_success",
+            "line": "[2026-09-04 12:46:48.831] [nas] [info] PDU Session establishment is successful PSI[1]"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.846",
+            "source": "ue7",
+            "event": "tun_up",
+            "line": "[2026-09-04 12:46:48.846] [app] [info] Connection setup for PDU session[1] is successful, TUN interface[uesimtun0, 10.45.0.3] is up.",
+            "ip": "10.45.0.3"
+          },
+          {
+            "timestamp": "2026-09-04 12:49:18.269",
+            "source": "ue7",
+            "event": "mm_registered",
+            "line": "[2026-09-04 12:49:18.269] [nas] [info] UE switches to state [MM-REGISTERED/NORMAL-SERVICE]"
+          },
+          {
+            "timestamp": "2026-09-04 12:50:01.607",
+            "source": "ue7",
+            "event": "mm_deregistered",
+            "line": "[2026-09-04 12:50:01.607] [nas] [info] UE switches to state [MM-DEREGISTERED/PLMN-SEARCH]"
+          },
+          {
+            "timestamp": "2026-09-04 12:50:01.607",
+            "source": "ue7",
+            "event": "mm_deregistered",
+            "line": "[2026-09-04 12:50:01.607] [nas] [info] UE switches to state [MM-DEREGISTERED/PS]"
+          },
+          {
+            "timestamp": "2026-09-04 12:50:01.607",
+            "source": "ue7",
+            "event": "mm_deregistered",
+            "line": "[2026-09-04 12:50:01.607] [nas] [info] UE switches to state [MM-DEREGISTERED/NORMAL-SERVICE]"
+          },
+          {
+            "timestamp": "2026-09-04 12:50:01.607",
+            "source": "ue7",
+            "event": "initial_registration",
+            "line": "[2026-09-04 12:50:01.607] [nas] [debug] Sending Initial Registration"
+          },
+          {
+            "timestamp": "2026-09-04 12:50:01.607",
+            "source": "ue7",
+            "event": "rrc_connected",
+            "line": "[2026-09-04 12:50:01.607] [rrc] [info] UE switches to state [RRC-CONNECTED]"
+          },
+          {
+            "timestamp": "2026-09-04 12:50:01.618",
+            "source": "ue7",
+            "event": "mm_registered",
+            "line": "[2026-09-04 12:50:01.618] [nas] [info] UE switches to state [MM-REGISTERED/NORMAL-SERVICE]"
+          },
+          {
+            "timestamp": "2026-09-04 12:50:01.618",
+            "source": "ue7",
+            "event": "registration_success",
+            "line": "[2026-09-04 12:50:01.618] [nas] [info] Initial Registration is successful"
+          },
+          {
+            "timestamp": "2026-09-04 12:50:02.036",
+            "source": "ue7",
+            "event": "pdu_session_success",
+            "line": "[2026-09-04 12:50:02.036] [nas] [info] PDU Session establishment is successful PSI[1]"
+          },
+          {
+            "timestamp": "2026-09-04 12:50:02.044",
+            "source": "ue7",
+            "event": "tun_up",
+            "line": "[2026-09-04 12:50:02.044] [app] [info] Connection setup for PDU session[1] is successful, TUN interface[uesimtun0, 10.45.0.20] is up.",
+            "ip": "10.45.0.20"
+          }
+        ],
+        "recovery_type": "re-registration"
+      },
+      {
+        "ue": "ue8",
+        "switch_time_ms": 1788526154000.0,
+        "restart_time_ms": 1788526208789.065,
+        "reallocation_latency_ms": 54955.0,
+        "registration_latency_ms": 10.0,
+        "session_setup_latency_ms": 426.0,
+        "rrc_latency_ms": 0.0,
+        "post_restart_latency_ms": 165.93505859375,
+        "ip_changed": true,
+        "old_ip": "10.45.0.4",
+        "new_ip": "10.45.0.21",
+        "recovered": true,
+        "events": [
+          {
+            "timestamp": "2026-09-04 12:46:48.269",
+            "source": "ue8",
+            "event": "mm_deregistered",
+            "line": "[2026-09-04 12:46:48.269] [nas] [info] UE switches to state [MM-DEREGISTERED/PLMN-SEARCH]"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.270",
+            "source": "ue8",
+            "event": "mm_deregistered",
+            "line": "[2026-09-04 12:46:48.270] [nas] [info] UE switches to state [MM-DEREGISTERED/PS]"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.270",
+            "source": "ue8",
+            "event": "mm_deregistered",
+            "line": "[2026-09-04 12:46:48.270] [nas] [info] UE switches to state [MM-DEREGISTERED/NORMAL-SERVICE]"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.270",
+            "source": "ue8",
+            "event": "initial_registration",
+            "line": "[2026-09-04 12:46:48.270] [nas] [debug] Sending Initial Registration"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.270",
+            "source": "ue8",
+            "event": "rrc_connected",
+            "line": "[2026-09-04 12:46:48.270] [rrc] [info] UE switches to state [RRC-CONNECTED]"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.816",
+            "source": "ue8",
+            "event": "mm_registered",
+            "line": "[2026-09-04 12:46:48.816] [nas] [info] UE switches to state [MM-REGISTERED/NORMAL-SERVICE]"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.816",
+            "source": "ue8",
+            "event": "registration_success",
+            "line": "[2026-09-04 12:46:48.816] [nas] [info] Initial Registration is successful"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.832",
+            "source": "ue8",
+            "event": "pdu_session_success",
+            "line": "[2026-09-04 12:46:48.832] [nas] [info] PDU Session establishment is successful PSI[1]"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.846",
+            "source": "ue8",
+            "event": "tun_up",
+            "line": "[2026-09-04 12:46:48.846] [app] [info] Connection setup for PDU session[1] is successful, TUN interface[uesimtun0, 10.45.0.4] is up.",
+            "ip": "10.45.0.4"
+          },
+          {
+            "timestamp": "2026-09-04 12:49:16.126",
+            "source": "ue8",
+            "event": "mm_registered",
+            "line": "[2026-09-04 12:49:16.126] [nas] [info] UE switches to state [MM-REGISTERED/NORMAL-SERVICE]"
+          },
+          {
+            "timestamp": "2026-09-04 12:50:08.944",
+            "source": "ue8",
+            "event": "mm_deregistered",
+            "line": "[2026-09-04 12:50:08.944] [nas] [info] UE switches to state [MM-DEREGISTERED/PLMN-SEARCH]"
+          },
+          {
+            "timestamp": "2026-09-04 12:50:08.945",
+            "source": "ue8",
+            "event": "mm_deregistered",
+            "line": "[2026-09-04 12:50:08.945] [nas] [info] UE switches to state [MM-DEREGISTERED/PS]"
+          },
+          {
+            "timestamp": "2026-09-04 12:50:08.945",
+            "source": "ue8",
+            "event": "mm_deregistered",
+            "line": "[2026-09-04 12:50:08.945] [nas] [info] UE switches to state [MM-DEREGISTERED/NORMAL-SERVICE]"
+          },
+          {
+            "timestamp": "2026-09-04 12:50:08.945",
+            "source": "ue8",
+            "event": "initial_registration",
+            "line": "[2026-09-04 12:50:08.945] [nas] [debug] Sending Initial Registration"
+          },
+          {
+            "timestamp": "2026-09-04 12:50:08.945",
+            "source": "ue8",
+            "event": "rrc_connected",
+            "line": "[2026-09-04 12:50:08.945] [rrc] [info] UE switches to state [RRC-CONNECTED]"
+          },
+          {
+            "timestamp": "2026-09-04 12:50:08.955",
+            "source": "ue8",
+            "event": "mm_registered",
+            "line": "[2026-09-04 12:50:08.955] [nas] [info] UE switches to state [MM-REGISTERED/NORMAL-SERVICE]"
+          },
+          {
+            "timestamp": "2026-09-04 12:50:08.955",
+            "source": "ue8",
+            "event": "registration_success",
+            "line": "[2026-09-04 12:50:08.955] [nas] [info] Initial Registration is successful"
+          },
+          {
+            "timestamp": "2026-09-04 12:50:09.372",
+            "source": "ue8",
+            "event": "pdu_session_success",
+            "line": "[2026-09-04 12:50:09.372] [nas] [info] PDU Session establishment is successful PSI[1]"
+          },
+          {
+            "timestamp": "2026-09-04 12:50:09.381",
+            "source": "ue8",
+            "event": "tun_up",
+            "line": "[2026-09-04 12:50:09.381] [app] [info] Connection setup for PDU session[1] is successful, TUN interface[uesimtun0, 10.45.0.21] is up.",
+            "ip": "10.45.0.21"
+          }
+        ],
+        "recovery_type": "re-registration"
+      },
+      {
+        "ue": "ue9",
+        "switch_time_ms": 1788526154000.0,
+        "restart_time_ms": 1788526216120.532,
+        "reallocation_latency_ms": 62284.0,
+        "registration_latency_ms": 11.0,
+        "session_setup_latency_ms": 425.0,
+        "rrc_latency_ms": 0.0,
+        "post_restart_latency_ms": 163.468017578125,
+        "ip_changed": true,
+        "old_ip": "10.45.0.12",
+        "new_ip": "10.45.0.22",
+        "recovered": true,
+        "events": [
+          {
+            "timestamp": "2026-09-04 12:46:48.195",
+            "source": "ue9",
+            "event": "mm_deregistered",
+            "line": "[2026-09-04 12:46:48.195] [nas] [info] UE switches to state [MM-DEREGISTERED/PLMN-SEARCH]"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.197",
+            "source": "ue9",
+            "event": "mm_deregistered",
+            "line": "[2026-09-04 12:46:48.197] [nas] [info] UE switches to state [MM-DEREGISTERED/PS]"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.197",
+            "source": "ue9",
+            "event": "mm_deregistered",
+            "line": "[2026-09-04 12:46:48.197] [nas] [info] UE switches to state [MM-DEREGISTERED/NORMAL-SERVICE]"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.197",
+            "source": "ue9",
+            "event": "initial_registration",
+            "line": "[2026-09-04 12:46:48.197] [nas] [debug] Sending Initial Registration"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.197",
+            "source": "ue9",
+            "event": "rrc_connected",
+            "line": "[2026-09-04 12:46:48.197] [rrc] [info] UE switches to state [RRC-CONNECTED]"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.821",
+            "source": "ue9",
+            "event": "mm_registered",
+            "line": "[2026-09-04 12:46:48.821] [nas] [info] UE switches to state [MM-REGISTERED/NORMAL-SERVICE]"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.821",
+            "source": "ue9",
+            "event": "registration_success",
+            "line": "[2026-09-04 12:46:48.821] [nas] [info] Initial Registration is successful"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.839",
+            "source": "ue9",
+            "event": "pdu_session_success",
+            "line": "[2026-09-04 12:46:48.839] [nas] [info] PDU Session establishment is successful PSI[1]"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.846",
+            "source": "ue9",
+            "event": "tun_up",
+            "line": "[2026-09-04 12:46:48.846] [app] [info] Connection setup for PDU session[1] is successful, TUN interface[uesimtun0, 10.45.0.12] is up.",
+            "ip": "10.45.0.12"
+          },
+          {
+            "timestamp": "2026-09-04 12:49:18.255",
+            "source": "ue9",
+            "event": "mm_registered",
+            "line": "[2026-09-04 12:49:18.255] [nas] [info] UE switches to state [MM-REGISTERED/NORMAL-SERVICE]"
+          },
+          {
+            "timestamp": "2026-09-04 12:50:16.272",
+            "source": "ue9",
+            "event": "mm_deregistered",
+            "line": "[2026-09-04 12:50:16.272] [nas] [info] UE switches to state [MM-DEREGISTERED/PLMN-SEARCH]"
+          },
+          {
+            "timestamp": "2026-09-04 12:50:16.272",
+            "source": "ue9",
+            "event": "mm_deregistered",
+            "line": "[2026-09-04 12:50:16.272] [nas] [info] UE switches to state [MM-DEREGISTERED/PS]"
+          },
+          {
+            "timestamp": "2026-09-04 12:50:16.272",
+            "source": "ue9",
+            "event": "mm_deregistered",
+            "line": "[2026-09-04 12:50:16.272] [nas] [info] UE switches to state [MM-DEREGISTERED/NORMAL-SERVICE]"
+          },
+          {
+            "timestamp": "2026-09-04 12:50:16.273",
+            "source": "ue9",
+            "event": "initial_registration",
+            "line": "[2026-09-04 12:50:16.273] [nas] [debug] Sending Initial Registration"
+          },
+          {
+            "timestamp": "2026-09-04 12:50:16.273",
+            "source": "ue9",
+            "event": "rrc_connected",
+            "line": "[2026-09-04 12:50:16.273] [rrc] [info] UE switches to state [RRC-CONNECTED]"
+          },
+          {
+            "timestamp": "2026-09-04 12:50:16.284",
+            "source": "ue9",
+            "event": "mm_registered",
+            "line": "[2026-09-04 12:50:16.284] [nas] [info] UE switches to state [MM-REGISTERED/NORMAL-SERVICE]"
+          },
+          {
+            "timestamp": "2026-09-04 12:50:16.284",
+            "source": "ue9",
+            "event": "registration_success",
+            "line": "[2026-09-04 12:50:16.284] [nas] [info] Initial Registration is successful"
+          },
+          {
+            "timestamp": "2026-09-04 12:50:16.700",
+            "source": "ue9",
+            "event": "pdu_session_success",
+            "line": "[2026-09-04 12:50:16.700] [nas] [info] PDU Session establishment is successful PSI[1]"
+          },
+          {
+            "timestamp": "2026-09-04 12:50:16.709",
+            "source": "ue9",
+            "event": "tun_up",
+            "line": "[2026-09-04 12:50:16.709] [app] [info] Connection setup for PDU session[1] is successful, TUN interface[uesimtun0, 10.45.0.22] is up.",
+            "ip": "10.45.0.22"
+          }
+        ],
+        "recovery_type": "re-registration"
+      },
+      {
+        "ue": "ue10",
+        "switch_time_ms": 1788526154000.0,
+        "restart_time_ms": 1788526223452.628,
+        "reallocation_latency_ms": 69620.0,
+        "registration_latency_ms": 11.0,
+        "session_setup_latency_ms": 426.0,
+        "rrc_latency_ms": 0.0,
+        "post_restart_latency_ms": 167.3720703125,
+        "ip_changed": true,
+        "old_ip": "10.45.0.10",
+        "new_ip": "10.45.0.23",
+        "recovered": true,
+        "events": [
+          {
+            "timestamp": "2026-09-04 12:46:48.179",
+            "source": "ue10",
+            "event": "mm_deregistered",
+            "line": "[2026-09-04 12:46:48.179] [nas] [info] UE switches to state [MM-DEREGISTERED/PLMN-SEARCH]"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.180",
+            "source": "ue10",
+            "event": "mm_deregistered",
+            "line": "[2026-09-04 12:46:48.180] [nas] [info] UE switches to state [MM-DEREGISTERED/PS]"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.180",
+            "source": "ue10",
+            "event": "mm_deregistered",
+            "line": "[2026-09-04 12:46:48.180] [nas] [info] UE switches to state [MM-DEREGISTERED/NORMAL-SERVICE]"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.180",
+            "source": "ue10",
+            "event": "initial_registration",
+            "line": "[2026-09-04 12:46:48.180] [nas] [debug] Sending Initial Registration"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.180",
+            "source": "ue10",
+            "event": "rrc_connected",
+            "line": "[2026-09-04 12:46:48.180] [rrc] [info] UE switches to state [RRC-CONNECTED]"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.821",
+            "source": "ue10",
+            "event": "mm_registered",
+            "line": "[2026-09-04 12:46:48.821] [nas] [info] UE switches to state [MM-REGISTERED/NORMAL-SERVICE]"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.821",
+            "source": "ue10",
+            "event": "registration_success",
+            "line": "[2026-09-04 12:46:48.821] [nas] [info] Initial Registration is successful"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.838",
+            "source": "ue10",
+            "event": "pdu_session_success",
+            "line": "[2026-09-04 12:46:48.838] [nas] [info] PDU Session establishment is successful PSI[1]"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.847",
+            "source": "ue10",
+            "event": "tun_up",
+            "line": "[2026-09-04 12:46:48.847] [app] [info] Connection setup for PDU session[1] is successful, TUN interface[uesimtun0, 10.45.0.10] is up.",
+            "ip": "10.45.0.10"
+          },
+          {
+            "timestamp": "2026-09-04 12:49:18.239",
+            "source": "ue10",
+            "event": "mm_registered",
+            "line": "[2026-09-04 12:49:18.239] [nas] [info] UE switches to state [MM-REGISTERED/NORMAL-SERVICE]"
+          },
+          {
+            "timestamp": "2026-09-04 12:50:23.608",
+            "source": "ue10",
+            "event": "mm_deregistered",
+            "line": "[2026-09-04 12:50:23.608] [nas] [info] UE switches to state [MM-DEREGISTERED/PLMN-SEARCH]"
+          },
+          {
+            "timestamp": "2026-09-04 12:50:23.609",
+            "source": "ue10",
+            "event": "mm_deregistered",
+            "line": "[2026-09-04 12:50:23.609] [nas] [info] UE switches to state [MM-DEREGISTERED/PS]"
+          },
+          {
+            "timestamp": "2026-09-04 12:50:23.609",
+            "source": "ue10",
+            "event": "mm_deregistered",
+            "line": "[2026-09-04 12:50:23.609] [nas] [info] UE switches to state [MM-DEREGISTERED/NORMAL-SERVICE]"
+          },
+          {
+            "timestamp": "2026-09-04 12:50:23.609",
+            "source": "ue10",
+            "event": "initial_registration",
+            "line": "[2026-09-04 12:50:23.609] [nas] [debug] Sending Initial Registration"
+          },
+          {
+            "timestamp": "2026-09-04 12:50:23.609",
+            "source": "ue10",
+            "event": "rrc_connected",
+            "line": "[2026-09-04 12:50:23.609] [rrc] [info] UE switches to state [RRC-CONNECTED]"
+          },
+          {
+            "timestamp": "2026-09-04 12:50:23.620",
+            "source": "ue10",
+            "event": "mm_registered",
+            "line": "[2026-09-04 12:50:23.620] [nas] [info] UE switches to state [MM-REGISTERED/NORMAL-SERVICE]"
+          },
+          {
+            "timestamp": "2026-09-04 12:50:23.620",
+            "source": "ue10",
+            "event": "registration_success",
+            "line": "[2026-09-04 12:50:23.620] [nas] [info] Initial Registration is successful"
+          },
+          {
+            "timestamp": "2026-09-04 12:50:24.036",
+            "source": "ue10",
+            "event": "pdu_session_success",
+            "line": "[2026-09-04 12:50:24.036] [nas] [info] PDU Session establishment is successful PSI[1]"
+          },
+          {
+            "timestamp": "2026-09-04 12:50:24.046",
+            "source": "ue10",
+            "event": "tun_up",
+            "line": "[2026-09-04 12:50:24.046] [app] [info] Connection setup for PDU session[1] is successful, TUN interface[uesimtun0, 10.45.0.23] is up.",
+            "ip": "10.45.0.23"
+          }
+        ],
+        "recovery_type": "re-registration"
+      },
+      {
+        "ue": "ue11",
+        "switch_time_ms": 1788526154000.0,
+        "restart_time_ms": 1788526230790.812,
+        "reallocation_latency_ms": 76938.0,
+        "registration_latency_ms": 10.0,
+        "session_setup_latency_ms": 426.0,
+        "rrc_latency_ms": 0.0,
+        "post_restart_latency_ms": 147.18798828125,
+        "ip_changed": true,
+        "old_ip": "10.45.0.6",
+        "new_ip": "10.45.0.24",
+        "recovered": true,
+        "events": [
+          {
+            "timestamp": "2026-09-04 12:46:48.256",
+            "source": "ue11",
+            "event": "mm_deregistered",
+            "line": "[2026-09-04 12:46:48.256] [nas] [info] UE switches to state [MM-DEREGISTERED/PLMN-SEARCH]"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.257",
+            "source": "ue11",
+            "event": "mm_deregistered",
+            "line": "[2026-09-04 12:46:48.257] [nas] [info] UE switches to state [MM-DEREGISTERED/PS]"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.257",
+            "source": "ue11",
+            "event": "mm_deregistered",
+            "line": "[2026-09-04 12:46:48.257] [nas] [info] UE switches to state [MM-DEREGISTERED/NORMAL-SERVICE]"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.257",
+            "source": "ue11",
+            "event": "initial_registration",
+            "line": "[2026-09-04 12:46:48.257] [nas] [debug] Sending Initial Registration"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.257",
+            "source": "ue11",
+            "event": "rrc_connected",
+            "line": "[2026-09-04 12:46:48.257] [rrc] [info] UE switches to state [RRC-CONNECTED]"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.819",
+            "source": "ue11",
+            "event": "mm_registered",
+            "line": "[2026-09-04 12:46:48.819] [nas] [info] UE switches to state [MM-REGISTERED/NORMAL-SERVICE]"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.819",
+            "source": "ue11",
+            "event": "registration_success",
+            "line": "[2026-09-04 12:46:48.819] [nas] [info] Initial Registration is successful"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.833",
+            "source": "ue11",
+            "event": "pdu_session_success",
+            "line": "[2026-09-04 12:46:48.833] [nas] [info] PDU Session establishment is successful PSI[1]"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.846",
+            "source": "ue11",
+            "event": "tun_up",
+            "line": "[2026-09-04 12:46:48.846] [app] [info] Connection setup for PDU session[1] is successful, TUN interface[uesimtun0, 10.45.0.6] is up.",
+            "ip": "10.45.0.6"
+          },
+          {
+            "timestamp": "2026-09-04 12:49:18.316",
+            "source": "ue11",
+            "event": "mm_registered",
+            "line": "[2026-09-04 12:49:18.316] [nas] [info] UE switches to state [MM-REGISTERED/NORMAL-SERVICE]"
+          },
+          {
+            "timestamp": "2026-09-04 12:50:30.927",
+            "source": "ue11",
+            "event": "mm_deregistered",
+            "line": "[2026-09-04 12:50:30.927] [nas] [info] UE switches to state [MM-DEREGISTERED/PLMN-SEARCH]"
+          },
+          {
+            "timestamp": "2026-09-04 12:50:30.928",
+            "source": "ue11",
+            "event": "mm_deregistered",
+            "line": "[2026-09-04 12:50:30.928] [nas] [info] UE switches to state [MM-DEREGISTERED/PS]"
+          },
+          {
+            "timestamp": "2026-09-04 12:50:30.928",
+            "source": "ue11",
+            "event": "mm_deregistered",
+            "line": "[2026-09-04 12:50:30.928] [nas] [info] UE switches to state [MM-DEREGISTERED/NORMAL-SERVICE]"
+          },
+          {
+            "timestamp": "2026-09-04 12:50:30.928",
+            "source": "ue11",
+            "event": "initial_registration",
+            "line": "[2026-09-04 12:50:30.928] [nas] [debug] Sending Initial Registration"
+          },
+          {
+            "timestamp": "2026-09-04 12:50:30.928",
+            "source": "ue11",
+            "event": "rrc_connected",
+            "line": "[2026-09-04 12:50:30.928] [rrc] [info] UE switches to state [RRC-CONNECTED]"
+          },
+          {
+            "timestamp": "2026-09-04 12:50:30.938",
+            "source": "ue11",
+            "event": "mm_registered",
+            "line": "[2026-09-04 12:50:30.938] [nas] [info] UE switches to state [MM-REGISTERED/NORMAL-SERVICE]"
+          },
+          {
+            "timestamp": "2026-09-04 12:50:30.938",
+            "source": "ue11",
+            "event": "registration_success",
+            "line": "[2026-09-04 12:50:30.938] [nas] [info] Initial Registration is successful"
+          },
+          {
+            "timestamp": "2026-09-04 12:50:31.356",
+            "source": "ue11",
+            "event": "pdu_session_success",
+            "line": "[2026-09-04 12:50:31.356] [nas] [info] PDU Session establishment is successful PSI[1]"
+          },
+          {
+            "timestamp": "2026-09-04 12:50:31.364",
+            "source": "ue11",
+            "event": "tun_up",
+            "line": "[2026-09-04 12:50:31.364] [app] [info] Connection setup for PDU session[1] is successful, TUN interface[uesimtun0, 10.45.0.24] is up.",
+            "ip": "10.45.0.24"
+          }
+        ],
+        "recovery_type": "re-registration"
+      },
+      {
+        "ue": "ue12",
+        "switch_time_ms": 1788526154000.0,
+        "restart_time_ms": 1788526238114.8938,
+        "reallocation_latency_ms": 84300.0,
+        "registration_latency_ms": 12.0,
+        "session_setup_latency_ms": 424.0,
+        "rrc_latency_ms": 0.0,
+        "post_restart_latency_ms": 185.106201171875,
+        "ip_changed": true,
+        "old_ip": "10.45.0.8",
+        "new_ip": "10.45.0.25",
+        "recovered": true,
+        "events": [
+          {
+            "timestamp": "2026-09-04 12:46:48.230",
+            "source": "ue12",
+            "event": "mm_deregistered",
+            "line": "[2026-09-04 12:46:48.230] [nas] [info] UE switches to state [MM-DEREGISTERED/PLMN-SEARCH]"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.230",
+            "source": "ue12",
+            "event": "mm_deregistered",
+            "line": "[2026-09-04 12:46:48.230] [nas] [info] UE switches to state [MM-DEREGISTERED/PS]"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.230",
+            "source": "ue12",
+            "event": "mm_deregistered",
+            "line": "[2026-09-04 12:46:48.230] [nas] [info] UE switches to state [MM-DEREGISTERED/NORMAL-SERVICE]"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.230",
+            "source": "ue12",
+            "event": "initial_registration",
+            "line": "[2026-09-04 12:46:48.230] [nas] [debug] Sending Initial Registration"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.230",
+            "source": "ue12",
+            "event": "rrc_connected",
+            "line": "[2026-09-04 12:46:48.230] [rrc] [info] UE switches to state [RRC-CONNECTED]"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.820",
+            "source": "ue12",
+            "event": "mm_registered",
+            "line": "[2026-09-04 12:46:48.820] [nas] [info] UE switches to state [MM-REGISTERED/NORMAL-SERVICE]"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.820",
+            "source": "ue12",
+            "event": "registration_success",
+            "line": "[2026-09-04 12:46:48.820] [nas] [info] Initial Registration is successful"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.837",
+            "source": "ue12",
+            "event": "pdu_session_success",
+            "line": "[2026-09-04 12:46:48.837] [nas] [info] PDU Session establishment is successful PSI[1]"
+          },
+          {
+            "timestamp": "2026-09-04 12:46:48.846",
+            "source": "ue12",
+            "event": "tun_up",
+            "line": "[2026-09-04 12:46:48.846] [app] [info] Connection setup for PDU session[1] is successful, TUN interface[uesimtun0, 10.45.0.8] is up.",
+            "ip": "10.45.0.8"
+          },
+          {
+            "timestamp": "2026-09-04 12:49:16.125",
+            "source": "ue12",
+            "event": "mm_registered",
+            "line": "[2026-09-04 12:49:16.125] [nas] [info] UE switches to state [MM-REGISTERED/NORMAL-SERVICE]"
+          },
+          {
+            "timestamp": "2026-09-04 12:50:38.288",
+            "source": "ue12",
+            "event": "mm_deregistered",
+            "line": "[2026-09-04 12:50:38.288] [nas] [info] UE switches to state [MM-DEREGISTERED/PLMN-SEARCH]"
+          },
+          {
+            "timestamp": "2026-09-04 12:50:38.288",
+            "source": "ue12",
+            "event": "mm_deregistered",
+            "line": "[2026-09-04 12:50:38.288] [nas] [info] UE switches to state [MM-DEREGISTERED/PS]"
+          },
+          {
+            "timestamp": "2026-09-04 12:50:38.288",
+            "source": "ue12",
+            "event": "mm_deregistered",
+            "line": "[2026-09-04 12:50:38.288] [nas] [info] UE switches to state [MM-DEREGISTERED/NORMAL-SERVICE]"
+          },
+          {
+            "timestamp": "2026-09-04 12:50:38.288",
+            "source": "ue12",
+            "event": "initial_registration",
+            "line": "[2026-09-04 12:50:38.288] [nas] [debug] Sending Initial Registration"
+          },
+          {
+            "timestamp": "2026-09-04 12:50:38.288",
+            "source": "ue12",
+            "event": "rrc_connected",
+            "line": "[2026-09-04 12:50:38.288] [rrc] [info] UE switches to state [RRC-CONNECTED]"
+          },
+          {
+            "timestamp": "2026-09-04 12:50:38.300",
+            "source": "ue12",
+            "event": "mm_registered",
+            "line": "[2026-09-04 12:50:38.300] [nas] [info] UE switches to state [MM-REGISTERED/NORMAL-SERVICE]"
+          },
+          {
+            "timestamp": "2026-09-04 12:50:38.300",
+            "source": "ue12",
+            "event": "registration_success",
+            "line": "[2026-09-04 12:50:38.300] [nas] [info] Initial Registration is successful"
+          },
+          {
+            "timestamp": "2026-09-04 12:50:38.716",
+            "source": "ue12",
+            "event": "pdu_session_success",
+            "line": "[2026-09-04 12:50:38.716] [nas] [info] PDU Session establishment is successful PSI[1]"
+          },
+          {
+            "timestamp": "2026-09-04 12:50:38.724",
+            "source": "ue12",
+            "event": "tun_up",
+            "line": "[2026-09-04 12:50:38.724] [app] [info] Connection setup for PDU session[1] is successful, TUN interface[uesimtun0, 10.45.0.25] is up.",
+            "ip": "10.45.0.25"
+          }
+        ],
+        "recovery_type": "re-registration"
+      }
+    ],
+    "aggregate": {
+      "reallocation_latency_ms": {
+        "mean": 43950.0,
+        "std": 26444.652086953232,
+        "min": 3602.0,
+        "max": 84300.0,
+        "p95": 84300.0,
+        "cv": 0.6016985685313591,
+        "count": 12
+      },
+      "registration_latency_ms": {
+        "mean": 10.916666666666666,
+        "std": 1.2401124093721456,
+        "min": 9.0,
+        "max": 14.0,
+        "p95": 14.0,
+        "cv": 0.11359808330126525,
+        "count": 12
+      },
+      "session_setup_latency_ms": {
+        "mean": 424.75,
+        "std": 2.667140109487382,
+        "min": 419.0,
+        "max": 427.0,
+        "p95": 427.0,
+        "cv": 0.006279317503207492,
+        "count": 12
+      },
+      "rrc_latency_ms": {
+        "mean": 0.0,
+        "std": 0.0,
+        "min": 0.0,
+        "max": 0.0,
+        "p95": 0.0,
+        "cv": 0.0,
+        "count": 12
+      },
+      "post_restart_latency_ms": {
+        "mean": 167.353515625,
+        "std": 9.6752572052998,
+        "min": 147.18798828125,
+        "max": 185.106201171875,
+        "p95": 185.106201171875,
+        "cv": 0.05781328924681681,
+        "count": 12
+      },
+      "recovered_count": 12,
+      "ip_changed_count": 12
+    },
+    "experiment_timestamp": "2026-09-04T09:50:45.334874"
+  }
+]

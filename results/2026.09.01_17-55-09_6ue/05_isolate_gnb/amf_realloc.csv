@@ -1,7 +1,0 @@
-run_mode,target_amf,ue,recovered,realloc_lat_ms,reg_lat_ms,sess_lat_ms,rrc_lat_ms,post_restart_lat_ms,ip_changed,old_ip,new_ip,gnb2_selected,mobility_reg,initial_fallback,session_continuity,n14_context_transfer,agg_realloc_mean,agg_realloc_std,agg_realloc_p95,agg_recovered,timestamp
-isolate-gnb,amf2,ue1,True,4577.0,,,,,False,,,,,,,,4201.0,1127.0657478603455,5217.0,6,2026-09-01T18:02:46.153918
-isolate-gnb,amf2,ue2,True,5045.0,,,,,False,,,,,,,,4201.0,1127.0657478603455,5217.0,6,2026-09-01T18:02:46.153918
-isolate-gnb,amf2,ue3,True,3028.0,,,,,False,,,,,,,,4201.0,1127.0657478603455,5217.0,6,2026-09-01T18:02:46.153918
-isolate-gnb,amf2,ue4,True,4793.0,,,,,False,,,,,,,,4201.0,1127.0657478603455,5217.0,6,2026-09-01T18:02:46.153918
-isolate-gnb,amf2,ue5,True,5217.0,,,,,False,,,,,,,,4201.0,1127.0657478603455,5217.0,6,2026-09-01T18:02:46.153918
-isolate-gnb,amf2,ue6,True,2546.0,,,,,False,,,,,,,,4201.0,1127.0657478603455,5217.0,6,2026-09-01T18:02:46.153918

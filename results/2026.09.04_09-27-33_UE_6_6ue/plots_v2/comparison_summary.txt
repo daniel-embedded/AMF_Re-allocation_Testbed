@@ -1,0 +1,29 @@
+======================================================================
+AMF Re-allocation: Sequential vs. Concurrent Comparison
+======================================================================
+
+Mean Re-allocation Latency:
+  Sequential: 22.65 s (std=13.85 s)
+  Concurrent: 5.07 s (std=0.69 s)
+  Speedup:    4.47x
+
+Makespan (time until last UE recovers):
+  Sequential: 41.14 s
+  Concurrent: 5.79 s
+  Speedup:    7.11x
+
+Mean Registration Latency:
+  Sequential: 12 ms
+  Concurrent: 290 ms
+
+Mean Session Setup Latency:
+  Sequential: 432 ms
+  Concurrent: 401 ms
+
+Per-UE Speedup:
+  ue1: 1.03x
+  ue2: 2.54x
+  ue3: 3.68x
+  ue4: 5.11x
+  ue5: 5.85x
+  ue6: 7.11x

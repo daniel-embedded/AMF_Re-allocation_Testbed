@@ -1,0 +1,115 @@
+Starting emulation setup:
+
+~/docker-open5gs$ python3 Python_scripts/container_ctl.py up
+
+Concurrent AMF re-allocation:
+
+~/docker-open5gs$ python3 sctp_proxy/amf_orchestrator_v7.py   --command concurrent   --target amf2   --wait-before 10   --wait-after 60   --ue-pool ue1,ue2,ue3,ue4,ue5,ue6
+
+Sequential AMF re-allocation:
+
+~/docker-open5gs$ python3 sctp_proxy/amf_orchestrator_v7.py   --command sequential   --target amf2   --stagger 5   --wait-after 60
+
+Comparative boxplot, CDF, Timeline/Gantt, and IP tables:
+
+~/docker-open5gs$ python3 Python_scripts/plot_results_v2.py results/amf_realloc.json --outdir results/
+
+Comparative table with speedup and makespan:
+
+~/docker-open5gs$ python3 Python_scripts/generate_comparison_table_v2.py \
+    --sequential results/2026.07.29_sequential_6UEs/amf_realloc.json \
+    --concurrent results/2026.07.29_concurrent_6UEs/amf_realloc.json \
+    --outdir results/
+
+Back'n'forth consistency (four complete cycles: AMF1 → AMF2 → AMF1 → AMF2 → AMF1. It reboots all UEs simultaneously in each cycle since it uses run_concurrent):
+
+~/docker-open5gs$ python3 sctp_proxy/amf_orchestrator_v7_dualproxy.py \
+  --command backforth \
+  --target amf2 \
+  --wait-before 10 \
+  --wait-after 60 \
+  --cooldown 30 \
+  --repeat 4 \
+  --basename amf_realloc_backforth \
+  --ue-pool ue1,ue2,ue3,ue4,ue5,ue6 \
+  --gnb-pool gnb1
+
+Partial re-allocation (it switches to AMF2 but reboots only three UEs and keeps three UEs connected to AMF1 through dead SCTP association):
+
+~/docker-open5gs$ python3 sctp_proxy/amf_orchestrator_v7.py \
+  --command partial \
+  --target amf2 \
+  --wait-before 10 \
+  --wait-after 60 \
+  --ue-subset ue1,ue2,ue3 \
+  --basename amf_realloc_partial \
+  --ue-pool ue1,ue2,ue3,ue4,ue5,ue6 \
+  --gnb-pool gnb1
+
+Isolate-gNB (it switches to AMF2 e reboot only gNB1. The UEs continue running. gNB1 loses the SCTP association with the proxy, restarts, and reconnects to the proxy → AMF2. The UEs must detect the signal loss and re-register):
+
+~/docker-open5gs$ python3 sctp_proxy/amf_orchestrator_v7.py \
+  --command isolate-gnb \
+  --target amf2 \
+  --wait-before 10 \
+  --wait-after 60 \
+  --basename amf_realloc_isolate_gnb \
+  --ue-pool ue1,ue2,ue3,ue4,ue5,ue6 \
+  --gnb-pool gnb1
+
+Comparing concurrent and sequential results:
+
+~/docker-open5gs$ python3 Python_scripts/generate_comparison_table_v2.py \
+    --sequential results/2026.07.29_sequential_6UEs/amf_realloc.json \
+    --concurrent results/2026.07.29_concurrent_6UEs/amf_realloc.json \
+    --outdir results/
+
+N14 re-allocation:
+
+~/docker-open5gs$ python3 sctp_proxy/amf_orchestrator_v7.py \
+    --command n14-mobility \
+    --target amf2 \
+    --compose-dir ~/docker-open5gs/compose-files/network-slicing/ \
+    --wait-after 60 \
+    --basename exp8_n14
+
+Plotting boxplot_comparison, barplot_per_ue, cdf_latency, timeline_gantt, and ip_rotation:
+
+~/docker-open5gs$ python3 Python_scripts/plot_results_v2.py results/2026.07.29_sequential_6UEs/amf_realloc.json --outdir results/
+
+Plotting scatter_speedup and speedup_per_ue:
+
+~/docker-open5gs$ python3 Python_scripts/plot_scatter_speedup.py \
+    --sequential results/amf_realloc_sequential.json \
+    --concurrent results/amf_realloc_concurrent.json \
+    --outdir results/
+
+Running all experiments:
+
+~/docker-open5gs$ ./run_all_experiments.sh
+
+Plotting all relevant figures:
+
+~/docker-open5gs$ sudo ./generate_all_plots.sh
+
+=========================================================================================
+RUN A SINGLE EXPERIMENT WITH VARIOUS UEs
+
+python3 sctp_proxy/amf_orchestrator_v7.py --command n14-mobility --target amf2 --ues 12 --wait-after 180 --basename exp8_12ue
+python3 sctp_proxy/amf_orchestrator_v7.py --command n14-mobility --target amf2 --ues 24 --wait-after 180 --basename exp8_24ue
+python3 sctp_proxy/amf_orchestrator_v7.py --command n14-mobility --target amf2 --ues 48 --wait-after 180 --basename exp8_48ue
+
+==========================================================================================
+RUN ALL EXPERIMENTS
+
+Initializing network with N UEs:
+	./start_network.sh (6, unchanged default)
+	./start_network.sh 12
+	./start_network.sh 24
+	./start_network.sh 48 or all
+
+Running all experiments:
+	./run_all_experiments_v4.sh              # 6 UEs — identical behavior to v3
+	./run_all_experiments_v4.sh pilot 12     # label + 12 UEs
+	./run_all_experiments_v4.sh scale 24
+	./run_all_experiments_v4.sh scale 48

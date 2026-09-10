@@ -1,0 +1,219 @@
+#!/usr/bin/bash
+# =============================================================================
+# generate_all_plots_v2.sh  (v2.1)
+# Batch figure generation for the 7-experiment AMF re-allocation setup.
+#
+# Merges the working 5-experiment plotter (per-experiment plots, scatter
+# speedup, comparison table, back-forth drift) with the split-gNB additions
+# (boxplot comparison + stayer/mover cohort plots via plot_results_v3.py).
+#
+# Usage:
+#   ./generate_all_plots_v2.sh [results_folder]
+#
+# Examples:
+#   ./generate_all_plots_v2.sh                    # uses latest results/ subfolder
+#   ./generate_all_plots_v2.sh results/2026.08.18_10-24-45
+# =============================================================================
+
+set -uo pipefail
+
+# ---------------------------------------------------------------------------
+# Locate results root directory
+# ---------------------------------------------------------------------------
+if [ $# -ge 1 ]; then
+    ROOT_DIR="$1"
+else
+    ROOT_DIR=$(ls -td results/*/ 2>/dev/null | head -n 1)
+    if [ -z "$ROOT_DIR" ]; then
+        echo "[ERROR] No results/ subfolder found."
+        echo "        Run: ./run_all_experiments_v2.sh first, or provide a path:"
+        echo "        ./generate_all_plots_v2.sh results/YYYY.MM.DD_HH-MM-SS"
+        exit 1
+    fi
+fi
+
+ROOT_DIR="${ROOT_DIR%/}"
+if [ ! -d "$ROOT_DIR" ]; then
+    echo "[ERROR] Directory not found: $ROOT_DIR"
+    exit 1
+fi
+
+echo "======================================================================"
+echo "  Batch Figure Generation (7-experiment setup)"
+echo "  Source: $ROOT_DIR"
+echo "======================================================================"
+
+# ---------------------------------------------------------------------------
+# Paths to Python plot scripts
+# ---------------------------------------------------------------------------
+PLOT_RESULTS="Python_scripts/plot_results_v2.py"   # per-experiment standard plots
+PLOT_V3="Python_scripts/plot_results_v3.py"        # boxplot + cohort (split-gNB)
+PLOT_SCATTER="Python_scripts/plot_scatter_speedup.py"
+GEN_TABLE="Python_scripts/generate_comparison_table_v2.py"
+
+for script in "$PLOT_RESULTS" "$PLOT_V3" "$PLOT_SCATTER" "$GEN_TABLE"; do
+    if [ ! -f "$script" ]; then
+        echo "[ERROR] Required script not found: $script"
+        echo "        Make sure it is under Python_scripts/ (~/docker-open5gs)."
+        exit 1
+    fi
+done
+
+PLOTS_DIR="$ROOT_DIR/plots"
+mkdir -p "$PLOTS_DIR"
+
+run_plot() {
+    local desc="$1"
+    local cmd="$2"
+    local outdir="$3"
+
+    echo ""
+    echo "[PLOT] $desc"
+    echo "       → $outdir"
+    eval "$cmd"
+    if [ $? -eq 0 ]; then
+        echo "       [OK]"
+    else
+        echo "       [WARN] Something went wrong (non-fatal)."
+    fi
+}
+
+# ---------------------------------------------------------------------------
+# 1) Per-experiment standard plots (all 7 experiments)
+# ---------------------------------------------------------------------------
+for exp_dir in "$ROOT_DIR"/0*_*; do
+    [ -d "$exp_dir" ] || continue
+    json_file="$exp_dir/amf_realloc.json"
+    if [ ! -f "$json_file" ]; then
+        echo "[SKIP] No amf_realloc.json in $exp_dir"
+        continue
+    fi
+
+    exp_name=$(basename "$exp_dir")
+    exp_plots_dir="$PLOTS_DIR/$exp_name"
+    mkdir -p "$exp_plots_dir"
+
+    run_plot "$exp_name — standard plots" \
+        "python3 \"$PLOT_RESULTS\" \"$json_file\" --outdir \"$exp_plots_dir\"" \
+        "$exp_plots_dir"
+done
+
+# ---------------------------------------------------------------------------
+# 2) Split-gNB analysis (boxplot + stayer/mover cohorts) — experiments 06/07
+# ---------------------------------------------------------------------------
+for exp_dir in "$ROOT_DIR"/06_split_gnb_simultaneous "$ROOT_DIR"/07_split_gnb_sequential; do
+    [ -d "$exp_dir" ] || continue
+    json_file="$exp_dir/amf_realloc.json"
+    if [ ! -f "$json_file" ]; then
+        echo "[SKIP] No amf_realloc.json in $exp_dir"
+        continue
+    fi
+
+    exp_name=$(basename "$exp_dir")
+    exp_plots_dir="$PLOTS_DIR/$exp_name"
+    mkdir -p "$exp_plots_dir"
+
+    run_plot "$exp_name — split-gNB cohort analysis" \
+        "python3 \"$PLOT_V3\" \"$json_file\" --outdir \"$exp_plots_dir\"" \
+        "$exp_plots_dir"
+done
+
+# ---------------------------------------------------------------------------
+# 3) Scatter speedup (sequential vs concurrent)
+# ---------------------------------------------------------------------------
+SEQ_JSON="$ROOT_DIR/01_sequential/amf_realloc.json"
+CONC_JSON="$ROOT_DIR/02_concurrent/amf_realloc.json"
+
+if [ -f "$SEQ_JSON" ] && [ -f "$CONC_JSON" ]; then
+    run_plot "Scatter Speedup (Sequential vs Concurrent)" \
+        "python3 \"$PLOT_SCATTER\" --sequential \"$SEQ_JSON\" --concurrent \"$CONC_JSON\" --outdir \"$PLOTS_DIR\"" \
+        "$PLOTS_DIR"
+
+    run_plot "Comparison Table (Sequential vs Concurrent)" \
+        "python3 \"$GEN_TABLE\" --sequential \"$SEQ_JSON\" --concurrent \"$CONC_JSON\" --outdir \"$PLOTS_DIR\" --label tab:comparison" \
+        "$PLOTS_DIR"
+else
+    echo "[SKIP] Scatter/comparison: need both 01_sequential and 02_concurrent results."
+fi
+
+# ---------------------------------------------------------------------------
+# 4) Back-forth drift plot (if 03_backforth exists)
+# ---------------------------------------------------------------------------
+BF_JSON="$ROOT_DIR/03_backforth/amf_realloc.json"
+if [ -f "$BF_JSON" ]; then
+    echo ""
+    echo "[PLOT] Back-forth drift analysis"
+    python3 - "$BF_JSON" "$PLOTS_DIR" << 'PYEOF'
+import json, sys
+from pathlib import Path
+import matplotlib.pyplot as plt
+import numpy as np
+
+json_path = sys.argv[1]
+outdir = Path(sys.argv[2])
+outdir.mkdir(parents=True, exist_ok=True)
+
+with open(json_path) as f:
+    runs = json.load(f)
+
+if not runs or not isinstance(runs, list):
+    print("[SKIP] Invalid back-forth JSON")
+    sys.exit(0)
+
+x = list(range(1, len(runs) + 1))
+means = []
+makespans = []
+for run in runs:
+    agg = run.get("aggregate", {})
+    rl = agg.get("reallocation_latency_ms", {})
+    means.append((rl.get("mean") or 0) / 1000.0)
+    max_val = max(
+        (r.get("reallocation_latency_ms") or 0) for r in run.get("ue_results", [])
+    ) / 1000.0
+    makespans.append(max_val)
+
+targets = [run.get("target_amf", "?") for run in runs]
+colors = ["#4C78A8" if t == "amf2" else "#F58518" for t in targets]
+
+fig, ax = plt.subplots(figsize=(7, 4))
+ax.plot(x, means, marker="o", label="Mean latency", color="black", linewidth=1.5)
+ax.scatter(x, means, c=colors, s=100, zorder=5, edgecolors="black")
+ax.plot(x, makespans, marker="s", label="Makespan (last UE)", color="gray", linestyle="--", linewidth=1.5)
+
+from matplotlib.patches import Patch
+legend_elements = [
+    Patch(facecolor="#4C78A8", edgecolor="black", label="Target: AMF2"),
+    Patch(facecolor="#F58518", edgecolor="black", label="Target: AMF1"),
+]
+ax.legend(handles=legend_elements, loc="upper left", title="Switch target")
+ax.set_xlabel("Cycle number")
+ax.set_ylabel("Latency (s)")
+ax.set_title("Back-and-Forth Consistency: Latency Drift Across Cycles")
+ax.set_xticks(x)
+ax.grid(True, alpha=0.3)
+fig.tight_layout()
+fig.savefig(outdir / "backforth_drift.png", dpi=300)
+print(f"[OK] Saved: {outdir / 'backforth_drift.png'}")
+plt.close(fig)
+PYEOF
+else
+    echo "[SKIP] Back-forth drift: 03_backforth/amf_realloc.json not found."
+fi
+
+# ---------------------------------------------------------------------------
+# Summary
+# ---------------------------------------------------------------------------
+echo ""
+echo "======================================================================"
+echo "  ALL PLOTS GENERATED"
+echo "======================================================================"
+echo ""
+echo "Output directory: $PLOTS_DIR"
+echo ""
+find "$PLOTS_DIR" -type f \( -name "*.png" -o -name "*.csv" -o -name "*.tex" -o -name "*.txt" \) | sort | while read -r f; do
+    rel="${f#$PLOTS_DIR/}"
+    size=$(du -h "$f" | cut -f1)
+    printf "  %-50s %6s\n" "$rel" "$size"
+done
+echo ""
+echo "======================================================================"

@@ -1,0 +1,27 @@
+AMF Re-allocation Experiment Summary
+======================================================================
+
+Run 1: mode=n14-mobility, target=amf2
+  reallocation_latency_ms: mean=2745.9ms, std=853.3ms, min=1250.6ms, max=4209.6ms, p95=4209.6ms, cv=0.311 (n=12)
+  registration_latency_ms: mean=219.0ms, std=162.1ms, min=34.0ms, max=409.0ms, p95=409.0ms, cv=0.740 (n=12)
+  rrc_latency_ms: mean=0.0ms, std=0.0ms, min=0.0ms, max=0.0ms, p95=0.0ms, cv=0.000 (n=12)
+  Recovered: 12/12
+  IP changed: 0
+  Mobility registrations (N14 path): 12
+  Initial-registration fallbacks: 0
+  Session continuity (no PDU re-establishment): 12
+  N14 UEContextTransfer evidence: True
+
+    ue1: realloc=2492.599853515625ms, reg=271.0ms, sess=Nonems, rrc=0.0ms, post_restart=Nonems, recovered=True, ip_changed=False
+    ue2: realloc=2926.599853515625ms, reg=291.0ms, sess=Nonems, rrc=0.0ms, post_restart=Nonems, recovered=True, ip_changed=False
+    ue3: realloc=3320.599853515625ms, reg=304.0ms, sess=Nonems, rrc=0.0ms, post_restart=Nonems, recovered=True, ip_changed=False
+    ue4: realloc=3766.599853515625ms, reg=361.0ms, sess=Nonems, rrc=0.0ms, post_restart=Nonems, recovered=True, ip_changed=False
+    ue5: realloc=4209.599853515625ms, reg=408.0ms, sess=Nonems, rrc=0.0ms, post_restart=Nonems, recovered=True, ip_changed=False
+    ue6: realloc=2078.599853515625ms, reg=376.0ms, sess=Nonems, rrc=0.0ms, post_restart=Nonems, recovered=True, ip_changed=False
+    ue7: realloc=2497.599853515625ms, reg=409.0ms, sess=Nonems, rrc=0.0ms, post_restart=Nonems, recovered=True, ip_changed=False
+    ue8: realloc=2502.599853515625ms, reg=39.0ms, sess=Nonems, rrc=0.0ms, post_restart=Nonems, recovered=True, ip_changed=False
+    ue9: realloc=2934.599853515625ms, reg=45.0ms, sess=Nonems, rrc=0.0ms, post_restart=Nonems, recovered=True, ip_changed=False
+    ue10: realloc=3329.599853515625ms, reg=45.0ms, sess=Nonems, rrc=0.0ms, post_restart=Nonems, recovered=True, ip_changed=False
+    ue11: realloc=1250.599853515625ms, reg=45.0ms, sess=Nonems, rrc=0.0ms, post_restart=Nonems, recovered=True, ip_changed=False
+    ue12: realloc=1641.599853515625ms, reg=34.0ms, sess=Nonems, rrc=0.0ms, post_restart=Nonems, recovered=True, ip_changed=False
+
