@@ -1,0 +1,1636 @@
+[Orchestrator] version 7.5.9 (exp8: proxy settle + escalating NG-Setup recovery)
+
+[Mode: N14-MOBILITY] Target: amf2 | UEs: ['ue1', 'ue2', 'ue3', 'ue4', 'ue5', 'ue6', 'ue7', 'ue8', 'ue9', 'ue10', 'ue11', 'ue12', 'ue13', 'ue14', 'ue15', 'ue16', 'ue17', 'ue18', 'ue19', 'ue20', 'ue21', 'ue22', 'ue23', 'ue24', 'ue25', 'ue26', 'ue27', 'ue28', 'ue29', 'ue30', 'ue31', 'ue32', 'ue33', 'ue34', 'ue35', 'ue36', 'ue37', 'ue38', 'ue39', 'ue40', 'ue41', 'ue42', 'ue43', 'ue44', 'ue45', 'ue46', 'ue47', 'ue48', 'ue49', 'ue50', 'ue51', 'ue52', 'ue53', 'ue54', 'ue55', 'ue56', 'ue57', 'ue58', 'ue59', 'ue60', 'ue61', 'ue62', 'ue63', 'ue64', 'ue65', 'ue66', 'ue67', 'ue68', 'ue69', 'ue70', 'ue71', 'ue72', 'ue73', 'ue74', 'ue75', 'ue76', 'ue77', 'ue78', 'ue79', 'ue80', 'ue81', 'ue82', 'ue83', 'ue84', 'ue85', 'ue86', 'ue87', 'ue88', 'ue89', 'ue90', 'ue91', 'ue92', 'ue93', 'ue94', 'ue95', 'ue96', 'ue97', 'ue98', 'ue99', 'ue100', 'ue101', 'ue102', 'ue103', 'ue104', 'ue105', 'ue106', 'ue107', 'ue108', 'ue109', 'ue110', 'ue111', 'ue112', 'ue113', 'ue114', 'ue115', 'ue116', 'ue117', 'ue118', 'ue119', 'ue120', 'ue121', 'ue122', 'ue123', 'ue124', 'ue125', 'ue126', 'ue127', 'ue128', 'ue129', 'ue130', 'ue131', 'ue132', 'ue133', 'ue134', 'ue135', 'ue136', 'ue137', 'ue138', 'ue139', 'ue140', 'ue141', 'ue142', 'ue143', 'ue144', 'ue145', 'ue146', 'ue147', 'ue148', 'ue149', 'ue150', 'ue151', 'ue152', 'ue153', 'ue154', 'ue155', 'ue156', 'ue157', 'ue158', 'ue159', 'ue160', 'ue161', 'ue162', 'ue163', 'ue164', 'ue165', 'ue166', 'ue167', 'ue168', 'ue169', 'ue170', 'ue171', 'ue172', 'ue173', 'ue174', 'ue175', 'ue176', 'ue177', 'ue178', 'ue179', 'ue180', 'ue181', 'ue182', 'ue183', 'ue184', 'ue185', 'ue186', 'ue187', 'ue188', 'ue189', 'ue190', 'ue191', 'ue192', 'ue193', 'ue194', 'ue195', 'ue196', 'ue197', 'ue198', 'ue199', 'ue200', 'ue201', 'ue202', 'ue203', 'ue204', 'ue205', 'ue206', 'ue207', 'ue208', 'ue209', 'ue210', 'ue211', 'ue212', 'ue213', 'ue214', 'ue215', 'ue216', 'ue217', 'ue218', 'ue219', 'ue220', 'ue221', 'ue222', 'ue223', 'ue224', 'ue225', 'ue226', 'ue227', 'ue228', 'ue229', 'ue230', 'ue231', 'ue232', 'ue233', 'ue234', 'ue235', 'ue236', 'ue237', 'ue238', 'ue239', 'ue240', 'ue241', 'ue242', 'ue243', 'ue244', 'ue245', 'ue246', 'ue247', 'ue248', 'ue249', 'ue250', 'ue251', 'ue252', 'ue253', 'ue254', 'ue255', 'ue256', 'ue257', 'ue258', 'ue259', 'ue260', 'ue261', 'ue262', 'ue263', 'ue264', 'ue265', 'ue266', 'ue267', 'ue268', 'ue269', 'ue270', 'ue271', 'ue272', 'ue273', 'ue274', 'ue275', 'ue276', 'ue277', 'ue278', 'ue279', 'ue280', 'ue281', 'ue282', 'ue283', 'ue284', 'ue285', 'ue286', 'ue287', 'ue288', 'ue289', 'ue290', 'ue291', 'ue292', 'ue293', 'ue294', 'ue295', 'ue296', 'ue297', 'ue298', 'ue299', 'ue300', 'ue301', 'ue302', 'ue303', 'ue304', 'ue305', 'ue306', 'ue307', 'ue308', 'ue309', 'ue310', 'ue311', 'ue312', 'ue313', 'ue314', 'ue315', 'ue316', 'ue317', 'ue318', 'ue319', 'ue320', 'ue321', 'ue322', 'ue323', 'ue324', 'ue325', 'ue326', 'ue327', 'ue328', 'ue329', 'ue330', 'ue331', 'ue332', 'ue333', 'ue334', 'ue335', 'ue336', 'ue337', 'ue338', 'ue339', 'ue340', 'ue341', 'ue342', 'ue343', 'ue344', 'ue345', 'ue346', 'ue347', 'ue348', 'ue349', 'ue350', 'ue351', 'ue352', 'ue353', 'ue354', 'ue355', 'ue356', 'ue357', 'ue358', 'ue359', 'ue360', 'ue361', 'ue362', 'ue363', 'ue364', 'ue365', 'ue366', 'ue367', 'ue368', 'ue369', 'ue370', 'ue371', 'ue372', 'ue373', 'ue374', 'ue375', 'ue376', 'ue377', 'ue378', 'ue379', 'ue380', 'ue381', 'ue382', 'ue383', 'ue384']
+[1/5] Baseline check...
+[0/6] Swapping amf1.yaml to tac1-only and loading it into amf1...
+[Docker] compose project 'network-slicing' auto-detected from amf1 labels
+[Docker] using env file: /home/hindem/docker-open5gs/.env
+[Docker] compose service amf1 (re)created
+[CONFIG] compose recreate was a no-op (bind-mount deployment?) — falling back to docker restart amf1
+[Docker] Restarted amf1
+[CONFIG] verified: running amf1 loaded tac1-only config
+[CONFIG] amf1.yaml restored on disk (running amf1 keeps tac1-only)
+[0/6] Restarting gnb1 (association dropped by amf1 reload)...
+[Docker] Restarted gnb1
+[Docker] gnb1 NG Setup confirmed
+[1/6] Pausing gnb2, rewriting UE configs ([gnb1, gnb2]), restarting UEs...
+[Docker] Paused gnb2
+[CONFIG] ue1: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue2: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue3: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue4: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue5: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue6: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue7: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue8: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue9: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue10: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue11: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue12: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue13: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue14: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue15: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue16: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue17: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue18: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue19: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue20: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue21: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue22: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue23: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue24: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue25: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue26: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue27: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue28: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue29: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue30: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue31: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue32: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue33: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue34: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue35: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue36: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue37: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue38: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue39: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue40: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue41: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue42: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue43: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue44: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue45: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue46: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue47: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue48: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue49: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue50: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue51: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue52: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue53: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue54: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue55: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue56: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue57: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue58: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue59: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue60: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue61: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue62: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue63: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue64: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue65: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue66: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue67: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue68: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue69: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue70: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue71: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue72: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue73: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue74: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue75: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue76: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue77: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue78: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue79: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue80: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue81: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue82: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue83: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue84: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue85: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue86: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue87: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue88: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue89: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue90: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue91: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue92: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue93: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue94: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue95: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue96: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue97: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue98: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue99: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue100: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue101: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue102: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue103: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue104: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue105: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue106: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue107: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue108: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue109: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue110: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue111: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue112: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue113: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue114: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue115: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue116: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue117: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue118: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue119: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue120: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue121: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue122: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue123: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue124: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue125: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue126: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue127: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue128: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue129: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue130: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue131: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue132: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue133: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue134: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue135: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue136: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue137: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue138: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue139: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue140: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue141: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue142: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue143: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue144: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue145: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue146: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue147: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue148: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue149: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue150: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue151: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue152: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue153: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue154: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue155: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue156: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue157: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue158: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue159: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue160: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue161: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue162: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue163: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue164: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue165: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue166: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue167: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue168: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue169: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue170: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue171: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue172: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue173: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue174: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue175: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue176: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue177: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue178: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue179: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue180: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue181: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue182: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue183: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue184: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue185: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue186: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue187: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue188: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue189: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue190: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue191: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue192: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue193: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue194: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue195: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue196: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue197: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue198: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue199: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue200: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue201: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue202: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue203: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue204: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue205: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue206: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue207: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue208: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue209: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue210: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue211: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue212: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue213: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue214: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue215: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue216: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue217: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue218: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue219: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue220: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue221: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue222: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue223: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue224: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue225: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue226: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue227: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue228: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue229: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue230: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue231: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue232: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue233: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue234: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue235: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue236: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue237: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue238: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue239: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue240: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue241: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue242: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue243: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue244: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue245: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue246: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue247: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue248: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue249: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue250: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue251: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue252: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue253: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue254: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue255: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue256: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue257: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue258: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue259: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue260: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue261: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue262: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue263: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue264: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue265: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue266: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue267: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue268: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue269: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue270: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue271: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue272: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue273: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue274: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue275: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue276: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue277: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue278: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue279: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue280: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue281: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue282: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue283: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue284: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue285: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue286: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue287: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue288: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue289: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue290: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue291: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue292: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue293: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue294: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue295: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue296: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue297: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue298: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue299: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue300: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue301: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue302: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue303: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue304: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue305: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue306: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue307: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue308: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue309: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue310: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue311: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue312: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue313: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue314: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue315: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue316: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue317: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue318: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue319: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue320: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue321: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue322: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue323: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue324: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue325: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue326: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue327: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue328: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue329: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue330: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue331: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue332: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue333: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue334: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue335: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue336: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue337: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue338: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue339: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue340: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue341: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue342: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue343: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue344: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue345: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue346: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue347: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue348: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue349: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue350: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue351: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue352: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue353: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue354: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue355: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue356: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue357: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue358: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue359: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue360: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue361: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue362: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue363: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue364: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue365: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue366: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue367: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue368: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue369: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue370: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue371: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue372: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue373: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue374: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue375: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue376: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue377: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue378: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue379: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue380: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue381: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue382: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue383: gnbSearchList now starts with gnb1.ueransim.org
+[CONFIG] ue384: gnbSearchList now starts with gnb1.ueransim.org
+[Docker] Restarted ue1
+[Docker] Restarted ue2
+[Docker] Restarted ue3
+[Docker] Restarted ue4
+[Docker] Restarted ue5
+[Docker] Restarted ue6
+[Docker] Restarted ue7
+[Docker] Restarted ue8
+[Docker] Restarted ue9
+[Docker] Restarted ue10
+[Docker] Restarted ue11
+[Docker] Restarted ue12
+[Docker] Restarted ue13
+[Docker] Restarted ue14
+[Docker] Restarted ue15
+[Docker] Restarted ue16
+[Docker] Restarted ue17
+[Docker] Restarted ue18
+[Docker] Restarted ue19
+[Docker] Restarted ue20
+[Docker] Restarted ue21
+[Docker] Restarted ue22
+[Docker] Restarted ue23
+[Docker] Restarted ue24
+[Docker] Restarted ue25
+[Docker] Restarted ue26
+[Docker] Restarted ue27
+[Docker] Restarted ue28
+[Docker] Restarted ue29
+[Docker] Restarted ue30
+[Docker] Restarted ue31
+[Docker] Restarted ue32
+[Docker] Restarted ue33
+[Docker] Restarted ue34
+[Docker] Restarted ue35
+[Docker] Restarted ue36
+[Docker] Restarted ue37
+[Docker] Restarted ue38
+[Docker] Restarted ue39
+[Docker] Restarted ue40
+[Docker] Restarted ue41
+[Docker] Restarted ue42
+[Docker] Restarted ue43
+[Docker] Restarted ue44
+[Docker] Restarted ue45
+[Docker] Restarted ue46
+[Docker] Restarted ue47
+[Docker] Restarted ue48
+[Docker] Restarted ue49
+[Docker] Restarted ue50
+[Docker] Restarted ue51
+[Docker] Restarted ue52
+[Docker] Restarted ue53
+[Docker] Restarted ue54
+[Docker] Restarted ue55
+[Docker] Restarted ue56
+[Docker] Restarted ue57
+[Docker] Restarted ue58
+[Docker] Restarted ue59
+[Docker] Restarted ue60
+[Docker] Restarted ue61
+[Docker] Restarted ue62
+[Docker] Restarted ue63
+[Docker] Restarted ue64
+[Docker] Restarted ue65
+[Docker] Restarted ue66
+[Docker] Restarted ue67
+[Docker] Restarted ue68
+[Docker] Restarted ue69
+[Docker] Restarted ue70
+[Docker] Restarted ue71
+[Docker] Restarted ue72
+[Docker] Restarted ue73
+[Docker] Restarted ue74
+[Docker] Restarted ue75
+[Docker] Restarted ue76
+[Docker] Restarted ue77
+[Docker] Restarted ue78
+[Docker] Restarted ue79
+[Docker] Restarted ue80
+[Docker] Restarted ue81
+[Docker] Restarted ue82
+[Docker] Restarted ue83
+[Docker] Restarted ue84
+[Docker] Restarted ue85
+[Docker] Restarted ue86
+[Docker] Restarted ue87
+[Docker] Restarted ue88
+[Docker] Restarted ue89
+[Docker] Restarted ue90
+[Docker] Restarted ue91
+[Docker] Restarted ue92
+[Docker] Restarted ue93
+[Docker] Restarted ue94
+[Docker] Restarted ue95
+[Docker] Restarted ue96
+[Docker] Restarted ue97
+[Docker] Restarted ue98
+[Docker] Restarted ue99
+[Docker] Restarted ue100
+[Docker] Restarted ue101
+[Docker] Restarted ue102
+[Docker] Restarted ue103
+[Docker] Restarted ue104
+[Docker] Restarted ue105
+[Docker] Restarted ue106
+[Docker] Restarted ue107
+[Docker] Restarted ue108
+[Docker] Restarted ue109
+[Docker] Restarted ue110
+[Docker] Restarted ue111
+[Docker] Restarted ue112
+[Docker] Restarted ue113
+[Docker] Restarted ue114
+[Docker] Restarted ue115
+[Docker] Restarted ue116
+[Docker] Restarted ue117
+[Docker] Restarted ue118
+[Docker] Restarted ue119
+[Docker] Restarted ue120
+[Docker] Restarted ue121
+[Docker] Restarted ue122
+[Docker] Restarted ue123
+[Docker] Restarted ue124
+[Docker] Restarted ue125
+[Docker] Restarted ue126
+[Docker] Restarted ue127
+[Docker] Restarted ue128
+[Docker] Restarted ue129
+[Docker] Restarted ue130
+[Docker] Restarted ue131
+[Docker] Restarted ue132
+[Docker] Restarted ue133
+[Docker] Restarted ue134
+[Docker] Restarted ue135
+[Docker] Restarted ue136
+[Docker] Restarted ue137
+[Docker] Restarted ue138
+[Docker] Restarted ue139
+[Docker] Restarted ue140
+[Docker] Restarted ue141
+[Docker] Restarted ue142
+[Docker] Restarted ue143
+[Docker] Restarted ue144
+[Docker] Restarted ue145
+[Docker] Restarted ue146
+[Docker] Restarted ue147
+[Docker] Restarted ue148
+[Docker] Restarted ue149
+[Docker] Restarted ue150
+[Docker] Restarted ue151
+[Docker] Restarted ue152
+[Docker] Restarted ue153
+[Docker] Restarted ue154
+[Docker] Restarted ue155
+[Docker] Restarted ue156
+[Docker] Restarted ue157
+[Docker] Restarted ue158
+[Docker] Restarted ue159
+[Docker] Restarted ue160
+[Docker] Restarted ue161
+[Docker] Restarted ue162
+[Docker] Restarted ue163
+[Docker] Restarted ue164
+[Docker] Restarted ue165
+[Docker] Restarted ue166
+[Docker] Restarted ue167
+[Docker] Restarted ue168
+[Docker] Restarted ue169
+[Docker] Restarted ue170
+[Docker] Restarted ue171
+[Docker] Restarted ue172
+[Docker] Restarted ue173
+[Docker] Restarted ue174
+[Docker] Restarted ue175
+[Docker] Restarted ue176
+[Docker] Restarted ue177
+[Docker] Restarted ue178
+[Docker] Restarted ue179
+[Docker] Restarted ue180
+[Docker] Restarted ue181
+[Docker] Restarted ue182
+[Docker] Restarted ue183
+[Docker] Restarted ue184
+[Docker] Restarted ue185
+[Docker] Restarted ue186
+[Docker] Restarted ue187
+[Docker] Restarted ue188
+[Docker] Restarted ue189
+[Docker] Restarted ue190
+[Docker] Restarted ue191
+[Docker] Restarted ue192
+[Docker] Restarted ue193
+[Docker] Restarted ue194
+[Docker] Restarted ue195
+[Docker] Restarted ue196
+[Docker] Restarted ue197
+[Docker] Restarted ue198
+[Docker] Restarted ue199
+[Docker] Restarted ue200
+[Docker] Restarted ue201
+[Docker] Restarted ue202
+[Docker] Restarted ue203
+[Docker] Restarted ue204
+[Docker] Restarted ue205
+[Docker] Restarted ue206
+[Docker] Restarted ue207
+[Docker] Restarted ue208
+[Docker] Restarted ue209
+[Docker] Restarted ue210
+[Docker] Restarted ue211
+[Docker] Restarted ue212
+[Docker] Restarted ue213
+[Docker] Restarted ue214
+[Docker] Restarted ue215
+[Docker] Restarted ue216
+[Docker] Restarted ue217
+[Docker] Restarted ue218
+[Docker] Restarted ue219
+[Docker] Restarted ue220
+[Docker] Restarted ue221
+[Docker] Restarted ue222
+[Docker] Restarted ue223
+[Docker] Restarted ue224
+[Docker] Restarted ue225
+[Docker] Restarted ue226
+[Docker] Restarted ue227
+[Docker] Restarted ue228
+[Docker] Restarted ue229
+[Docker] Restarted ue230
+[Docker] Restarted ue231
+[Docker] Restarted ue232
+[Docker] Restarted ue233
+[Docker] Restarted ue234
+[Docker] Restarted ue235
+[Docker] Restarted ue236
+[Docker] Restarted ue237
+[Docker] Restarted ue238
+[Docker] Restarted ue239
+[Docker] Restarted ue240
+[Docker] Restarted ue241
+[Docker] Restarted ue242
+[Docker] Restarted ue243
+[Docker] Restarted ue244
+[Docker] Restarted ue245
+[Docker] Restarted ue246
+[Docker] Restarted ue247
+[Docker] Restarted ue248
+[Docker] Restarted ue249
+[Docker] Restarted ue250
+[Docker] Restarted ue251
+[Docker] Restarted ue252
+[Docker] Restarted ue253
+[Docker] Restarted ue254
+[Docker] Restarted ue255
+[Docker] Restarted ue256
+[Docker] Restarted ue257
+[Docker] Restarted ue258
+[Docker] Restarted ue259
+[Docker] Restarted ue260
+[Docker] Restarted ue261
+[Docker] Restarted ue262
+[Docker] Restarted ue263
+[Docker] Restarted ue264
+[Docker] Restarted ue265
+[Docker] Restarted ue266
+[Docker] Restarted ue267
+[Docker] Restarted ue268
+[Docker] Restarted ue269
+[Docker] Restarted ue270
+[Docker] Restarted ue271
+[Docker] Restarted ue272
+[Docker] Restarted ue273
+[Docker] Restarted ue274
+[Docker] Restarted ue275
+[Docker] Restarted ue276
+[Docker] Restarted ue277
+[Docker] Restarted ue278
+[Docker] Restarted ue279
+[Docker] Restarted ue280
+[Docker] Restarted ue281
+[Docker] Restarted ue282
+[Docker] Restarted ue283
+[Docker] Restarted ue284
+[Docker] Restarted ue285
+[Docker] Restarted ue286
+[Docker] Restarted ue287
+[Docker] Restarted ue288
+[Docker] Restarted ue289
+[Docker] Restarted ue290
+[Docker] Restarted ue291
+[Docker] Restarted ue292
+[Docker] Restarted ue293
+[Docker] Restarted ue294
+[Docker] Restarted ue295
+[Docker] Restarted ue296
+[Docker] Restarted ue297
+[Docker] Restarted ue298
+[Docker] Restarted ue299
+[Docker] Restarted ue300
+[Docker] Restarted ue301
+[Docker] Restarted ue302
+[Docker] Restarted ue303
+[Docker] Restarted ue304
+[Docker] Restarted ue305
+[Docker] Restarted ue306
+[Docker] Restarted ue307
+[Docker] Restarted ue308
+[Docker] Restarted ue309
+[Docker] Restarted ue310
+[Docker] Restarted ue311
+[Docker] Restarted ue312
+[Docker] Restarted ue313
+[Docker] Restarted ue314
+[Docker] Restarted ue315
+[Docker] Restarted ue316
+[Docker] Restarted ue317
+[Docker] Restarted ue318
+[Docker] Restarted ue319
+[Docker] Restarted ue320
+[Docker] Restarted ue321
+[Docker] Restarted ue322
+[Docker] Restarted ue323
+[Docker] Restarted ue324
+[Docker] Restarted ue325
+[Docker] Restarted ue326
+[Docker] Restarted ue327
+[Docker] Restarted ue328
+[Docker] Restarted ue329
+[Docker] Restarted ue330
+[Docker] Restarted ue331
+[Docker] Restarted ue332
+[Docker] Restarted ue333
+[Docker] Restarted ue334
+[Docker] Restarted ue335
+[Docker] Restarted ue336
+[Docker] Restarted ue337
+[Docker] Restarted ue338
+[Docker] Restarted ue339
+[Docker] Restarted ue340
+[Docker] Restarted ue341
+[Docker] Restarted ue342
+[Docker] Restarted ue343
+[Docker] Restarted ue344
+[Docker] Restarted ue345
+[Docker] Restarted ue346
+[Docker] Restarted ue347
+[Docker] Restarted ue348
+[Docker] Restarted ue349
+[Docker] Restarted ue350
+[Docker] Restarted ue351
+[Docker] Restarted ue352
+[Docker] Restarted ue353
+[Docker] Restarted ue354
+[Docker] Restarted ue355
+[Docker] Restarted ue356
+[Docker] Restarted ue357
+[Docker] Restarted ue358
+[Docker] Restarted ue359
+[Docker] Restarted ue360
+[Docker] Restarted ue361
+[Docker] Restarted ue362
+[Docker] Restarted ue363
+[Docker] Restarted ue364
+[Docker] Restarted ue365
+[Docker] Restarted ue366
+[Docker] Restarted ue367
+[Docker] Restarted ue368
+[Docker] Restarted ue369
+[Docker] Restarted ue370
+[Docker] Restarted ue371
+[Docker] Restarted ue372
+[Docker] Restarted ue373
+[Docker] Restarted ue374
+[Docker] Restarted ue375
+[Docker] Restarted ue376
+[Docker] Restarted ue377
+[Docker] Restarted ue378
+[Docker] Restarted ue379
+[Docker] Restarted ue380
+[Docker] Restarted ue381
+[Docker] Restarted ue382
+[Docker] Restarted ue383
+[Docker] Restarted ue384
+  -> ue239 re-registered (realloc latency: 96314 ms)
+  -> ue222 re-registered (realloc latency: 85872 ms)
+  -> ue53 re-registered (realloc latency: 20134 ms)
+  -> ue47 re-registered (realloc latency: 18038 ms)
+  -> ue286 re-registered (realloc latency: 108480 ms)
+  -> ue138 re-registered (realloc latency: 52625 ms)
+  -> ue22 re-registered (realloc latency: 8700 ms)
+  -> ue355 re-registered (realloc latency: 135481 ms)
+  -> ue268 re-registered (realloc latency: 107435 ms)
+  -> ue196 re-registered (realloc latency: 140913 ms)
+  -> ue215 re-registered (realloc latency: 83158 ms)
+  -> ue178 re-registered (realloc latency: 67055 ms)
+  -> ue272 re-registered (realloc latency: 104546 ms)
+  -> ue223 re-registered (realloc latency: 84472 ms)
+  -> ue58 re-registered (realloc latency: 22127 ms)
+  -> ue343 re-registered (realloc latency: 131916 ms)
+  -> ue383 re-registered (realloc latency: 150126 ms)
+  -> ue227 re-registered (realloc latency: 85872 ms)
+  -> ue282 re-registered (realloc latency: 106904 ms)
+  -> ue100 re-registered (realloc latency: 38528 ms)
+  -> ue319 re-registered (realloc latency: 120708 ms)
+  -> ue225 re-registered (realloc latency: 91021 ms)
+  -> ue237 re-registered (realloc latency: 90526 ms)
+  -> ue25 re-registered (realloc latency: 9841 ms)
+  -> ue72 re-registered (realloc latency: 27541 ms)
+  -> ue43 re-registered (realloc latency: 16939 ms)
+  -> ue181 re-registered (realloc latency: 68374 ms)
+  -> ue91 re-registered (realloc latency: 34977 ms)
+  -> ue325 re-registered (realloc latency: 123227 ms)
+  -> ue375 re-registered (realloc latency: 152665 ms)
+  -> ue62 re-registered (realloc latency: 23631 ms)
+  -> ue164 re-registered (realloc latency: 61957 ms)
+  -> ue10 re-registered (realloc latency: 4411 ms)
+  -> ue370 re-registered (realloc latency: 142864 ms)
+  -> ue122 re-registered (realloc latency: 46157 ms)
+  -> ue229 re-registered (realloc latency: 88332 ms)
+  -> ue90 re-registered (realloc latency: 34350 ms)
+  -> ue95 re-registered (realloc latency: 36450 ms)
+  -> ue240 re-registered (realloc latency: 91818 ms)
+  -> ue103 re-registered (realloc latency: 39321 ms)
+  -> ue357 re-registered (realloc latency: 142209 ms)
+  -> ue182 re-registered (realloc latency: 68991 ms)
+  -> ue177 re-registered (realloc latency: 67048 ms)
+  -> ue14 re-registered (realloc latency: 6028 ms)
+  -> ue236 re-registered (realloc latency: 93153 ms)
+  -> ue17 re-registered (realloc latency: 7028 ms)
+  -> ue114 re-registered (realloc latency: 43673 ms)
+  -> ue310 re-registered (realloc latency: 118154 ms)
+  -> ue137 re-registered (realloc latency: 52000 ms)
+  -> ue378 re-registered (realloc latency: 147757 ms)
+  -> ue230 re-registered (realloc latency: 91021 ms)
+  -> ue121 re-registered (realloc latency: 46151 ms)
+  -> ue123 re-registered (realloc latency: 46859 ms)
+  -> ue146 re-registered (realloc latency: 55284 ms)
+  -> ue210 re-registered (realloc latency: 80302 ms)
+  -> ue172 re-registered (realloc latency: 64775 ms)
+  -> ue109 re-registered (realloc latency: 41429 ms)
+  -> ue21 re-registered (realloc latency: 8487 ms)
+  -> ue57 re-registered (realloc latency: 21669 ms)
+  -> ue117 re-registered (realloc latency: 44339 ms)
+  -> ue106 re-registered (realloc latency: 40780 ms)
+  -> ue68 re-registered (realloc latency: 25741 ms)
+  -> ue85 re-registered (realloc latency: 32264 ms)
+  -> ue284 re-registered (realloc latency: 108487 ms)
+  -> ue56 re-registered (realloc latency: 21464 ms)
+  -> ue321 re-registered (realloc latency: 122121 ms)
+  -> ue346 re-registered (realloc latency: 137265 ms)
+  -> ue42 re-registered (realloc latency: 16288 ms)
+  -> ue31 re-registered (realloc latency: 11796 ms)
+  -> ue87 re-registered (realloc latency: 33197 ms)
+  -> ue201 re-registered (realloc latency: 75742 ms)
+  -> ue11 re-registered (realloc latency: 5141 ms)
+  -> ue73 re-registered (realloc latency: 27728 ms)
+  -> ue129 re-registered (realloc latency: 49248 ms)
+  -> ue131 re-registered (realloc latency: 50093 ms)
+  -> ue369 re-registered (realloc latency: 143353 ms)
+  -> ue110 re-registered (realloc latency: 41869 ms)
+  -> ue382 re-registered (realloc latency: 149230 ms)
+  -> ue315 re-registered (realloc latency: 119849 ms)
+  -> ue197 re-registered (realloc latency: 75193 ms)
+  -> ue318 re-registered (realloc latency: 125744 ms)
+  -> ue265 re-registered (realloc latency: 103720 ms)
+  -> ue235 re-registered (realloc latency: 90046 ms)
+  -> ue257 re-registered (realloc latency: 103720 ms)
+  -> ue349 re-registered (realloc latency: 133839 ms)
+  -> ue149 re-registered (realloc latency: 56765 ms)
+  -> ue4 re-registered (realloc latency: 1732 ms)
+  -> ue296 re-registered (realloc latency: 114401 ms)
+  -> ue188 re-registered (realloc latency: 71383 ms)
+  -> ue242 re-registered (realloc latency: 91818 ms)
+  -> ue316 re-registered (realloc latency: 120701 ms)
+  -> ue139 re-registered (realloc latency: 52626 ms)
+  -> ue186 re-registered (realloc latency: 71390 ms)
+  -> ue38 re-registered (realloc latency: 14562 ms)
+  -> ue61 re-registered (realloc latency: 23626 ms)
+  -> ue260 re-registered (realloc latency: 100840 ms)
+  -> ue294 re-registered (realloc latency: 111881 ms)
+  -> ue171 re-registered (realloc latency: 64769 ms)
+  -> ue65 re-registered (realloc latency: 25330 ms)
+  -> ue214 re-registered (realloc latency: 83153 ms)
+  -> ue307 re-registered (realloc latency: 117315 ms)
+  -> ue189 re-registered (realloc latency: 73366 ms)
+  -> ue348 re-registered (realloc latency: 133201 ms)
+  -> ue51 re-registered (realloc latency: 19724 ms)
+  -> ue341 re-registered (realloc latency: 129185 ms)
+  -> ue259 re-registered (realloc latency: 98027 ms)
+  -> ue112 re-registered (realloc latency: 42935 ms)
+  -> ue207 re-registered (realloc latency: 79447 ms)
+  -> ue217 re-registered (realloc latency: 81982 ms)
+  -> ue360 re-registered (realloc latency: 138007 ms)
+  -> ue26 re-registered (realloc latency: 10428 ms)
+  -> ue340 re-registered (realloc latency: 129185 ms)
+  -> ue119 re-registered (realloc latency: 45092 ms)
+  -> ue16 re-registered (realloc latency: 6611 ms)
+  -> ue34 re-registered (realloc latency: 13317 ms)
+  -> ue328 re-registered (realloc latency: 125254 ms)
+  -> ue337 re-registered (realloc latency: 130098 ms)
+  -> ue190 re-registered (realloc latency: 72229 ms)
+  -> ue241 re-registered (realloc latency: 97037 ms)
+  -> ue191 re-registered (realloc latency: 73359 ms)
+  -> ue377 re-registered (realloc latency: 150761 ms)
+  -> ue361 re-registered (realloc latency: 142208 ms)
+  -> ue311 re-registered (realloc latency: 118801 ms)
+  -> ue238 re-registered (realloc latency: 92712 ms)
+  -> ue258 re-registered (realloc latency: 101898 ms)
+  -> ue224 re-registered (realloc latency: 86838 ms)
+  -> ue263 re-registered (realloc latency: 99580 ms)
+  -> ue159 re-registered (realloc latency: 59963 ms)
+  -> ue270 re-registered (realloc latency: 102580 ms)
+  -> ue347 re-registered (realloc latency: 131429 ms)
+  -> ue329 re-registered (realloc latency: 125744 ms)
+  -> ue247 re-registered (realloc latency: 93172 ms)
+  -> ue374 re-registered (realloc latency: 151180 ms)
+  -> ue76 re-registered (realloc latency: 29803 ms)
+  -> ue175 re-registered (realloc latency: 66310 ms)
+  -> ue317 re-registered (realloc latency: 121270 ms)
+  -> ue101 re-registered (realloc latency: 39147 ms)
+  -> ue288 re-registered (realloc latency: 109229 ms)
+  -> ue253 re-registered (realloc latency: 99995 ms)
+  -> ue362 re-registered (realloc latency: 138649 ms)
+  -> ue150 re-registered (realloc latency: 56771 ms)
+  -> ue136 re-registered (realloc latency: 51361 ms)
+  -> ue203 re-registered (realloc latency: 77660 ms)
+  -> ue23 re-registered (realloc latency: 9274 ms)
+  -> ue289 re-registered (realloc latency: 110833 ms)
+  -> ue107 re-registered (realloc latency: 41422 ms)
+  -> ue344 re-registered (realloc latency: 130324 ms)
+  -> ue353 re-registered (realloc latency: 134618 ms)
+  -> ue54 re-registered (realloc latency: 20594 ms)
+  -> ue335 re-registered (realloc latency: 127117 ms)
+  -> ue323 re-registered (realloc latency: 122780 ms)
+  -> ue338 re-registered (realloc latency: 128381 ms)
+  -> ue39 re-registered (realloc latency: 15029 ms)
+  -> ue202 re-registered (realloc latency: 77661 ms)
+  -> ue277 re-registered (realloc latency: 106056 ms)
+  -> ue147 re-registered (realloc latency: 55919 ms)
+  -> ue334 re-registered (realloc latency: 126600 ms)
+  -> ue82 re-registered (realloc latency: 31004 ms)
+  -> ue204 re-registered (realloc latency: 77660 ms)
+  -> ue3 re-registered (realloc latency: 1189 ms)
+  -> ue358 re-registered (realloc latency: 136619 ms)
+  -> ue206 re-registered (realloc latency: 77670 ms)
+  -> ue6 re-registered (realloc latency: 2636 ms)
+  -> ue301 re-registered (realloc latency: 113789 ms)
+  -> ue108 re-registered (realloc latency: 41423 ms)
+  -> ue283 re-registered (realloc latency: 107433 ms)
+  -> ue152 re-registered (realloc latency: 57626 ms)
+  -> ue66 re-registered (realloc latency: 25688 ms)
+  -> ue143 re-registered (realloc latency: 54138 ms)
+  -> ue356 re-registered (realloc latency: 140247 ms)
+  -> ue251 re-registered (realloc latency: 96106 ms)
+  -> ue78 re-registered (realloc latency: 29832 ms)
+  -> ue309 re-registered (realloc latency: 119849 ms)
+  -> ue74 re-registered (realloc latency: 28016 ms)
+  -> ue221 re-registered (realloc latency: 88335 ms)
+  -> ue300 re-registered (realloc latency: 115406 ms)
+  -> ue276 re-registered (realloc latency: 106049 ms)
+  -> ue331 re-registered (realloc latency: 127962 ms)
+  -> ue140 re-registered (realloc latency: 53389 ms)
+  -> ue195 re-registered (realloc latency: 74557 ms)
+  -> ue308 re-registered (realloc latency: 122780 ms)
+  -> ue314 re-registered (realloc latency: 118801 ms)
+  -> ue194 re-registered (realloc latency: 76393 ms)
+  -> ue243 re-registered (realloc latency: 91824 ms)
+  -> ue97 re-registered (realloc latency: 37766 ms)
+  -> ue220 re-registered (realloc latency: 84001 ms)
+  -> ue133 re-registered (realloc latency: 51354 ms)
+  -> ue384 re-registered (realloc latency: 150075 ms)
+  -> ue187 re-registered (realloc latency: 70541 ms)
+  -> ue350 re-registered (realloc latency: 137265 ms)
+  -> ue155 re-registered (realloc latency: 58424 ms)
+  -> ue266 re-registered (realloc latency: 102997 ms)
+  -> ue161 re-registered (realloc latency: 60661 ms)
+  -> ue29 re-registered (realloc latency: 11078 ms)
+  -> ue303 re-registered (realloc latency: 122786 ms)
+  -> ue199 re-registered (realloc latency: 76393 ms)
+  -> ue211 re-registered (realloc latency: 86844 ms)
+  -> ue84 re-registered (realloc latency: 31758 ms)
+  -> ue115 re-registered (realloc latency: 43673 ms)
+  -> ue141 re-registered (realloc latency: 53389 ms)
+  -> ue8 re-registered (realloc latency: 3444 ms)
+  -> ue183 re-registered (realloc latency: 70534 ms)
+  -> ue312 re-registered (realloc latency: 120690 ms)
+  -> ue339 re-registered (realloc latency: 134627 ms)
+  -> ue125 re-registered (realloc latency: 47754 ms)
+  -> ue180 re-registered (realloc latency: 68993 ms)
+  -> ue278 re-registered (realloc latency: 106049 ms)
+  -> ue145 re-registered (realloc latency: 54890 ms)
+  -> ue94 re-registered (realloc latency: 35871 ms)
+  -> ue205 re-registered (realloc latency: 84478 ms)
+  -> ue264 re-registered (realloc latency: 105004 ms)
+  -> ue166 re-registered (realloc latency: 62597 ms)
+  -> ue291 re-registered (realloc latency: 111881 ms)
+  -> ue226 re-registered (realloc latency: 85326 ms)
+  -> ue144 re-registered (realloc latency: 54889 ms)
+  -> ue64 re-registered (realloc latency: 24590 ms)
+  -> ue200 re-registered (realloc latency: 76813 ms)
+  -> ue372 re-registered (realloc latency: 147757 ms)
+  -> ue30 re-registered (realloc latency: 11611 ms)
+  -> ue89 re-registered (realloc latency: 34009 ms)
+  -> ue45 re-registered (realloc latency: 17551 ms)
+  -> ue104 re-registered (realloc latency: 40100 ms)
+  -> ue209 re-registered (realloc latency: 78814 ms)
+  -> ue269 re-registered (realloc latency: 105004 ms)
+  -> ue41 re-registered (realloc latency: 15745 ms)
+  -> ue192 re-registered (realloc latency: 72867 ms)
+  -> ue80 re-registered (realloc latency: 30417 ms)
+  -> ue368 re-registered (realloc latency: 20135 ms)
+  -> ue173 re-registered (realloc latency: 65550 ms)
+  -> ue12 re-registered (realloc latency: 5143 ms)
+  -> ue376 re-registered (realloc latency: 150078 ms)
+  -> ue99 re-registered (realloc latency: 38528 ms)
+  -> ue306 re-registered (realloc latency: 115974 ms)
+  -> ue163 re-registered (realloc latency: 61422 ms)
+  -> ue170 re-registered (realloc latency: 64054 ms)
+  -> ue330 re-registered (realloc latency: 126592 ms)
+  -> ue83 re-registered (realloc latency: 31516 ms)
+  -> ue246 re-registered (realloc latency: 94021 ms)
+  -> ue70 re-registered (realloc latency: 41448 ms)
+  -> ue232 re-registered (realloc latency: 88784 ms)
+  -> ue179 re-registered (realloc latency: 67829 ms)
+  -> ue256 re-registered (realloc latency: 98027 ms)
+  -> ue250 re-registered (realloc latency: 94546 ms)
+  -> ue322 re-registered (realloc latency: 123225 ms)
+  -> ue40 re-registered (realloc latency: 29832 ms)
+  -> ue77 re-registered (realloc latency: 29803 ms)
+  -> ue245 re-registered (realloc latency: 94014 ms)
+  -> ue32 re-registered (realloc latency: 12505 ms)
+  -> ue193 re-registered (realloc latency: 74044 ms)
+  -> ue231 re-registered (realloc latency: 87687 ms)
+  -> ue371 re-registered (realloc latency: 145800 ms)
+  -> ue262 re-registered (realloc latency: 99080 ms)
+  -> ue326 re-registered (realloc latency: 127962 ms)
+  -> ue93 re-registered (realloc latency: 35613 ms)
+  -> ue198 re-registered (realloc latency: 75736 ms)
+  -> ue364 re-registered (realloc latency: 139597 ms)
+  -> ue333 re-registered (realloc latency: 127118 ms)
+  -> ue20 re-registered (realloc latency: 7649 ms)
+  -> ue352 re-registered (realloc latency: 140246 ms)
+  -> ue380 re-registered (realloc latency: 152667 ms)
+  -> ue304 re-registered (realloc latency: 117312 ms)
+  -> ue156 re-registered (realloc latency: 58862 ms)
+  -> ue37 re-registered (realloc latency: 14549 ms)
+  -> ue27 re-registered (realloc latency: 10429 ms)
+  -> ue148 re-registered (realloc latency: 55925 ms)
+  -> ue13 re-registered (realloc latency: 5148 ms)
+  -> ue154 re-registered (realloc latency: 58417 ms)
+  -> ue67 re-registered (realloc latency: 25723 ms)
+  -> ue359 re-registered (realloc latency: 145154 ms)
+  -> ue255 re-registered (realloc latency: 97478 ms)
+  -> ue254 re-registered (realloc latency: 96108 ms)
+  -> ue275 re-registered (realloc latency: 104548 ms)
+  -> ue279 re-registered (realloc latency: 109778 ms)
+  -> ue213 re-registered (realloc latency: 82518 ms)
+  -> ue44 re-registered (realloc latency: 16938 ms)
+  -> ue55 re-registered (realloc latency: 21231 ms)
+  -> ue118 re-registered (realloc latency: 44611 ms)
+  -> ue157 re-registered (realloc latency: 59325 ms)
+  -> ue219 re-registered (realloc latency: 85320 ms)
+  -> ue252 re-registered (realloc latency: 101898 ms)
+  -> ue24 re-registered (realloc latency: 9341 ms)
+  -> ue28 re-registered (realloc latency: 11072 ms)
+  -> ue366 re-registered (realloc latency: 142198 ms)
+  -> ue273 re-registered (realloc latency: 104547 ms)
+  -> ue313 re-registered (realloc latency: 122121 ms)
+  -> ue299 re-registered (realloc latency: 113014 ms)
+  -> ue367 re-registered (realloc latency: 141548 ms)
+  -> ue153 re-registered (realloc latency: 58417 ms)
+  -> ue158 re-registered (realloc latency: 59958 ms)
+  -> ue81 re-registered (realloc latency: 30999 ms)
+  -> ue79 re-registered (realloc latency: 30417 ms)
+  -> ue185 re-registered (realloc latency: 69692 ms)
+  -> ue208 re-registered (realloc latency: 79454 ms)
+  -> ue267 re-registered (realloc latency: 101052 ms)
+  -> ue290 re-registered (realloc latency: 109778 ms)
+  -> ue280 re-registered (realloc latency: 107905 ms)
+  -> ue63 re-registered (realloc latency: 24100 ms)
+  -> ue134 re-registered (realloc latency: 51358 ms)
+  -> ue298 re-registered (realloc latency: 117201 ms)
+  -> ue261 re-registered (realloc latency: 100839 ms)
+  -> ue124 re-registered (realloc latency: 47183 ms)
+  -> ue130 re-registered (realloc latency: 49255 ms)
+  -> ue162 re-registered (realloc latency: 61417 ms)
+  -> ue332 re-registered (realloc latency: 125749 ms)
+  -> ue363 re-registered (realloc latency: 144408 ms)
+  -> ue342 re-registered (realloc latency: 130955 ms)
+  -> ue52 re-registered (realloc latency: 19781 ms)
+  -> ue128 re-registered (realloc latency: 48607 ms)
+  -> ue274 re-registered (realloc latency: 103732 ms)
+  -> ue60 re-registered (realloc latency: 23011 ms)
+  -> ue324 re-registered (realloc latency: 124013 ms)
+  -> ue351 re-registered (realloc latency: 133831 ms)
+  -> ue228 re-registered (realloc latency: 89414 ms)
+  -> ue7 re-registered (realloc latency: 3226 ms)
+  -> ue327 re-registered (realloc latency: 124693 ms)
+  -> ue176 re-registered (realloc latency: 66316 ms)
+  -> ue92 re-registered (realloc latency: 34981 ms)
+  -> ue354 re-registered (realloc latency: 140913 ms)
+  -> ue212 re-registered (realloc latency: 80302 ms)
+  -> ue169 re-registered (realloc latency: 64047 ms)
+  -> ue19 re-registered (realloc latency: 7633 ms)
+  -> ue96 re-registered (realloc latency: 36475 ms)
+  -> ue345 re-registered (realloc latency: 132560 ms)
+  -> ue46 re-registered (realloc latency: 17555 ms)
+  -> ue151 re-registered (realloc latency: 57614 ms)
+  -> ue15 re-registered (realloc latency: 19781 ms)
+  -> ue234 re-registered (realloc latency: 88329 ms)
+  -> ue88 re-registered (realloc latency: 33199 ms)
+  -> ue184 re-registered (realloc latency: 69687 ms)
+  -> ue381 re-registered (realloc latency: 148811 ms)
+  -> ue302 re-registered (realloc latency: 114403 ms)
+  -> ue36 re-registered (realloc latency: 13916 ms)
+  -> ue105 re-registered (realloc latency: 40100 ms)
+  -> ue320 re-registered (realloc latency: 121277 ms)
+  -> ue218 re-registered (realloc latency: 84472 ms)
+  -> ue35 re-registered (realloc latency: 13322 ms)
+  -> ue168 re-registered (realloc latency: 63278 ms)
+  -> ue292 re-registered (realloc latency: 114409 ms)
+  -> ue33 re-registered (realloc latency: 13303 ms)
+  -> ue305 re-registered (realloc latency: 116415 ms)
+  -> ue127 re-registered (realloc latency: 48600 ms)
+  -> ue86 re-registered (realloc latency: 32734 ms)
+  -> ue285 re-registered (realloc latency: 107898 ms)
+  -> ue142 re-registered (realloc latency: 54138 ms)
+  -> ue98 re-registered (realloc latency: 37996 ms)
+  -> ue102 re-registered (realloc latency: 39148 ms)
+  -> ue71 re-registered (realloc latency: 27279 ms)
+  -> ue132 re-registered (realloc latency: 50507 ms)
+  -> ue120 re-registered (realloc latency: 45519 ms)
+  -> ue111 re-registered (realloc latency: 42310 ms)
+  -> ue373 re-registered (realloc latency: 152025 ms)
+  -> ue174 re-registered (realloc latency: 65557 ms)
+  -> ue116 re-registered (realloc latency: 44223 ms)
+  -> ue379 re-registered (realloc latency: 147102 ms)
+  -> ue281 re-registered (realloc latency: 110833 ms)
+  -> ue75 re-registered (realloc latency: 28510 ms)
+  -> ue233 re-registered (realloc latency: 88317 ms)
+  -> ue248 re-registered (realloc latency: 94926 ms)
+  -> ue126 re-registered (realloc latency: 47760 ms)
+  -> ue249 re-registered (realloc latency: 95554 ms)
+  -> ue135 re-registered (realloc latency: 51358 ms)
+  -> ue297 re-registered (realloc latency: 116415 ms)
+  -> ue336 re-registered (realloc latency: 129467 ms)
+  -> ue50 re-registered (realloc latency: 19496 ms)
+  -> ue165 re-registered (realloc latency: 62591 ms)
+  -> ue271 re-registered (realloc latency: 102580 ms)
+  -> ue293 re-registered (realloc latency: 111887 ms)
+  -> ue9 re-registered (realloc latency: 3994 ms)
+  -> ue59 re-registered (realloc latency: 22757 ms)
+  -> ue167 re-registered (realloc latency: 63272 ms)
+  -> ue18 re-registered (realloc latency: 7629 ms)
+  -> ue2 re-registered (realloc latency: 974 ms)
+  -> ue5 re-registered (realloc latency: 14568 ms)
+  -> ue287 re-registered (realloc latency: 117201 ms)
+  -> ue113 re-registered (realloc latency: 42935 ms)
+  -> ue48 re-registered (realloc latency: 18671 ms)
+  -> ue295 re-registered (realloc latency: 115970 ms)
+  -> ue49 re-registered (realloc latency: 18897 ms)
+  -> ue1 re-registered (realloc latency: 399 ms)
+  -> ue160 re-registered (realloc latency: 60654 ms)
+  -> ue216 re-registered (realloc latency: 81405 ms)
+  -> ue365 re-registered (realloc latency: 143353 ms)
+  -> ue69 re-registered (realloc latency: 26073 ms)
+  -> ue244 re-registered (realloc latency: 93165 ms)
+[1/6] Baseline: 384/384 UEs registered
+[2/6] Switching proxy2 to amf2 and starting gnb2...
+[WARN] proxy switch localhost:9998 -> amf2: attempt 1/12 got 'ERROR: Timeout'; retrying in 5s...
+[WARN] proxy switch localhost:9998 -> amf2: attempt 2/12 got 'ERROR: Timeout'; retrying in 5s...
+[WARN] proxy switch localhost:9998 -> amf2: attempt 3/12 got 'ERROR: Timeout'; retrying in 5s...
+[WARN] proxy switch localhost:9998 -> amf2: attempt 4/12 got 'ERROR: Timeout'; retrying in 5s...
+[WARN] proxy switch localhost:9998 -> amf2: attempt 5/12 got 'ERROR: Timeout'; retrying in 5s...
+[WARN] proxy switch localhost:9998 -> amf2: attempt 6/12 got 'ERROR: Timeout'; retrying in 5s...
+[WARN] proxy switch localhost:9998 -> amf2: attempt 7/12 got 'ERROR: Timeout'; retrying in 5s...
+[WARN] proxy switch localhost:9998 -> amf2: attempt 8/12 got 'ERROR: Timeout'; retrying in 5s...
+[WARN] proxy switch localhost:9998 -> amf2: attempt 9/12 got 'ERROR: Timeout'; retrying in 5s...
+[WARN] proxy switch localhost:9998 -> amf2: attempt 10/12 got 'ERROR: Timeout'; retrying in 5s...
+[WARN] proxy switch localhost:9998 -> amf2: attempt 11/12 got 'ERROR: Timeout'; retrying in 5s...
+[PROXY] localhost:9998 switch to amf2 succeeded on attempt 12
+[PROXY] proxy2 settled (STATUS: Backend: amf2
+Active associations: 0
+Connections total: 1
+Switches total: 1
+Auto)
+[Docker] Restarted gnb2
+[Docker] gnb2 NG Setup confirmed
+[2/6] gnb2 radio visible to 96/384 UEs (latched; 3s/444s)...
+[2/6] gnb2 radio visible to 112/384 UEs (latched; 21s/444s)...
+[2/6] gnb2 radio visible to 113/384 UEs (latched; 39s/444s)...
+[2/6] gnb2 radio visible to 113/384 UEs (latched; 57s/444s)...
+[2/6] gnb2 radio visible to 113/384 UEs (latched; 76s/444s)...
+[2/6] gnb2 radio visible to 114/384 UEs (latched; 95s/444s)...
+[2/6] gnb2 radio visible to 114/384 UEs (latched; 113s/444s)...
+[2/6] gnb2 radio visible to 114/384 UEs (latched; 130s/444s)...
+[2/6] gnb2 radio visible to 114/384 UEs (latched; 147s/444s)...
+[2/6] gnb2 radio visible to 114/384 UEs (latched; 166s/444s)...
+[2/6] gnb2 radio visible to 114/384 UEs (latched; 184s/444s)...
+[2/6] gnb2 radio visible to 114/384 UEs (latched; 202s/444s)...
+[2/6] gnb2 radio visible to 115/384 UEs (latched; 218s/444s)...
+[2/6] gnb2 radio visible to 115/384 UEs (latched; 237s/444s)...
+[2/6] gnb2 radio visible to 115/384 UEs (latched; 255s/444s)...
+[2/6] gnb2 radio visible to 115/384 UEs (latched; 273s/444s)...
+[2/6] gnb2 radio visible to 115/384 UEs (latched; 291s/444s)...
+[2/6] gnb2 radio visible to 115/384 UEs (latched; 306s/444s)...
+[2/6] gnb2 radio visible to 115/384 UEs (latched; 325s/444s)...
+[2/6] gnb2 radio visible to 115/384 UEs (latched; 342s/444s)...
+[2/6] gnb2 radio visible to 115/384 UEs (latched; 360s/444s)...
+[2/6] gnb2 radio visible to 115/384 UEs (latched; 378s/444s)...
+[2/6] gnb2 radio visible to 115/384 UEs (latched; 397s/444s)...
+[2/6] gnb2 radio visible to 115/384 UEs (latched; 416s/444s)...
+[2/6] gnb2 radio visible to 115/384 UEs (latched; 434s/444s)...
+[WARN] gnb2 radio (RLS) not visible to all UEs after 444s; restarting gnb2 once more...
+[Docker] Restarted gnb2
+[WARN] gnb2 NG Setup not confirmed within 240.0s
+[ERROR] gnb2 NG Setup not confirmed after retry
+[DIAG] last 15 gnb2 log line(s):
+       gnb2 | [2026-09-24 00:02:31.696] [rrc] [debug] UE[337] new signal detected
+       gnb2 | [2026-09-24 00:02:31.696] [rrc] [debug] UE[338] new signal detected
+       gnb2 | [2026-09-24 00:02:31.696] [rrc] [debug] UE[339] new signal detected
+       gnb2 | [2026-09-24 00:02:31.696] [rrc] [debug] UE[340] new signal detected
+       gnb2 | [2026-09-24 00:02:31.696] [rrc] [debug] UE[341] new signal detected
+       gnb2 | [2026-09-24 00:02:31.696] [rrc] [debug] UE[342] new signal detected
+       gnb2 | [2026-09-24 00:02:31.696] [rrc] [debug] UE[343] new signal detected
+       gnb2 | [2026-09-24 00:02:31.696] [rrc] [debug] UE[344] new signal detected
+       gnb2 | [2026-09-24 00:02:31.696] [rrc] [debug] UE[345] new signal detected
+       gnb2 | [2026-09-24 00:02:31.696] [rrc] [debug] UE[346] new signal detected
+       gnb2 | [2026-09-24 00:02:40.499] [rrc] [debug] UE[347] new signal detected
+       gnb2 | [2026-09-24 00:02:40.898] [rrc] [debug] UE[348] new signal detected
+       gnb2 | [2026-09-24 00:02:40.913] [rrc] [debug] UE[349] new signal detected
+       gnb2 | [2026-09-24 00:02:40.913] [rrc] [debug] UE[350] new signal detected
+       gnb2 | [2026-09-24 00:02:40.913] [rrc] [debug] UE[351] new signal detected
+[CLEANUP] Restoring amf1 (full TAI), gnb1, gnb2, UE configs, proxy2...
+[Docker] compose project 'network-slicing' auto-detected from amf1 labels
+[Docker] using env file: /home/hindem/docker-open5gs/.env
+[Docker] compose service amf1 (re)created
+[Docker] Restarted amf1
+[Docker] Restarted gnb1
+[Docker] gnb1 NG Setup confirmed
+[Docker] Restarted ue1
+[Docker] Restarted ue2
+[Docker] Restarted ue3
+[Docker] Restarted ue4
+[Docker] Restarted ue5
+[Docker] Restarted ue6
+[Docker] Restarted ue7
+[Docker] Restarted ue8
+[Docker] Restarted ue9
+[Docker] Restarted ue10
+[Docker] Restarted ue11
+[Docker] Restarted ue12
+[Docker] Restarted ue13
+[Docker] Restarted ue14
+[Docker] Restarted ue15
+[Docker] Restarted ue16
+[Docker] Restarted ue17
+[Docker] Restarted ue18
+[Docker] Restarted ue19
+[Docker] Restarted ue20
+[Docker] Restarted ue21
+[Docker] Restarted ue22
+[Docker] Restarted ue23
+[Docker] Restarted ue24
+[Docker] Restarted ue25
+[Docker] Restarted ue26
+[Docker] Restarted ue27
+[Docker] Restarted ue28
+[Docker] Restarted ue29
+[Docker] Restarted ue30
+[Docker] Restarted ue31
+[Docker] Restarted ue32
+[Docker] Restarted ue33
+[Docker] Restarted ue34
+[Docker] Restarted ue35
+[Docker] Restarted ue36
+[Docker] Restarted ue37
+[Docker] Restarted ue38
+[Docker] Restarted ue39
+[Docker] Restarted ue40
+[Docker] Restarted ue41
+[Docker] Restarted ue42
+[Docker] Restarted ue43
+[Docker] Restarted ue44
+[Docker] Restarted ue45
+[Docker] Restarted ue46
+[Docker] Restarted ue47
+[Docker] Restarted ue48
+[Docker] Restarted ue49
+[Docker] Restarted ue50
+[Docker] Restarted ue51
+[Docker] Restarted ue52
+[Docker] Restarted ue53
+[Docker] Restarted ue54
+[Docker] Restarted ue55
+[Docker] Restarted ue56
+[Docker] Restarted ue57
+[Docker] Restarted ue58
+[Docker] Restarted ue59
+[Docker] Restarted ue60
+[Docker] Restarted ue61
+[Docker] Restarted ue62
+[Docker] Restarted ue63
+[Docker] Restarted ue64
+[Docker] Restarted ue65
+[Docker] Restarted ue66
+[Docker] Restarted ue67
+[Docker] Restarted ue68
+[Docker] Restarted ue69
+[Docker] Restarted ue70
+[Docker] Restarted ue71
+[Docker] Restarted ue72
+[Docker] Restarted ue73
+[Docker] Restarted ue74
+[Docker] Restarted ue75
+[Docker] Restarted ue76
+[Docker] Restarted ue77
+[Docker] Restarted ue78
+[Docker] Restarted ue79
+[Docker] Restarted ue80
+[Docker] Restarted ue81
+[Docker] Restarted ue82
+[Docker] Restarted ue83
+[Docker] Restarted ue84
+[Docker] Restarted ue85
+[Docker] Restarted ue86
+[Docker] Restarted ue87
+[Docker] Restarted ue88
+[Docker] Restarted ue89
+[Docker] Restarted ue90
+[Docker] Restarted ue91
+[Docker] Restarted ue92
+[Docker] Restarted ue93
+[Docker] Restarted ue94
+[Docker] Restarted ue95
+[Docker] Restarted ue96
+[Docker] Restarted ue97
+[Docker] Restarted ue98
+[Docker] Restarted ue99
+[Docker] Restarted ue100
+[Docker] Restarted ue101
+[Docker] Restarted ue102
+[Docker] Restarted ue103
+[Docker] Restarted ue104
+[Docker] Restarted ue105
+[Docker] Restarted ue106
+[Docker] Restarted ue107
+[Docker] Restarted ue108
+[Docker] Restarted ue109
+[Docker] Restarted ue110
+[Docker] Restarted ue111
+[Docker] Restarted ue112
+[Docker] Restarted ue113
+[Docker] Restarted ue114
+[Docker] Restarted ue115
+[Docker] Restarted ue116
+[Docker] Restarted ue117
+[Docker] Restarted ue118
+[Docker] Restarted ue119
+[Docker] Restarted ue120
+[Docker] Restarted ue121
+[Docker] Restarted ue122
+[Docker] Restarted ue123
+[Docker] Restarted ue124
+[Docker] Restarted ue125
+[Docker] Restarted ue126
+[Docker] Restarted ue127
+[Docker] Restarted ue128
+[Docker] Restarted ue129
+[Docker] Restarted ue130
+[Docker] Restarted ue131
+[Docker] Restarted ue132
+[Docker] Restarted ue133
+[Docker] Restarted ue134
+[Docker] Restarted ue135
+[Docker] Restarted ue136
+[Docker] Restarted ue137
+[Docker] Restarted ue138
+[Docker] Restarted ue139
+[Docker] Restarted ue140
+[Docker] Restarted ue141
+[Docker] Restarted ue142
+[Docker] Restarted ue143
+[Docker] Restarted ue144
+[Docker] Restarted ue145
+[Docker] Restarted ue146
+[Docker] Restarted ue147
+[Docker] Restarted ue148
+[Docker] Restarted ue149
+[Docker] Restarted ue150
+[Docker] Restarted ue151
+[Docker] Restarted ue152
+[Docker] Restarted ue153
+[Docker] Restarted ue154
+[Docker] Restarted ue155
+[Docker] Restarted ue156
+[Docker] Restarted ue157
+[Docker] Restarted ue158
+[Docker] Restarted ue159
+[Docker] Restarted ue160
+[Docker] Restarted ue161
+[Docker] Restarted ue162
+[Docker] Restarted ue163
+[Docker] Restarted ue164
+[Docker] Restarted ue165
+[Docker] Restarted ue166
+[Docker] Restarted ue167
+[Docker] Restarted ue168
+[Docker] Restarted ue169
+[Docker] Restarted ue170
+[Docker] Restarted ue171
+[Docker] Restarted ue172
+[Docker] Restarted ue173
+[Docker] Restarted ue174
+[Docker] Restarted ue175
+[Docker] Restarted ue176
+[Docker] Restarted ue177
+[Docker] Restarted ue178
+[Docker] Restarted ue179
+[Docker] Restarted ue180
+[Docker] Restarted ue181
+[Docker] Restarted ue182
+[Docker] Restarted ue183
+[Docker] Restarted ue184
+[Docker] Restarted ue185
+[Docker] Restarted ue186
+[Docker] Restarted ue187
+[Docker] Restarted ue188
+[Docker] Restarted ue189
+[Docker] Restarted ue190
+[Docker] Restarted ue191
+[Docker] Restarted ue192
+[Docker] Restarted ue193
+[Docker] Restarted ue194
+[Docker] Restarted ue195
+[Docker] Restarted ue196
+[Docker] Restarted ue197
+[Docker] Restarted ue198
+[Docker] Restarted ue199
+[Docker] Restarted ue200
+[Docker] Restarted ue201
+[Docker] Restarted ue202
+[Docker] Restarted ue203
+[Docker] Restarted ue204
+[Docker] Restarted ue205
+[Docker] Restarted ue206
+[Docker] Restarted ue207
+[Docker] Restarted ue208
+[Docker] Restarted ue209
+[Docker] Restarted ue210
+[Docker] Restarted ue211
+[Docker] Restarted ue212
+[Docker] Restarted ue213
+[Docker] Restarted ue214
+[Docker] Restarted ue215
+[Docker] Restarted ue216
+[Docker] Restarted ue217
+[Docker] Restarted ue218
+[Docker] Restarted ue219
+[Docker] Restarted ue220
+[Docker] Restarted ue221
+[Docker] Restarted ue222
+[Docker] Restarted ue223
+[Docker] Restarted ue224
+[Docker] Restarted ue225
+[Docker] Restarted ue226
+[Docker] Restarted ue227
+[Docker] Restarted ue228
+[Docker] Restarted ue229
+[Docker] Restarted ue230
+[Docker] Restarted ue231
+[Docker] Restarted ue232
+[Docker] Restarted ue233
+[Docker] Restarted ue234
+[Docker] Restarted ue235
+[Docker] Restarted ue236
+[Docker] Restarted ue237
+[Docker] Restarted ue238
+[Docker] Restarted ue239
+[Docker] Restarted ue240
+[Docker] Restarted ue241
+[Docker] Restarted ue242
+[Docker] Restarted ue243
+[Docker] Restarted ue244
+[Docker] Restarted ue245
+[Docker] Restarted ue246
+[Docker] Restarted ue247
+[Docker] Restarted ue248
+[Docker] Restarted ue249
+[Docker] Restarted ue250
+[Docker] Restarted ue251
+[Docker] Restarted ue252
+[Docker] Restarted ue253
+[Docker] Restarted ue254
+[Docker] Restarted ue255
+[Docker] Restarted ue256
+[Docker] Restarted ue257
+[Docker] Restarted ue258
+[Docker] Restarted ue259
+[Docker] Restarted ue260
+[Docker] Restarted ue261
+[Docker] Restarted ue262
+[Docker] Restarted ue263
+[Docker] Restarted ue264
+[Docker] Restarted ue265
+[Docker] Restarted ue266
+[Docker] Restarted ue267
+[Docker] Restarted ue268
+[Docker] Restarted ue269
+[Docker] Restarted ue270
+[Docker] Restarted ue271
+[Docker] Restarted ue272
+[Docker] Restarted ue273
+[Docker] Restarted ue274
+[Docker] Restarted ue275
+[Docker] Restarted ue276
+[Docker] Restarted ue277
+[Docker] Restarted ue278
+[Docker] Restarted ue279
+[Docker] Restarted ue280
+[Docker] Restarted ue281
+[Docker] Restarted ue282
+[Docker] Restarted ue283
+[Docker] Restarted ue284
+[Docker] Restarted ue285
+[Docker] Restarted ue286
+[Docker] Restarted ue287
+[Docker] Restarted ue288
+[Docker] Restarted ue289
+[Docker] Restarted ue290
+[Docker] Restarted ue291
+[Docker] Restarted ue292
+[Docker] Restarted ue293
+[Docker] Restarted ue294
+[Docker] Restarted ue295
+[Docker] Restarted ue296
+[Docker] Restarted ue297
+[Docker] Restarted ue298
+[Docker] Restarted ue299
+[Docker] Restarted ue300
+[Docker] Restarted ue301
+[Docker] Restarted ue302
+[Docker] Restarted ue303
+[Docker] Restarted ue304
+[Docker] Restarted ue305
+[Docker] Restarted ue306
+[Docker] Restarted ue307
+[Docker] Restarted ue308
+[Docker] Restarted ue309
+[Docker] Restarted ue310
+[Docker] Restarted ue311
+[Docker] Restarted ue312
+[Docker] Restarted ue313
+[Docker] Restarted ue314
+[Docker] Restarted ue315
+[Docker] Restarted ue316
+[Docker] Restarted ue317
+[Docker] Restarted ue318
+[Docker] Restarted ue319
+[Docker] Restarted ue320
+[Docker] Restarted ue321
+[Docker] Restarted ue322
+[Docker] Restarted ue323
+[Docker] Restarted ue324
+[Docker] Restarted ue325
+[Docker] Restarted ue326
+[Docker] Restarted ue327
+[Docker] Restarted ue328
+[Docker] Restarted ue329
+[Docker] Restarted ue330
+[Docker] Restarted ue331
+[Docker] Restarted ue332
+[Docker] Restarted ue333
+[Docker] Restarted ue334
+[Docker] Restarted ue335
+[Docker] Restarted ue336
+[Docker] Restarted ue337
+[Docker] Restarted ue338
+[Docker] Restarted ue339
+[Docker] Restarted ue340
+[Docker] Restarted ue341
+[Docker] Restarted ue342
+[Docker] Restarted ue343
+[Docker] Restarted ue344
+[Docker] Restarted ue345
+[Docker] Restarted ue346
+[Docker] Restarted ue347
+[Docker] Restarted ue348
+[Docker] Restarted ue349
+[Docker] Restarted ue350
+[Docker] Restarted ue351
+[Docker] Restarted ue352
+[Docker] Restarted ue353
+[Docker] Restarted ue354
+[Docker] Restarted ue355
+[Docker] Restarted ue356
+[Docker] Restarted ue357
+[Docker] Restarted ue358
+[Docker] Restarted ue359
+[Docker] Restarted ue360
+[Docker] Restarted ue361
+[Docker] Restarted ue362
+[Docker] Restarted ue363
+[Docker] Restarted ue364
+[Docker] Restarted ue365
+[Docker] Restarted ue366
+[Docker] Restarted ue367
+[Docker] Restarted ue368
+[Docker] Restarted ue369
+[Docker] Restarted ue370
+[Docker] Restarted ue371
+[Docker] Restarted ue372
+[Docker] Restarted ue373
+[Docker] Restarted ue374
+[Docker] Restarted ue375
+[Docker] Restarted ue376
+[Docker] Restarted ue377
+[Docker] Restarted ue378
+[Docker] Restarted ue379
+[Docker] Restarted ue380
+[Docker] Restarted ue381
+[Docker] Restarted ue382
+[Docker] Restarted ue383
+[Docker] Restarted ue384
+[Docker] Restarted gnb2
+[Export] JSON: results/exp8_n14.json
+[Export] CSV: results/exp8_n14.csv
+[Export] LaTeX: results/exp8_n14.tex
+[Export] Summary: results/exp8_n14_summary.txt
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+[FATAL] n14-mobility ABORTED EARLY: gnb2 radio (RLS) not visible to UEs
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+

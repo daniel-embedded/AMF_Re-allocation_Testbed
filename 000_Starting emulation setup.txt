@@ -69,9 +69,11 @@ N14 re-allocation:
 ~/docker-open5gs$ python3 sctp_proxy/amf_orchestrator_v7.py \
     --command n14-mobility \
     --target amf2 \
+    --ues 384 \
+    --radio-min-frac 0.95 \
     --compose-dir ~/docker-open5gs/compose-files/network-slicing/ \
     --wait-after 60 \
-    --basename exp8_n14
+    --basename exp8_n14 | tee exp8_384_console.txt
 
 Plotting boxplot_comparison, barplot_per_ue, cdf_latency, timeline_gantt, and ip_rotation:
 
@@ -98,6 +100,8 @@ RUN A SINGLE EXPERIMENT WITH VARIOUS UEs
 python3 sctp_proxy/amf_orchestrator_v7.py --command n14-mobility --target amf2 --ues 12 --wait-after 180 --basename exp8_12ue
 python3 sctp_proxy/amf_orchestrator_v7.py --command n14-mobility --target amf2 --ues 24 --wait-after 180 --basename exp8_24ue
 python3 sctp_proxy/amf_orchestrator_v7.py --command n14-mobility --target amf2 --ues 48 --wait-after 180 --basename exp8_48ue
+python3 sctp_proxy/amf_orchestrator_v7.py --command n14-mobility --target amf2 --ues 488 --wait-after 180 --basename exp8_488ue
+python3 sctp_proxy/amf_orchestrator_v7.py --command n14-mobility --target amf2 --ues 768 --wait-after 180 --basename exp8_768ue
 
 ==========================================================================================
 RUN ALL EXPERIMENTS
@@ -106,10 +110,179 @@ Initializing network with N UEs:
 	./start_network.sh (6, unchanged default)
 	./start_network.sh 12
 	./start_network.sh 24
-	./start_network.sh 48 or all
+	./start_network.sh 48
+	./start_network.sh 488
+	./start_network.sh 768 or all
 
 Running all experiments:
-	./run_all_experiments_v4.sh              # 6 UEs — identical behavior to v3
-	./run_all_experiments_v4.sh pilot 12     # label + 12 UEs
-	./run_all_experiments_v4.sh scale 24
-	./run_all_experiments_v4.sh scale 48
+	./run_all_experiments_v5.sh                # 6 UEs — identical behavior to v3 and v4
+	./run_all_experiments_v5.sh <LABLE> 12     # label + 12 UEs
+	./run_all_experiments_v5.sh <LABLE> 24
+	./run_all_experiments_v5.sh <LABLE> 48
+	./run_all_experiments_v5.sh <LABLE> 488
+	./run_all_experiments_v5.sh <LABLE> 768
+
+
+
+======================================================================================================================
+================================================= FULL SETUP RUNNING =================================================
+======================================================================================================================
+
+1) Running once each tier:
+
+for j in 6 12 24 48 96 192 216 240 264 288 312 336 384 488; do
+  ./start_network_v2.sh ${j}
+  sleep 30
+  ./run_all_experiments_v5.sh UE_${j} ${j}
+  sleep 30
+  python3 Python_scripts/container_ctl.py down
+  sleep 30
+done
+
+
+2) Plotting initial figures (repeat for each all-exp running):
+
+./generate_all_plots_v3.sh results/<RESULTS_FOLDER>.
+
+
+3) Running additional Exp8 repetitions for statistical relevance:
+
+3.a) 6 UEs:
+./start_network_v2.sh 6
+for i in 1 2; do
+  python3 sctp_proxy/amf_orchestrator_v7.py --command n14-mobility --target amf2 --ues 6 --wait-after 180 --basename exp8_6ue_rep${i}
+done
+python3 Python_scripts/container_ctl.py down
+
+3.b) 12 UEs:
+./start_network_v2.sh 12
+for i in 1 2; do
+  python3 sctp_proxy/amf_orchestrator_v7.py --command n14-mobility --target amf2 --ues 12 --wait-after 180 --basename exp8_12ue_rep${i}
+done
+python3 Python_scripts/container_ctl.py down
+
+3.c) 24 UEs:
+./start_network_v2.sh 24
+for i in 1 2 3 4 5; do
+  python3 sctp_proxy/amf_orchestrator_v7.py --command n14-mobility --target amf2 --ues 24 --wait-after 180 --basename exp8_24ue_rep${i}
+done
+python3 Python_scripts/container_ctl.py down
+
+3.d) 48 UEs:
+./start_network_v2.sh 48
+for i in 1 2 3 4 5; do
+  python3 sctp_proxy/amf_orchestrator_v7.py --command n14-mobility --target amf2 --ues 48 --wait-after 180 --basename exp8_48ue_rep${i}
+done
+python3 Python_scripts/container_ctl.py down
+
+3.e) 96 UEs:
+./start_network_v2.sh 96
+for i in 1 2; do
+  python3 sctp_proxy/amf_orchestrator_v7.py --command n14-mobility --target amf2 --ues 96 --wait-after 180 --basename exp8_96ue_rep${i}
+done
+python3 Python_scripts/container_ctl.py down
+
+3.f) 192 UEs:
+./start_network_v2.sh 192
+for i in 1 2 3 4 5; do
+  python3 sctp_proxy/amf_orchestrator_v7.py --command n14-mobility --target amf2 --ues 192 --wait-after 180 --basename exp8_192ue_rep${i}
+done
+python3 Python_scripts/container_ctl.py down
+
+3.g) 384 UEs:
+./start_network_v2.sh 384
+for i in 1 2 3 4 5; do
+  python3 sctp_proxy/amf_orchestrator_v7.py --command n14-mobility --target amf2 --ues 384 --wait-after 180 --basename exp8_384ue_rep${i}
+done
+python3 Python_scripts/container_ctl.py down
+
+3.h) 488 UEs:
+./start_network_v2.sh 488
+for i in 1 2 3 4 5; do
+  python3 sctp_proxy/amf_orchestrator_v7.py --command n14-mobility --target amf2 --ues 488 --wait-after 180 --basename exp8_488ue_rep${i}
+done
+python3 Python_scripts/container_ctl.py down
+
+3.i) Multiple runnings:
+for j in 264 288 312 336; do
+./start_network_v2.sh ${j}
+for i in 1 2 3 4 5; do
+  python3 sctp_proxy/amf_orchestrator_v7.py --command n14-mobility --target amf2 --ues ${j} --wait-after 180 --basename exp8_${j}ue_rep${i}
+done
+python3 Python_scripts/container_ctl.py down
+done
+
+4) Summary results:
+
+./generate_analysis_plots.sh
+
+
+5) Stressing network:
+
+5.a) Back-forth
+
+for j in 6 12 24 48 96 192 216 240 384 488; do
+  ./start_network_v2.sh ${j}
+  sleep 60
+  python3 sctp_proxy/amf_orchestrator_v7.py --command backforth --wait-before 10 --wait-after 30 --basename <RESULTS_NAME> --cooldown 30 --repeat 10 --ues ${j} --gnb-pool gnb1
+  sleep 60
+  python3 Python_scripts/container_ctl.py down
+  sleep 60
+done
+OBS: <RESULTS_NAME> can include ${j}
+
+5.b) Concurrent
+
+  ./start_network_v2.sh 512
+  python3 sctp_proxy/amf_orchestrator_v7.py --command backforth --wait-before 10 --wait-after 30 --basename Exp2_512UE --cooldown 30 --repeat 10 --ues 512 --gnb-pool gnb1
+
+
+======================================================================================================================
+=============================================== CONVERTING JSON TO TXT ===============================================
+======================================================================================================================
+
+Considers only the current folder:
+find . -maxdepth 1 -type f -name "*.json" -exec sh -c 'echo "=== $(basename "$1") ===" >> consolidado.txt && cat "$1" >> consolidado.txt && echo "" >> consolidado.txt' _ {} \;
+
+Current folder, chronological order:
+find . -maxdepth 1 -type f -name "*.json" -printf '%T@ %p\n' | sort -n | cut -d' ' -f2- | while read f; do echo "=== $(basename "$f") ===" >> consolidado.txt && cat "$f" >> consolidado.txt && echo "" >> consolidado.txt; done
+
+Includes sub-folders, chronological order:
+find . -type f -name "*.json" -printf '%T@ %p\n' | sort -n | cut -d' ' -f2- | while read f; do echo "=== $(basename "$f") ===" >> consolidado.txt && cat "$f" >> consolidado.txt && echo "" >> consolidado.txt; done
+
+
+
+
+
+======================================================================================================================
+================================================ BASH SCRIPT EXAMPLES ================================================
+======================================================================================================================
+
+for j in 1 2 3; do
+        echo "=== $j ==="
+        if [[ "$j" == "2" ]]; then
+                echo "=== 1/$j ==="
+        fi
+done
+
+
+for fname in "a.txt" "b.txt" "c.txt"
+do
+  echo $fname
+  if [ "$fname" = "a.txt" ] || [ "$fname" = "c.txt" ]; then
+    echo "yes!"
+  else
+    echo "no!"
+  fi
+done
+
+
+aaa="xxx"
+if [[ "$aaa" == "bbb" ]]; then
+   echo "bbb"
+elif [[ "$aaa" == "ccc" ]]; then
+   echo "ccc"
+else
+   echo "something else"
+fi
+

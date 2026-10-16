@@ -1,0 +1,18 @@
+AMF RE-ALLOCATION — SEQUENTIAL vs CONCURRENT SUMMARY
+=======================================================
+
+Sequential:
+  n      = 192 UEs
+  mean   = 337.458 s
+  median = 337.495 s
+  std    = 194.015 s
+  range  = [3.946, 670.776] s
+
+Concurrent:
+  n      = 192 UEs
+  mean   = 40.605 s
+  median = 40.951 s
+  std    = 20.946 s
+  range  = [4.134, 76.338] s
+
+Mean speedup (sequential / concurrent): 8.31x

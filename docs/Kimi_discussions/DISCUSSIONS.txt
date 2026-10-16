@@ -1,0 +1,36 @@
+INITIAL REQUIREMENTS
+1) This experiment can run individually or in an automatic sequence with  the other five experiments.
+2) All UEs need to have equivalent configs, I mean, UEs to re-allocate  and re-select need to have the same config from UEs not  re-allocating/re-selecting. In this way, we can choose any of them to  re-allocate and re-select.
+3) It's ok to adapt previous setup since it does not jeopardize its  ability to run the very same previous experiments individually or all of  them (including the new one) in a row.
+4) You can suggest possible metrics to measure in this new experiment,  as well as other measures in previous experiments.
+5) Results from generate_all_plots.sh and run_all_experiments.sh have the same importance.
+DISCUSSED CHANGES:
+Summary: What needs to change
+1. UE configs must become editable at runtime
+The current docker-compose.yaml injects UE configs via Docker configs:  (read-only). To let the orchestrator temporarily rewrite gnbSearchList  for the chosen subset, all six UE services must switch to volumes: (bind  mounts) pointing to the host config directory.
+2. All UEs get identical, gNB-agnostic configs
+Every ue*.yaml will list both gNBs in gnbSearchList. At experiment time,  the orchestrator will swap the order to gnb2 first for the second-half  subset, then restore the original after the run. This guarantees any UE  is interchangeable and eliminates bias.
+3. gNB2 points to the proxy
+gnb2.yaml will connect to proxy.open5gs.org:38412 instead of directly to  amf2:38413. This keeps the AMF reallocation path uniform across both  gNBs, making latencies directly comparable.
+4. Two new orchestrator modes
+split-gnb-simultaneous: AMF switch to AMF2, start gNB2, and restart  the second-half UEs all at once.
+split-gnb-sequential: AMF switch first, wait for the first-half UEs  to recover on gNB1, then start gNB2 and restart the second-half UEs.
+Both modes include config backup/restore so crashes don't leave modified  files behind.
+5. New metrics (benefits all experiments)
+rrc_latency_ms: RRC-CONNECTED minus initial_registration
+post_restart_latency_ms: time from container restart to  registration_success (isolates the restart cost)
+Absolute timestamps for each phase (enables deeper timeline plots)
+6. Workflow integration
+run_all_experiments.sh gains steps 6 and 7. generate_all_plots.sh gains a  cohort-comparison plot contrasting gNB1 stayers vs. gNB2 movers.
+Backward compatibility: Experiments 1–5 run identically. The only  infrastructure change is the bind mount; legacy modes do not rewrite  configs.
+The two new experiments (6 and 7) include simultaneous AMF switch + gNB  re-selection and sequential (AMF recovery first, then gNB re-selection).  We also defined some metrics:
+For the new experiment (beyond your current set):
+gNB reselection latency: Time from UE container restart to  RRC-CONNECTED on the new gNB.
+Path-divergence offset: Difference in reallocation latency between  the gnb1→proxy→amf2 cohort and the gnb2→amf2 cohort.
+Cross-gNB registration offset: Whether the half moving to gnb2  register faster or slower than the half staying on gnb1.
+IP churn correlation: Check if IP changes correlate with gNB changes  (they might not, if the same SMF/UPF pair is used, but it's worth  measuring).
+For the previous experiments (easy additions):
+RRC establishment latency: rrc_connected timestamp minus  initial_registration timestamp.
+AMF session count delta: From AMF logs, count Added/Removed sessions  per run to verify clean teardown.
+Per-run recovery jitter: Coefficient of variation (CV) of  reallocation latency across UEs—useful for spotting contention.
+

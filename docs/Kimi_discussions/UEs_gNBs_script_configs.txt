@@ -1,0 +1,1248 @@
+  ue1:
+    container_name: ue1
+    image: "ghcr.io/borjis131/ue:v3.2.7"
+    command: "-c /UERANSIM/config/ue1.yaml"
+    networks:
+      open5gs:
+        aliases:
+          - ue1.ueransim.org
+#    configs:
+#      - source: ue1_config
+#        target: /UERANSIM/config/ue1.yaml
+    volumes:
+#      - ../../configs/network-slicing/:/UERANSIM/config/
+      - ../../configs/network-slicing/ue1.yaml:/UERANSIM/config/ue1.yaml:rw
+    privileged: true
+    cap_add:
+      - NET_ADMIN
+    depends_on:
+      - gnb1
+#      - gnb2
+
+mcc: '001'
+mnc: '01'
+
+nci: '0x000000011'
+gNBId: 2
+idLength: 32
+#tac: 1
+tac: 2
+
+linkIp: gnb2.ueransim.org
+ngapIp: gnb2.ueransim.org
+gtpIp: gnb2.ueransim.org
+
+amfConfigs:
+  - address: proxy2.open5gs.org
+    port: 38413
+#  - address: amf1.open5gs.org
+#    port: 38412
+#  - address: amf2.open5gs.org
+#    port: 38413
+
+slices:
+  - sst: 1
+    sd: 0x000001
+  - sst: 1
+    sd: 0x000002
+
+ignoreStreamIds: true
+
+#!/usr/bin/bash
+# =============================================================================
+# run_all_experiments_v2.sh
+# Automated workflow for AMF re-allocation experiments (7 modes).
+#
+# New in v2:
+#   06_split_gnb_simultaneous : AMF2 switch + gNB2 start + restart second-half UEs
+#                               (all triggered together)
+#   07_split_gnb_sequential   : AMF2 switch first, wait for recovery, then
+#                               gNB2 start + restart second-half UEs
+#
+# The orchestrator computes new metrics (rrc_latency_ms, post_restart_latency_ms)
+# automatically; this script only drives the sequencing.
+# =============================================================================
+
+set -uo pipefail
+
+# ---------------------------------------------------------------------------
+# Configuration
+# ---------------------------------------------------------------------------
+ORCHESTRATOR="python3 sctp_proxy/amf_orchestrator_v5.py"
+UE_POOL="ue1,ue2,ue3,ue4,ue5,ue6"
+GNB_POOL_SINGLE="gnb1"
+GNB_POOL_BOTH="gnb1,gnb2"
+WAIT_BEFORE=10
+WAIT_AFTER=60
+COOLDOWN=30
+
+# ---------------------------------------------------------------------------
+# Determine output root directory
+# ---------------------------------------------------------------------------
+TIMESTAMP=$(date +"%Y.%m.%d_%H-%M-%S")
+CUSTOM_LABEL="${1:-}"
+
+if [ -n "$CUSTOM_LABEL" ]; then
+    ROOT_DIR="results/${TIMESTAMP}_${CUSTOM_LABEL}"
+else
+    ROOT_DIR="results/${TIMESTAMP}"
+fi
+mkdir -p "$ROOT_DIR"
+
+# Subdirectories for each experiment
+DIR_SEQ="$ROOT_DIR/01_sequential"
+DIR_CONC="$ROOT_DIR/02_concurrent"
+DIR_BF="$ROOT_DIR/03_backforth"
+DIR_PART="$ROOT_DIR/04_partial"
+DIR_GNB="$ROOT_DIR/05_isolate_gnb"
+DIR_SPLIT_SIM="$ROOT_DIR/06_split_gnb_simultaneous"
+DIR_SPLIT_SEQ="$ROOT_DIR/07_split_gnb_sequential"
+
+for d in "$DIR_SEQ" "$DIR_CONC" "$DIR_BF" "$DIR_PART" "$DIR_GNB" "$DIR_SPLIT_SIM" "$DIR_SPLIT_SEQ"; do
+    mkdir -p "$d"
+done
+
+# ---------------------------------------------------------------------------
+# Helper functions
+# ---------------------------------------------------------------------------
+
+ensure_amf1() {
+    echo "[CHECK] Ensuring proxy is on AMF1..."
+    STATUS=$($ORCHESTRATOR --command status 2>/dev/null || echo "ERROR")
+    if echo "$STATUS" | grep -q "Backend: amf1"; then
+        echo "[OK] Proxy already on AMF1"
+        return 0
+    fi
+    echo "[INFO] Switching proxy back to AMF1..."
+    $ORCHESTRATOR --command switch --target amf1
+    sleep 3
+}
+
+ensure_gnb2_stopped() {
+    echo "[CHECK] Ensuring gnb2 is stopped for clean baseline..."
+    if sudo docker ps --format "{{.Names}}" | grep -q "^gnb2$"; then
+        echo "[INFO] Stopping gnb2..."
+        sudo docker stop gnb2 >/dev/null 2>&1
+        sleep 2
+    fi
+    echo "[OK] gnb2 is not running"
+}
+
+run_experiment() {
+    local name="$1"
+    local cmd="$2"
+    local outdir="$3"
+    local extra_args="${4:-}"
+
+    echo ""
+    echo "======================================================================"
+    echo "  EXPERIMENT: $name"
+    echo "  Output: $outdir"
+    echo "======================================================================"
+
+    # Experiments 1–5 and 6–7 all need AMF1 baseline, except back-forth
+    if [ "$name" != "backforth" ]; then
+        ensure_amf1
+    fi
+
+    # Split-gNB experiments need a clean gnb2 state before they begin
+    if [[ "$name" == split_gnb* ]]; then
+        ensure_gnb2_stopped
+    fi
+
+    echo "[WAIT] Stabilizing for ${WAIT_BEFORE}s before $name..."
+    sleep "$WAIT_BEFORE"
+
+    eval "$cmd $extra_args --output-dir \"$outdir\" --basename amf_realloc"
+
+    if [ $? -eq 0 ]; then
+        echo "[DONE] $name completed. Results in: $outdir"
+    else
+        echo "[WARN] $name may have encountered an error. Check logs above."
+    fi
+
+    echo "[WAIT] Cooldown ${COOLDOWN}s before next experiment..."
+    sleep "$COOLDOWN"
+}
+
+# ---------------------------------------------------------------------------
+# Main workflow
+# ---------------------------------------------------------------------------
+
+echo "======================================================================"
+echo "  AMF Re-allocation Experiment Workflow v2"
+echo "  Root output: $ROOT_DIR"
+echo "======================================================================"
+
+# Verify orchestrator exists
+if [ ! -f "sctp_proxy/amf_orchestrator_v5.py" ]; then
+    echo "[ERROR] sctp_proxy/amf_orchestrator_v5.py not found!"
+    echo "        Please ensure the updated orchestrator is in place."
+    exit 1
+fi
+
+# Verify proxy is reachable
+STATUS=$($ORCHESTRATOR --command status 2>/dev/null || echo "ERROR")
+if echo "$STATUS" | grep -q "ERROR"; then
+    echo "[ERROR] Cannot reach sctp-proxy. Is it running?"
+    exit 1
+fi
+
+# ---------------------------------------------------------------------------
+# 1) SEQUENTIAL (stagger = 5 s)
+# ---------------------------------------------------------------------------
+run_experiment "SEQUENTIAL (stagger=5s)" \
+    "$ORCHESTRATOR --command sequential --target amf2 --wait-before $WAIT_BEFORE --wait-after $WAIT_AFTER --stagger 5 --ue-pool $UE_POOL --gnb-pool $GNB_POOL_SINGLE" \
+    "$DIR_SEQ"
+
+# ---------------------------------------------------------------------------
+# 2) CONCURRENT
+# ---------------------------------------------------------------------------
+run_experiment "CONCURRENT" \
+    "$ORCHESTRATOR --command concurrent --target amf2 --wait-before $WAIT_BEFORE --wait-after $WAIT_AFTER --ue-pool $UE_POOL --gnb-pool $GNB_POOL_SINGLE" \
+    "$DIR_CONC"
+
+# ---------------------------------------------------------------------------
+# 3) BACK-FORTH (4 cycles: AMF2 -> AMF1 -> AMF2 -> AMF1)
+# ---------------------------------------------------------------------------
+run_experiment "BACK-FORTH (4 cycles)" \
+    "$ORCHESTRATOR --command backforth --wait-before $WAIT_BEFORE --wait-after $WAIT_AFTER --cooldown $COOLDOWN --repeat 4 --ue-pool $UE_POOL --gnb-pool $GNB_POOL_SINGLE" \
+    "$DIR_BF"
+
+# ---------------------------------------------------------------------------
+# 4) PARTIAL (only 3 UEs restarted)
+# ---------------------------------------------------------------------------
+run_experiment "PARTIAL (subset: ue1,ue2,ue3)" \
+    "$ORCHESTRATOR --command partial --target amf2 --wait-before $WAIT_BEFORE --wait-after $WAIT_AFTER --ue-subset ue1,ue2,ue3 --ue-pool $UE_POOL --gnb-pool $GNB_POOL_SINGLE" \
+    "$DIR_PART"
+
+# ---------------------------------------------------------------------------
+# 5) ISOLATE-GNB (only gNB restarted)
+# ---------------------------------------------------------------------------
+run_experiment "ISOLATE-GNB" \
+    "$ORCHESTRATOR --command isolate-gnb --target amf2 --wait-before $WAIT_BEFORE --wait-after $WAIT_AFTER --ue-pool $UE_POOL --gnb-pool $GNB_POOL_SINGLE" \
+    "$DIR_GNB"
+
+# ---------------------------------------------------------------------------
+# 6) SPLIT-GNB SIMULTANEOUS
+#    AMF switch + gNB2 start + restart second-half UEs all together
+# ---------------------------------------------------------------------------
+run_experiment "SPLIT-GNB SIMULTANEOUS (ue4,ue5,ue6 -> gnb2)" \
+    "$ORCHESTRATOR --command split-gnb-simultaneous --target amf2 --wait-before $WAIT_BEFORE --wait-after $WAIT_AFTER --ue-pool $UE_POOL --gnb-pool $GNB_POOL_BOTH --ue-subset ue4,ue5,ue6" \
+    "$DIR_SPLIT_SIM"
+
+# ---------------------------------------------------------------------------
+# 7) SPLIT-GNB SEQUENTIAL
+#    AMF switch first, wait for recovery, then gNB2 phase
+# ---------------------------------------------------------------------------
+run_experiment "SPLIT-GNB SEQUENTIAL (ue4,ue5,ue6 -> gnb2)" \
+    "$ORCHESTRATOR --command split-gnb-sequential --target amf2 --wait-before $WAIT_BEFORE --wait-after $WAIT_AFTER --ue-pool $UE_POOL --gnb-pool $GNB_POOL_BOTH --ue-subset ue4,ue5,ue6" \
+    "$DIR_SPLIT_SEQ"
+
+# ---------------------------------------------------------------------------
+# Final cleanup
+# ---------------------------------------------------------------------------
+ensure_amf1
+ensure_gnb2_stopped
+
+# ---------------------------------------------------------------------------
+# Summary
+# ---------------------------------------------------------------------------
+echo ""
+echo "======================================================================"
+echo "  WORKFLOW COMPLETE"
+echo "======================================================================"
+echo ""
+echo "All results saved under: $ROOT_DIR"
+echo ""
+echo "Subdirectories:"
+echo "  01_sequential/              → Sequential mode (stagger=5s)"
+echo "  02_concurrent/              → Concurrent mode (all 6 UEs)"
+echo "  03_backforth/               → Back-forth consistency (4 cycles)"
+echo "  04_partial/                 → Partial re-allocation (3 UEs)"
+echo "  05_isolate_gnb/             → gNB-only restart"
+echo "  06_split_gnb_simultaneous/  → Split-gNB simultaneous"
+echo "  07_split_gnb_sequential/    → Split-gNB sequential"
+echo ""
+echo "Each folder contains:"
+echo "  amf_realloc.json          (raw data, now with rrc_latency_ms &"
+echo "                             post_restart_latency_ms where applicable)"
+echo "  amf_realloc.csv           (spreadsheet)"
+echo "  amf_realloc.tex           (LaTeX table)"
+echo "  amf_realloc_summary.txt   (human-readable summary)"
+echo ""
+echo "Next step:"
+echo "  ./generate_all_plots_v2.sh $ROOT_DIR"
+echo ""
+echo "======================================================================"
+
+#!/usr/bin/env python3
+"""
+amf_orchestrator_v5_dualproxy.py
+Multi-UE, multi-mode automated orchestrator for AMF re-allocation experiments.
+
+Fixes over v5 + dual-proxy support:
+  1. Legacy modes (1-5) only restart gnb1, never gnb2.
+  2. Split-gnb modes (6-7) restart gnb1 to force stayer re-registration.
+  3. gnb2 readiness is verified before restarting movers.
+  4. post_restart_latency_ms uses docker inspect StartedAt (UTC).
+  5. _swap_gnb_order uses regex, not brittle exact-string replace.
+  6. CLI passes cleaned ue_pool/gnb_pool to runner.
+  7. experiment_timestamp added to all mode returns.
+  8. run_baseline_check restored to verify UE registration state.
+  9. Input validation for ue_subset in split-gnb modes.
+  10. Dual-proxy support: both proxies switch simultaneously.
+"""
+
+import argparse
+import csv
+import json
+import os
+import re
+import socket
+import subprocess
+import sys
+import time
+import statistics
+from datetime import datetime, timezone
+from pathlib import Path
+from typing import Dict, List, Optional, Tuple
+
+# -- Configuration ---------------------------------------------------
+DEFAULT_PROXY_HOST = "localhost"
+DEFAULT_PROXY_PORT = 9999
+DEFAULT_PROXY2_HOST = "localhost"
+DEFAULT_PROXY2_PORT = 9998
+DEFAULT_OUTPUT_DIR = "./results"
+DEFAULT_CONFIG_DIR = "configs/network-slicing"
+
+DEFAULT_UE_POOL = ["ue1", "ue2", "ue3", "ue4", "ue5", "ue6"]
+DEFAULT_GNB_POOL = ["gnb1"]
+LEGACY_GNB = "gnb1"
+
+CONTAINERS = {"proxy": "sctp-proxy"}
+
+# -- Proxy Communication --------------------------------------------
+def send_proxy_cmd(cmd: str, host: str, port: int, timeout: float = 5.0) -> str:
+    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    sock.settimeout(timeout)
+    try:
+        sock.sendto(cmd.encode(), (host, port))
+        data, _ = sock.recvfrom(4096)
+        return data.decode().strip()
+    except socket.timeout:
+        return "ERROR: Timeout"
+    finally:
+        sock.close()
+
+def get_proxy_status(host: str, port: int) -> str:
+    return send_proxy_cmd("STATUS", host, port)
+
+def switch_proxy_backend(target: str, host: str, port: int) -> bool:
+    resp = send_proxy_cmd(f"SWITCH {target}", host, port)
+    return resp.startswith("OK")
+
+def switch_both_backends(target: str, host1: str, port1: int, host2: str, port2: int) -> bool:
+    """Switch both proxies to the same target AMF."""
+    ok1 = switch_proxy_backend(target, host1, port1)
+    ok2 = switch_proxy_backend(target, host2, port2)
+    if ok1 and ok2:
+        return True
+    if not ok1:
+        print(f"[ERROR] Primary proxy switch failed ({host1}:{port1})")
+    if not ok2:
+        print(f"[ERROR] Secondary proxy switch failed ({host2}:{port2})")
+    return False
+
+# -- Docker Helpers -------------------------------------------------
+def docker_logs(container: str, tail: int = 500) -> str:
+    result = subprocess.run(
+        ["sudo", "docker", "logs", "--tail", str(tail), container],
+        capture_output=True, text=True
+    )
+    return result.stdout
+
+def restart_container(container: str) -> bool:
+    result = subprocess.run(
+        ["sudo", "docker", "restart", container],
+        capture_output=True, text=True
+    )
+    if result.returncode != 0:
+        print(f"[ERROR] Failed to restart {container}: {result.stderr.strip()}")
+        return False
+    print(f"[Docker] Restarted {container}")
+    return True
+
+def container_running(container: str) -> bool:
+    result = subprocess.run(
+        ["sudo", "docker", "ps", "--format", "{{.Names}}",
+         "--filter", f"name={container}"],
+        capture_output=True, text=True
+    )
+    return container in result.stdout
+
+def get_container_start_time_ms(container: str) -> Optional[float]:
+    """Return container start time in UTC milliseconds from docker inspect."""
+    result = subprocess.run(
+        ["sudo", "docker", "inspect", "-f", "{{.State.StartedAt}}", container],
+        capture_output=True, text=True
+    )
+    if result.returncode != 0:
+        return None
+    ts_str = result.stdout.strip()
+    if ts_str.endswith("Z"):
+        ts_str = ts_str[:-1] + "+00:00"
+    try:
+        dt = datetime.fromisoformat(ts_str)
+        return dt.timestamp() * 1000
+    except ValueError:
+        ts_str = ts_str.split(".")[0]
+        if ts_str.endswith("+00:00"):
+            ts_str = ts_str[:-6]
+        try:
+            dt = datetime.strptime(ts_str, "%Y-%m-%dT%H:%M:%S")
+            return dt.replace(tzinfo=timezone.utc).timestamp() * 1000
+        except ValueError:
+            return None
+
+def wait_for_gnb_ng_setup(gnb_name: str, timeout: float = 15.0, interval: float = 1.0) -> bool:
+    """Poll gNB logs until NG Setup procedure is successful."""
+    elapsed = 0.0
+    pat = re.compile(r"NG Setup procedure is successful")
+    while elapsed < timeout:
+        logs = docker_logs(gnb_name, tail=50)
+        if pat.search(logs):
+            print(f"[Docker] {gnb_name} NG Setup confirmed")
+            return True
+        time.sleep(interval)
+        elapsed += interval
+    print(f"[WARN] {gnb_name} NG Setup not confirmed within {timeout}s")
+    return False
+
+# -- Log Parsers ----------------------------------------------------
+class LogParser:
+    UE_TS_RE = re.compile(r"\[(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3})\]")
+    UE_PATTERNS = {
+        "mm_deregistered": re.compile(r"UE switches to state \[MM-DEREGISTERED"),
+        "mm_registered": re.compile(r"UE switches to state \[MM-REGISTERED/NORMAL-SERVICE\]"),
+        "initial_registration": re.compile(r"Sending Initial Registration"),
+        "registration_success": re.compile(r"Initial Registration is successful"),
+        "pdu_session_success": re.compile(r"PDU Session establishment is successful"),
+        "tun_up": re.compile(r"Connection setup for PDU session\[.*\] is successful, TUN interface\[.*, (\d+\.\d+\.\d+\.\d+)\]"),
+        "rrc_connected": re.compile(r"UE switches to state \[RRC-CONNECTED\]"),
+    }
+    PROXY_SWITCH_RE = re.compile(
+        r"\[(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})\].*BACKEND SWITCH: .* -> (\w+)"
+    )
+    GNB_NG_SETUP_RE = re.compile(r"NG Setup procedure is successful")
+
+    def parse_ue(self, text: str, ue_name: str = "ue") -> List[Dict]:
+        events = []
+        for line in text.splitlines():
+            m = self.UE_TS_RE.search(line)
+            if not m:
+                continue
+            ts = m.group(1)
+            for name, pat in self.UE_PATTERNS.items():
+                mm = pat.search(line)
+                if mm:
+                    ev = {
+                        "timestamp": ts,
+                        "source": ue_name,
+                        "event": name,
+                        "line": line.strip(),
+                    }
+                    if name == "tun_up" and mm.lastindex:
+                        ev["ip"] = mm.group(1)
+                    events.append(ev)
+                    break
+        return events
+
+    def parse_proxy_switch_time(self, text: str, target_amf: str) -> Optional[str]:
+        matches = self.PROXY_SWITCH_RE.findall(text)
+        for ts_str, backend in reversed(matches):
+            if backend == target_amf:
+                return ts_str
+        return None
+
+# -- Metric Computer ------------------------------------------------
+class MetricComputer:
+    @staticmethod
+    def _ts_to_ms(ts_str: str) -> float:
+        s = ts_str.strip()
+        for fmt in ("%Y-%m-%d %H:%M:%S.%f", "%Y-%m-%d %H:%M:%S"):
+            try:
+                dt = datetime.strptime(s, fmt)
+                return dt.timestamp() * 1000
+            except ValueError:
+                continue
+        return 0.0
+
+    @classmethod
+    def compute_ue_metrics(
+        cls,
+        ue_events: List[Dict],
+        switch_time_ms: float,
+        ue_name: str,
+        restart_time_ms: Optional[float] = None,
+    ) -> Dict:
+        m = {
+            "ue": ue_name,
+            "switch_time_ms": switch_time_ms,
+            "restart_time_ms": restart_time_ms,
+            "reallocation_latency_ms": None,
+            "registration_latency_ms": None,
+            "session_setup_latency_ms": None,
+            "rrc_latency_ms": None,
+            "post_restart_latency_ms": None,
+            "ip_changed": False,
+            "old_ip": None,
+            "new_ip": None,
+            "recovered": False,
+            "events": ue_events,
+        }
+
+        sorted_events = sorted(ue_events, key=lambda e: cls._ts_to_ms(e["timestamp"]))
+        post_switch = [e for e in sorted_events if cls._ts_to_ms(e["timestamp"]) >= switch_time_ms]
+
+        reg_success_idx = None
+        for i in range(len(post_switch) - 1, -1, -1):
+            if post_switch[i]["event"] == "registration_success":
+                reg_success_idx = i
+                break
+
+        if reg_success_idx is None:
+            return m
+
+        reg_success_event = post_switch[reg_success_idx]
+        reg_success_ts = cls._ts_to_ms(reg_success_event["timestamp"])
+
+        init_reg_event = None
+        for i in range(reg_success_idx - 1, -1, -1):
+            if post_switch[i]["event"] == "initial_registration":
+                init_reg_event = post_switch[i]
+                break
+
+        tun_up_event = None
+        for i in range(reg_success_idx + 1, len(post_switch)):
+            if post_switch[i]["event"] == "tun_up":
+                tun_up_event = post_switch[i]
+                break
+
+        rrc_event = None
+        if init_reg_event is not None:
+            init_ts = cls._ts_to_ms(init_reg_event["timestamp"])
+            for i in range(reg_success_idx - 1, -1, -1):
+                if post_switch[i]["event"] == "rrc_connected":
+                    if cls._ts_to_ms(post_switch[i]["timestamp"]) >= init_ts:
+                        rrc_event = post_switch[i]
+                        break
+
+        m["recovered"] = True
+        m["reallocation_latency_ms"] = reg_success_ts - switch_time_ms
+
+        if restart_time_ms is not None:
+            m["post_restart_latency_ms"] = reg_success_ts - restart_time_ms
+
+        if init_reg_event is not None:
+            init_ts = cls._ts_to_ms(init_reg_event["timestamp"])
+            m["registration_latency_ms"] = reg_success_ts - init_ts
+            if rrc_event is not None:
+                m["rrc_latency_ms"] = cls._ts_to_ms(rrc_event["timestamp"]) - init_ts
+
+        if tun_up_event is not None:
+            m["session_setup_latency_ms"] = cls._ts_to_ms(tun_up_event["timestamp"]) - reg_success_ts
+            m["new_ip"] = tun_up_event.get("ip")
+
+        pre_switch = [e for e in sorted_events if cls._ts_to_ms(e["timestamp"]) < switch_time_ms]
+        old_tuns = [e for e in pre_switch if e["event"] == "tun_up"]
+        if old_tuns:
+            m["old_ip"] = old_tuns[-1].get("ip")
+
+        if m["old_ip"] and m["new_ip"]:
+            m["ip_changed"] = m["old_ip"] != m["new_ip"]
+
+        return m
+
+    @classmethod
+    def compute_aggregate(cls, ue_results: List[Dict]) -> Dict:
+        def _extract(key: str) -> List[float]:
+            return [r[key] for r in ue_results if r.get(key) is not None]
+
+        agg = {}
+        for key in (
+            "reallocation_latency_ms",
+            "registration_latency_ms",
+            "session_setup_latency_ms",
+            "rrc_latency_ms",
+            "post_restart_latency_ms",
+        ):
+            vals = sorted(_extract(key))
+            if not vals:
+                agg[key] = {
+                    "mean": None,
+                    "std": None,
+                    "min": None,
+                    "max": None,
+                    "p95": None,
+                    "cv": None,
+                    "count": 0,
+                }
+                continue
+            mean_val = statistics.mean(vals)
+            std_val = statistics.stdev(vals) if len(vals) > 1 else 0.0
+            p95_idx = int(len(vals) * 0.95)
+            p95 = vals[min(p95_idx, len(vals) - 1)]
+            agg[key] = {
+                "mean": mean_val,
+                "std": std_val,
+                "min": min(vals),
+                "max": max(vals),
+                "p95": p95,
+                "cv": (std_val / mean_val) if mean_val > 0 else 0.0,
+                "count": len(vals),
+            }
+        agg["recovered_count"] = sum(1 for r in ue_results if r.get("recovered"))
+        agg["ip_changed_count"] = sum(1 for r in ue_results if r.get("ip_changed"))
+        return agg
+
+# -- Experiment Runner ----------------------------------------------
+class ExperimentRunner:
+    def __init__(
+        self,
+        proxy_host: str,
+        proxy_port: int,
+        proxy2_host: str,
+        proxy2_port: int,
+        output_dir: str,
+        ue_pool: List[str],
+        gnb_pool: List[str],
+        config_dir: str = DEFAULT_CONFIG_DIR,
+    ):
+        self.proxy_host = proxy_host
+        self.proxy_port = proxy_port
+        self.proxy2_host = proxy2_host
+        self.proxy2_port = proxy2_port
+        self.output_dir = Path(output_dir)
+        self.output_dir.mkdir(parents=True, exist_ok=True)
+        self.parser = LogParser()
+        self.computer = MetricComputer()
+        self.ue_pool = ue_pool
+        self.gnb_pool = gnb_pool
+        self.config_dir = Path(config_dir)
+        self._config_backups: Dict[str, str] = {}
+
+    def _ue_config_path(self, ue_name: str) -> Path:
+        return self.config_dir / f"{ue_name}.yaml"
+
+    def _backup_config(self, ue_name: str) -> str:
+        return self._ue_config_path(ue_name).read_text()
+
+    def _restore_config(self, ue_name: str, content: str):
+        self._ue_config_path(ue_name).write_text(content)
+
+    def _swap_gnb_order(self, ue_name: str, gnb2_first: bool = True):
+        """Robust regex-based swap of gnbSearchList entries."""
+        path = self._ue_config_path(ue_name)
+        text = path.read_text()
+        if gnb2_first:
+            text = re.sub(
+                r"^(\s*-\s+gnb1\.ueransim\.org\s*\n)(\s*-\s+gnb2\.ueransim\.org\s*\n)",
+                r"\2\1",
+                text,
+                flags=re.MULTILINE,
+            )
+        else:
+            text = re.sub(
+                r"^(\s*-\s+gnb2\.ueransim\.org\s*\n)(\s*-\s+gnb1\.ueransim\.org\s*\n)",
+                r"\2\1",
+                text,
+                flags=re.MULTILINE,
+            )
+        path.write_text(text)
+
+    def _restart_container_tracked(self, container: str) -> Tuple[bool, Optional[float]]:
+        ok = restart_container(container)
+        if not ok:
+            return False, None
+        time.sleep(0.5)
+        start_ms = get_container_start_time_ms(container)
+        return ok, start_ms
+
+    def _get_proxy_switch_time_ms(self, target_amf: str, proxy_container: str = "sctp-proxy") -> Optional[float]:
+        for _ in range(5):
+            raw = docker_logs(proxy_container, tail=100)
+            ts_str = self.parser.parse_proxy_switch_time(raw, target_amf)
+            if ts_str:
+                return self.computer._ts_to_ms(ts_str)
+            time.sleep(0.5)
+        return None
+
+    def _switch_backend(self, target_amf: str) -> bool:
+        return switch_both_backends(
+            target_amf,
+            self.proxy_host, self.proxy_port,
+            self.proxy2_host, self.proxy2_port,
+        )
+
+    def run_baseline_check(self) -> bool:
+        print("[1/5] Baseline check...")
+        if not container_running(CONTAINERS["proxy"]):
+            print("[ERROR] sctp-proxy container not running!")
+            return False
+        for ue in self.ue_pool:
+            logs = self.parser.parse_ue(docker_logs(ue, tail=100), ue)
+            if not any(e["event"] == "mm_registered" for e in logs):
+                print(f"[WARN] {ue} not currently registered. Proceeding anyway...")
+        return True
+
+    def wait_for_ue_recovery(
+        self,
+        ue_name: str,
+        switch_time_ms: float,
+        timeout: float,
+        interval: float = 2.0,
+        restart_time_ms: Optional[float] = None,
+    ) -> Dict:
+        elapsed = 0.0
+        while elapsed < timeout:
+            time.sleep(interval)
+            elapsed += interval
+            ue_logs = self.parser.parse_ue(docker_logs(ue_name, tail=500), ue_name)
+            metrics = self.computer.compute_ue_metrics(ue_logs, switch_time_ms, ue_name, restart_time_ms)
+            if metrics.get("recovered"):
+                return metrics
+        return self.computer.compute_ue_metrics(
+            self.parser.parse_ue(docker_logs(ue_name, tail=500), ue_name),
+            switch_time_ms,
+            ue_name,
+            restart_time_ms,
+        )
+
+    def wait_for_all_recovery(
+        self,
+        switch_time_ms: float,
+        timeout: float,
+        target_pool: Optional[List[str]] = None,
+        restart_times: Optional[Dict[str, float]] = None,
+        interval: float = 2.0,
+    ) -> List[Dict]:
+        pool = target_pool if target_pool is not None else self.ue_pool
+        pending = set(pool)
+        results: Dict[str, Dict] = {}
+        elapsed = 0.0
+        while elapsed < timeout and pending:
+            time.sleep(interval)
+            elapsed += interval
+            for ue in list(pending):
+                ue_logs = self.parser.parse_ue(docker_logs(ue, tail=500), ue)
+                rt = restart_times.get(ue) if restart_times else None
+                metrics = self.computer.compute_ue_metrics(ue_logs, switch_time_ms, ue, rt)
+                if metrics.get("recovered"):
+                    results[ue] = metrics
+                    pending.remove(ue)
+                    lat = metrics.get("reallocation_latency_ms")
+                    lat_str = f"{lat:.0f} ms" if lat is not None else "N/A"
+                    print(f"  -> {ue} re-registered (realloc latency: {lat_str})")
+        for ue in pending:
+            print(f"  [WARN] {ue} did not re-register within {timeout}s")
+            ue_logs = self.parser.parse_ue(docker_logs(ue, tail=500), ue)
+            rt = restart_times.get(ue) if restart_times else None
+            results[ue] = self.computer.compute_ue_metrics(ue_logs, switch_time_ms, ue, rt)
+        return [results[ue] for ue in pool]
+
+    # ------------------------------------------------------------------
+    # Legacy Modes (1-5)  —  ONLY gnb1 is ever restarted
+    # ------------------------------------------------------------------
+    def run_sequential(
+        self, target_amf: str, wait_before: float, wait_after: float, stagger: float = 0.0
+    ) -> Dict:
+        print(f"\n[Mode: SEQUENTIAL] Target: {target_amf} | UEs: {self.ue_pool}")
+        if not self.run_baseline_check():
+            return {"error": "proxy not running"}
+        time.sleep(wait_before)
+
+        print(f"[3/5] Switching both proxies to {target_amf}...")
+        if not self._switch_backend(target_amf):
+            return {"error": "switch failed"}
+        time.sleep(1.0)
+        t0 = self._get_proxy_switch_time_ms(target_amf) or (time.time() * 1000)
+        print(f"[INFO] Switch time: {datetime.fromtimestamp(t0/1000).isoformat()}")
+
+        restart_container(LEGACY_GNB)
+        if stagger > 0:
+            time.sleep(2)
+
+        results = []
+        for ue in self.ue_pool:
+            restart_container(ue)
+            if stagger > 0:
+                time.sleep(stagger)
+            results.append(self.wait_for_ue_recovery(ue, t0, timeout=wait_after))
+
+        return {
+            "mode": "sequential",
+            "target_amf": target_amf,
+            "switch_time_ms": t0,
+            "ue_results": results,
+            "aggregate": self.computer.compute_aggregate(results),
+            "experiment_timestamp": datetime.now().isoformat(),
+        }
+
+    def run_concurrent(self, target_amf: str, wait_before: float, wait_after: float) -> Dict:
+        print(f"\n[Mode: CONCURRENT] Target: {target_amf} | UEs: {self.ue_pool}")
+        if not self.run_baseline_check():
+            return {"error": "proxy not running"}
+        time.sleep(wait_before)
+
+        print(f"[3/5] Switching both proxies to {target_amf}...")
+        if not self._switch_backend(target_amf):
+            return {"error": "switch failed"}
+        time.sleep(1.0)
+        t0 = self._get_proxy_switch_time_ms(target_amf) or (time.time() * 1000)
+        print(f"[INFO] Switch time: {datetime.fromtimestamp(t0/1000).isoformat()}")
+
+        restart_container(LEGACY_GNB)
+        time.sleep(2)
+        for ue in self.ue_pool:
+            restart_container(ue)
+
+        results = self.wait_for_all_recovery(t0, timeout=wait_after)
+        return {
+            "mode": "concurrent",
+            "target_amf": target_amf,
+            "switch_time_ms": t0,
+            "ue_results": results,
+            "aggregate": self.computer.compute_aggregate(results),
+            "experiment_timestamp": datetime.now().isoformat(),
+        }
+
+    def run_backforth(self, repeat: int, wait_before: float, wait_after: float, cooldown: float) -> List[Dict]:
+        targets = ["amf2" if i % 2 == 0 else "amf1" for i in range(repeat)]
+        all_results = []
+        for i, target in enumerate(targets):
+            print(f"\n### Back-forth run {i+1}/{repeat} -> {target} ###")
+            all_results.append(self.run_concurrent(target, wait_before, wait_after))
+            if i < len(targets) - 1:
+                print(f"Cooling down for {cooldown}s...")
+                time.sleep(cooldown)
+        return all_results
+
+    def run_partial(
+        self, target_amf: str, wait_before: float, wait_after: float, ue_subset: List[str]
+    ) -> Dict:
+        print(f"\n[Mode: PARTIAL] Target: {target_amf} | Subset: {ue_subset}")
+        if not self.run_baseline_check():
+            return {"error": "proxy not running"}
+        time.sleep(wait_before)
+
+        print(f"[3/5] Switching both proxies to {target_amf}...")
+        if not self._switch_backend(target_amf):
+            return {"error": "switch failed"}
+        time.sleep(1.0)
+        t0 = self._get_proxy_switch_time_ms(target_amf) or (time.time() * 1000)
+        print(f"[INFO] Switch time: {datetime.fromtimestamp(t0/1000).isoformat()}")
+
+        restart_container(LEGACY_GNB)
+        time.sleep(2)
+
+        for ue in ue_subset:
+            restart_container(ue)
+
+        results = []
+        for ue in self.ue_pool:
+            if ue in ue_subset:
+                results.append(self.wait_for_ue_recovery(ue, t0, timeout=wait_after))
+            else:
+                results.append(
+                    self.computer.compute_ue_metrics(
+                        self.parser.parse_ue(docker_logs(ue, tail=500), ue), t0, ue
+                    )
+                )
+
+        return {
+            "mode": "partial",
+            "target_amf": target_amf,
+            "ue_subset": ue_subset,
+            "switch_time_ms": t0,
+            "ue_results": results,
+            "aggregate": self.computer.compute_aggregate(results),
+            "experiment_timestamp": datetime.now().isoformat(),
+        }
+
+    def run_isolate_gnb(self, target_amf: str, wait_before: float, wait_after: float) -> Dict:
+        print(f"\n[Mode: ISOLATE-GNB] Target: {target_amf}")
+        if not self.run_baseline_check():
+            return {"error": "proxy not running"}
+        time.sleep(wait_before)
+
+        print(f"[3/5] Switching both proxies to {target_amf}...")
+        if not self._switch_backend(target_amf):
+            return {"error": "switch failed"}
+        time.sleep(1.0)
+        t0 = self._get_proxy_switch_time_ms(target_amf) or (time.time() * 1000)
+        print(f"[INFO] Switch time: {datetime.fromtimestamp(t0/1000).isoformat()}")
+
+        restart_container(LEGACY_GNB)
+        results = self.wait_for_all_recovery(t0, timeout=wait_after)
+        return {
+            "mode": "isolate-gnb",
+            "target_amf": target_amf,
+            "switch_time_ms": t0,
+            "ue_results": results,
+            "aggregate": self.computer.compute_aggregate(results),
+            "experiment_timestamp": datetime.now().isoformat(),
+        }
+
+    # ------------------------------------------------------------------
+    # New Split-gNB Modes (6-7)
+    # ------------------------------------------------------------------
+    def _validate_subset(self, ue_subset: List[str]) -> Tuple[bool, str]:
+        if not ue_subset:
+            return False, "ue_subset cannot be empty"
+        invalid = [u for u in ue_subset if u not in self.ue_pool]
+        if invalid:
+            return False, f"Invalid UE names in subset: {invalid}"
+        if set(ue_subset) == set(self.ue_pool):
+            return False, "ue_subset cannot contain all UEs (nothing to compare)"
+        return True, ""
+
+    def run_split_gnb_simultaneous(
+        self, target_amf: str, wait_before: float, wait_after: float, ue_subset: List[str]
+    ) -> Dict:
+        ok, msg = self._validate_subset(ue_subset)
+        if not ok:
+            return {"error": msg}
+
+        print(f"\n[Mode: SPLIT-GNB SIMULTANEOUS] Target: {target_amf} | Movers: {ue_subset}")
+        if not self.run_baseline_check():
+            return {"error": "proxy not running"}
+
+        for ue in ue_subset:
+            self._config_backups[ue] = self._backup_config(ue)
+            self._swap_gnb_order(ue, gnb2_first=True)
+
+        time.sleep(wait_before)
+
+        print(f"[3/5] Switching both proxies to {target_amf}...")
+        if not self._switch_backend(target_amf):
+            for ue in ue_subset:
+                self._restore_config(ue, self._config_backups[ue])
+            return {"error": "switch failed"}
+        time.sleep(1.0)
+        t0 = self._get_proxy_switch_time_ms(target_amf) or (time.time() * 1000)
+        print(f"[INFO] Switch time: {datetime.fromtimestamp(t0/1000).isoformat()}")
+
+        print("[4/5] Restarting gNB1 and gNB2...")
+        restart_container(LEGACY_GNB)
+        restart_container("gnb2")
+        time.sleep(2)
+        if not wait_for_gnb_ng_setup("gnb2", timeout=10.0):
+            print("[WARN] gnb2 NG Setup not confirmed; proceeding anyway...")
+
+        restart_times = {}
+        print("[5/5] Restarting mover UEs...")
+        for ue in ue_subset:
+            _, rt = self._restart_container_tracked(ue)
+            restart_times[ue] = rt
+
+        results = self.wait_for_all_recovery(t0, timeout=wait_after, restart_times=restart_times)
+
+        for ue in ue_subset:
+            self._restore_config(ue, self._config_backups[ue])
+
+        return {
+            "mode": "split-gnb-simultaneous",
+            "target_amf": target_amf,
+            "switch_time_ms": t0,
+            "ue_results": results,
+            "aggregate": self.computer.compute_aggregate(results),
+            "experiment_timestamp": datetime.now().isoformat(),
+        }
+
+    def run_split_gnb_sequential(
+        self, target_amf: str, wait_before: float, wait_after: float, ue_subset: List[str]
+    ) -> Dict:
+        ok, msg = self._validate_subset(ue_subset)
+        if not ok:
+            return {"error": msg}
+
+        stayers = [u for u in self.ue_pool if u not in ue_subset]
+        print(f"\n[Mode: SPLIT-GNB SEQUENTIAL] Target: {target_amf} | Movers: {ue_subset} | Stayers: {stayers}")
+        if not self.run_baseline_check():
+            return {"error": "proxy not running"}
+
+        for ue in ue_subset:
+            self._config_backups[ue] = self._backup_config(ue)
+            self._swap_gnb_order(ue, gnb2_first=True)
+
+        time.sleep(wait_before)
+
+        print(f"[3/6] Switching both proxies to {target_amf}...")
+        if not self._switch_backend(target_amf):
+            for ue in ue_subset:
+                self._restore_config(ue, self._config_backups[ue])
+            return {"error": "switch failed"}
+        time.sleep(1.0)
+        t0 = self._get_proxy_switch_time_ms(target_amf) or (time.time() * 1000)
+        print(f"[INFO] Switch time: {datetime.fromtimestamp(t0/1000).isoformat()}")
+
+        print("[4/6] Restarting gNB1, waiting for Stayers to recover...")
+        restart_container(LEGACY_GNB)
+        time.sleep(2)
+        stayer_results = self.wait_for_all_recovery(t0, timeout=wait_after, target_pool=stayers)
+
+        print("[5/6] Starting gNB2 and restarting Movers...")
+        restart_container("gnb2")
+        if not wait_for_gnb_ng_setup("gnb2", timeout=10.0):
+            print("[WARN] gnb2 NG Setup not confirmed; proceeding anyway...")
+
+        restart_times = {}
+        for ue in ue_subset:
+            _, rt = self._restart_container_tracked(ue)
+            restart_times[ue] = rt
+
+        mover_results = self.wait_for_all_recovery(
+            t0, timeout=wait_after, target_pool=ue_subset, restart_times=restart_times
+        )
+
+        for ue in ue_subset:
+            self._restore_config(ue, self._config_backups[ue])
+
+        all_results = stayer_results + mover_results
+        return {
+            "mode": "split-gnb-sequential",
+            "target_amf": target_amf,
+            "switch_time_ms": t0,
+            "ue_results": all_results,
+            "aggregate": self.computer.compute_aggregate(all_results),
+            "experiment_timestamp": datetime.now().isoformat(),
+        }
+
+    # ------------------------------------------------------------------
+    # Export
+    # ------------------------------------------------------------------
+    def export(self, results, basename: str):
+        """Export one or multiple experiment runs."""
+        if isinstance(results, dict):
+            results = [results]
+        if not results:
+            print("[Export] No results to export")
+            return
+
+        json_path = self.output_dir / f"{basename}.json"
+        with open(json_path, "w") as f:
+            json.dump(results, f, indent=2, default=str)
+        print(f"[Export] JSON: {json_path}")
+
+        csv_path = self.output_dir / f"{basename}.csv"
+        flat_rows = []
+        for run in results:
+            agg = run.get("aggregate", {})
+            for ue_res in run.get("ue_results", []):
+                flat = {
+                    "run_mode": run.get("mode", ""),
+                    "target_amf": run.get("target_amf", ""),
+                    "ue": ue_res.get("ue", ""),
+                    "recovered": ue_res.get("recovered", False),
+                    "realloc_lat_ms": ue_res.get("reallocation_latency_ms"),
+                    "reg_lat_ms": ue_res.get("registration_latency_ms"),
+                    "sess_lat_ms": ue_res.get("session_setup_latency_ms"),
+                    "rrc_lat_ms": ue_res.get("rrc_latency_ms"),
+                    "post_restart_lat_ms": ue_res.get("post_restart_latency_ms"),
+                    "ip_changed": ue_res.get("ip_changed", False),
+                    "old_ip": ue_res.get("old_ip", ""),
+                    "new_ip": ue_res.get("new_ip", ""),
+                    "agg_realloc_mean": agg.get("reallocation_latency_ms", {}).get("mean"),
+                    "agg_realloc_std": agg.get("reallocation_latency_ms", {}).get("std"),
+                    "agg_realloc_p95": agg.get("reallocation_latency_ms", {}).get("p95"),
+                    "agg_recovered": agg.get("recovered_count", 0),
+                    "timestamp": run.get("experiment_timestamp", ""),
+                }
+                flat_rows.append(flat)
+
+        if flat_rows:
+            with open(csv_path, "w", newline="") as f:
+                writer = csv.DictWriter(f, fieldnames=flat_rows[0].keys())
+                writer.writeheader()
+                writer.writerows(flat_rows)
+            print(f"[Export] CSV: {csv_path}")
+
+        latex_path = self.output_dir / f"{basename}.tex"
+        NL = "\n"
+        BS = "\\"
+        with open(latex_path, "w") as f:
+            f.write(f"{BS}begin{{table}}[ht]{NL}")
+            f.write(f"{BS}centering{NL}")
+            f.write(f"{BS}begin{{tabular}}{{|c|c|c|c|c|c|c|c|c|}}{NL}")
+            f.write(f"{BS}hline{NL}")
+            f.write(
+                f"Run & Mode & UE & Realloc (ms) & Reg (ms) & Sess (ms) & "
+                f"RRC (ms) & IP Chg & Recov {BS}{BS}{NL}"
+            )
+            f.write(f"{BS}hline{NL}")
+            for run_idx, run in enumerate(results):
+                mode = run.get("mode", "")
+                for ue_res in run.get("ue_results", []):
+                    def fmt(v):
+                        return f"{v:.1f}" if isinstance(v, (int, float)) and v is not None else str(v)
+                    row = (
+                        f"{run_idx+1} & {mode} & {ue_res.get('ue','')} & "
+                        f"{fmt(ue_res.get('reallocation_latency_ms'))} & "
+                        f"{fmt(ue_res.get('registration_latency_ms'))} & "
+                        f"{fmt(ue_res.get('session_setup_latency_ms'))} & "
+                        f"{fmt(ue_res.get('rrc_latency_ms'))} & "
+                        f"{'Y' if ue_res.get('ip_changed') else 'N'} & "
+                        f"{'Y' if ue_res.get('recovered') else 'N'} {BS}{BS}{NL}"
+                    )
+                    f.write(row)
+                agg = run.get("aggregate", {})
+                for key in ("reallocation_latency_ms",):
+                    stats = agg.get(key, {})
+                    if stats.get("mean") is not None:
+                        mean_val = fmt(stats.get("mean"))
+                        std_val = fmt(stats.get("std"))
+                        f.write(
+                            f"{BS}multicolumn{{2}}{{|c|}}{{{BS}textbf{{Aggregate}}}} & "
+                            f"n={stats.get('count',0)} & "
+                            + mean_val + " $" + BS + "pm$ " + std_val + " & "
+                            + "-- & -- & -- & -- & "
+                            + f"{agg.get('recovered_count',0)}/{len(run.get('ue_results',[]))} "
+                            + f"{BS}{BS}{NL}"
+                        )
+                f.write(f"{BS}hline{NL}")
+            f.write(f"{BS}end{{tabular}}{NL}")
+            f.write(f"{BS}caption{{AMF Re-allocation Experiment Results}}{NL}")
+            f.write(f"{BS}label{{tab:amf_realloc}}{NL}")
+            f.write(f"{BS}end{{table}}{NL}")
+        print(f"[Export] LaTeX: {latex_path}")
+
+        summary_path = self.output_dir / f"{basename}_summary.txt"
+        with open(summary_path, "w") as f:
+            f.write("AMF Re-allocation Experiment Summary\n")
+            f.write("=" * 70 + "\n\n")
+            for run_idx, run in enumerate(results):
+                f.write(f"Run {run_idx+1}: mode={run.get('mode')}, target={run.get('target_amf')}\n")
+                agg = run.get("aggregate", {})
+                for key, stats in agg.items():
+                    if isinstance(stats, dict) and stats.get("mean") is not None:
+                        f.write(
+                            f"  {key}: mean={stats['mean']:.1f}ms, std={stats['std']:.1f}ms, "
+                            f"min={stats['min']:.1f}ms, max={stats['max']:.1f}ms, "
+                            f"p95={stats['p95']:.1f}ms, cv={stats.get('cv',0):.3f} (n={stats['count']})\n"
+                        )
+                f.write(f"  Recovered: {agg.get('recovered_count',0)}/{len(run.get('ue_results',[]))}\n")
+                f.write(f"  IP changed: {agg.get('ip_changed_count',0)}\n\n")
+                for ue_res in run.get("ue_results", []):
+                    f.write(
+                        f"    {ue_res['ue']}: realloc={ue_res.get('reallocation_latency_ms')}ms, "
+                        f"reg={ue_res.get('registration_latency_ms')}ms, "
+                        f"sess={ue_res.get('session_setup_latency_ms')}ms, "
+                        f"rrc={ue_res.get('rrc_latency_ms')}ms, "
+                        f"post_restart={ue_res.get('post_restart_latency_ms')}ms, "
+                        f"recovered={ue_res.get('recovered')}, ip_changed={ue_res.get('ip_changed')}\n"
+                    )
+                f.write("\n")
+        print(f"[Export] Summary: {summary_path}")
+
+
+# -- CLI -----------------------------------------------------------
+def main():
+    parser = argparse.ArgumentParser(description="AMF Re-allocation Orchestrator v5 (Fixed + Dual Proxy)")
+    parser.add_argument("--proxy-host", default=DEFAULT_PROXY_HOST)
+    parser.add_argument("--proxy-port", type=int, default=DEFAULT_PROXY_PORT)
+    parser.add_argument("--proxy2-host", default=DEFAULT_PROXY2_HOST)
+    parser.add_argument("--proxy2-port", type=int, default=DEFAULT_PROXY2_PORT)
+    parser.add_argument(
+        "--command",
+        choices=[
+            "status", "switch", "sequential", "concurrent",
+            "backforth", "partial", "isolate-gnb",
+            "split-gnb-simultaneous", "split-gnb-sequential",
+        ],
+        required=True,
+    )
+    parser.add_argument("--target", default="amf2")
+    parser.add_argument("--wait-before", type=float, default=10.0)
+    parser.add_argument("--wait-after", type=float, default=60.0)
+    parser.add_argument("--cooldown", type=float, default=30.0)
+    parser.add_argument("--repeat", type=int, default=1)
+    parser.add_argument("--stagger", type=float, default=0.0)
+    parser.add_argument("--ue-pool", default=",".join(DEFAULT_UE_POOL))
+    parser.add_argument("--gnb-pool", default=",".join(DEFAULT_GNB_POOL))
+    parser.add_argument("--ue-subset", default="")
+    parser.add_argument("--output-dir", default=DEFAULT_OUTPUT_DIR)
+    parser.add_argument("--basename", default="amf_realloc")
+    args = parser.parse_args()
+
+    ue_pool = [u.strip() for u in args.ue_pool.split(",") if u.strip()]
+    gnb_pool = [g.strip() for g in args.gnb_pool.split(",") if g.strip()]
+
+    runner = ExperimentRunner(
+        args.proxy_host,
+        args.proxy_port,
+        args.proxy2_host,
+        args.proxy2_port,
+        args.output_dir,
+        ue_pool=ue_pool,
+        gnb_pool=gnb_pool,
+    )
+
+    if args.command == "status":
+        print(get_proxy_status(args.proxy_host, args.proxy_port))
+
+    elif args.command == "switch":
+        ok = switch_both_backends(
+            args.target,
+            args.proxy_host, args.proxy_port,
+            args.proxy2_host, args.proxy2_port,
+        )
+        sys.exit(0 if ok else 1)
+
+    elif args.command == "sequential":
+        res = runner.run_sequential(args.target, args.wait_before, args.wait_after, args.stagger)
+        runner.export([res], args.basename)
+
+    elif args.command == "concurrent":
+        res = runner.run_concurrent(args.target, args.wait_before, args.wait_after)
+        runner.export([res], args.basename)
+
+    elif args.command == "backforth":
+        res = runner.run_backforth(args.repeat, args.wait_before, args.wait_after, args.cooldown)
+        runner.export(res, args.basename)
+
+    elif args.command == "partial":
+        subset = [u.strip() for u in args.ue_subset.split(",") if u.strip()]
+        if not subset:
+            print("[ERROR] --ue-subset required for partial mode")
+            sys.exit(1)
+        res = runner.run_partial(args.target, args.wait_before, args.wait_after, subset)
+        runner.export([res], args.basename)
+
+    elif args.command == "isolate-gnb":
+        res = runner.run_isolate_gnb(args.target, args.wait_before, args.wait_after)
+        runner.export([res], args.basename)
+
+    elif args.command == "split-gnb-simultaneous":
+        subset = [u.strip() for u in args.ue_subset.split(",") if u.strip()]
+        if not subset:
+            print("[ERROR] --ue-subset required for split-gnb-simultaneous mode")
+            sys.exit(1)
+        res = runner.run_split_gnb_simultaneous(
+            args.target, args.wait_before, args.wait_after, subset
+        )
+        runner.export([res], args.basename)
+
+    elif args.command == "split-gnb-sequential":
+        subset = [u.strip() for u in args.ue_subset.split(",") if u.strip()]
+        if not subset:
+            print("[ERROR] --ue-subset required for split-gnb-sequential mode")
+            sys.exit(1)
+        res = runner.run_split_gnb_sequential(
+            args.target, args.wait_before, args.wait_after, subset
+        )
+        runner.export([res], args.basename)
+
+
+if __name__ == "__main__":
+    main()

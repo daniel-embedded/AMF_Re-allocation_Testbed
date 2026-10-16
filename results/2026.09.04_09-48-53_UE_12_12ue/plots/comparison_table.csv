@@ -1,3 +1,0 @@
-mode,n,mean_s,median_s,std_s,min_s,max_s
-sequential,12,43.950,43.950,26.445,3.602,84.300
-concurrent,12,6.252,6.287,1.154,4.271,7.808

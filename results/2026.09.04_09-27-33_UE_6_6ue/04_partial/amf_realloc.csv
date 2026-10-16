@@ -1,7 +1,0 @@
-run_mode,target_amf,ue,recovered,realloc_lat_ms,reg_lat_ms,sess_lat_ms,rrc_lat_ms,post_restart_lat_ms,ip_changed,old_ip,new_ip,gnb2_selected,mobility_reg,initial_fallback,session_continuity,n14_context_transfer,agg_realloc_mean,agg_realloc_std,agg_realloc_p95,agg_recovered,timestamp
-partial,amf2,ue1,True,4273.0,20.0,411.0,0.0,206.401123046875,True,10.45.0.38,10.45.0.44,,,,,,3874.8333333333335,1200.398836498381,5535.0,3,2026-09-04T09:34:11.331425
-partial,amf2,ue2,True,4894.0,228.0,436.0,0.0,400.058837890625,True,10.45.0.39,10.45.0.45,,,,,,3874.8333333333335,1200.398836498381,5535.0,3,2026-09-04T09:34:11.331425
-partial,amf2,ue3,True,5535.0,454.0,429.0,0.0,636.341064453125,True,10.45.0.40,10.45.0.46,,,,,,3874.8333333333335,1200.398836498381,5535.0,3,2026-09-04T09:34:11.331425
-partial,amf2,ue4,False,2638.0,,,,,False,,,,,,,,3874.8333333333335,1200.398836498381,5535.0,3,2026-09-04T09:34:11.331425
-partial,amf2,ue5,False,2837.0,,,,,False,,,,,,,,3874.8333333333335,1200.398836498381,5535.0,3,2026-09-04T09:34:11.331425
-partial,amf2,ue6,False,3072.0,,,,,False,,,,,,,,3874.8333333333335,1200.398836498381,5535.0,3,2026-09-04T09:34:11.331425

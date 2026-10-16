@@ -1,0 +1,9 @@
+mode,IP preserved,Session continuity,GUTI preserved,N14 transfer,No collateral
+Sequential,0,0,0,0,1
+Concurrent,0,0,0,0,1
+Back-forth,0,0,0,0,1
+Partial,0,0,0,0,0
+Isolate-gNB,1,0,0,0,1
+Split simult.,0,0,0,0,1
+Split sequent.,0,0,0,0,1
+N14 mobility,1,1,1,1,1

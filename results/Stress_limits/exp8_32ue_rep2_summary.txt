@@ -1,0 +1,47 @@
+AMF Re-allocation Experiment Summary
+======================================================================
+
+Run 1: mode=n14-mobility, target=amf2
+  reallocation_latency_ms: mean=2646.4ms, std=817.3ms, min=1081.4ms, max=4164.4ms, p95=4148.4ms, cv=0.309 (n=32)
+  registration_latency_ms: mean=219.9ms, std=160.9ms, min=28.0ms, max=677.0ms, p95=495.0ms, cv=0.731 (n=32)
+  rrc_latency_ms: mean=0.0ms, std=0.0ms, min=0.0ms, max=0.0ms, p95=0.0ms, cv=0.000 (n=32)
+  Recovered: 32/32
+  IP changed: 0
+  Mobility registrations (N14 path): 32
+  Initial-registration fallbacks: 0
+  Session continuity (no PDU re-establishment): 32
+  N14 UEContextTransfer evidence: True
+
+    ue1: realloc=2305.38623046875ms, reg=495.0ms, sess=Nonems, rrc=0.0ms, post_restart=Nonems, recovered=True, ip_changed=False
+    ue2: realloc=2433.38623046875ms, reg=207.0ms, sess=Nonems, rrc=0.0ms, post_restart=Nonems, recovered=True, ip_changed=False
+    ue3: realloc=2734.38623046875ms, reg=148.0ms, sess=Nonems, rrc=0.0ms, post_restart=Nonems, recovered=True, ip_changed=False
+    ue4: realloc=2993.38623046875ms, reg=45.0ms, sess=Nonems, rrc=0.0ms, post_restart=Nonems, recovered=True, ip_changed=False
+    ue5: realloc=3677.38623046875ms, reg=307.0ms, sess=Nonems, rrc=0.0ms, post_restart=Nonems, recovered=True, ip_changed=False
+    ue6: realloc=1372.38623046875ms, reg=102.0ms, sess=Nonems, rrc=0.0ms, post_restart=Nonems, recovered=True, ip_changed=False
+    ue7: realloc=1746.38623046875ms, reg=56.0ms, sess=Nonems, rrc=0.0ms, post_restart=Nonems, recovered=True, ip_changed=False
+    ue8: realloc=2433.38623046875ms, reg=359.0ms, sess=Nonems, rrc=0.0ms, post_restart=Nonems, recovered=True, ip_changed=False
+    ue9: realloc=2734.38623046875ms, reg=246.0ms, sess=Nonems, rrc=0.0ms, post_restart=Nonems, recovered=True, ip_changed=False
+    ue10: realloc=2988.38623046875ms, reg=56.0ms, sess=Nonems, rrc=0.0ms, post_restart=Nonems, recovered=True, ip_changed=False
+    ue11: realloc=3402.38623046875ms, reg=80.0ms, sess=Nonems, rrc=0.0ms, post_restart=Nonems, recovered=True, ip_changed=False
+    ue12: realloc=4164.38623046875ms, reg=392.0ms, sess=Nonems, rrc=0.0ms, post_restart=Nonems, recovered=True, ip_changed=False
+    ue13: realloc=1696.38623046875ms, reg=36.0ms, sess=Nonems, rrc=0.0ms, post_restart=Nonems, recovered=True, ip_changed=False
+    ue14: realloc=2311.38623046875ms, reg=262.0ms, sess=Nonems, rrc=0.0ms, post_restart=Nonems, recovered=True, ip_changed=False
+    ue15: realloc=2736.38623046875ms, reg=214.0ms, sess=Nonems, rrc=0.0ms, post_restart=Nonems, recovered=True, ip_changed=False
+    ue16: realloc=2987.38623046875ms, reg=54.0ms, sess=Nonems, rrc=0.0ms, post_restart=Nonems, recovered=True, ip_changed=False
+    ue17: realloc=3408.38623046875ms, reg=88.0ms, sess=Nonems, rrc=0.0ms, post_restart=Nonems, recovered=True, ip_changed=False
+    ue18: realloc=4148.38623046875ms, reg=474.0ms, sess=Nonems, rrc=0.0ms, post_restart=Nonems, recovered=True, ip_changed=False
+    ue19: realloc=1690.38623046875ms, reg=157.0ms, sess=Nonems, rrc=0.0ms, post_restart=Nonems, recovered=True, ip_changed=False
+    ue20: realloc=2304.38623046875ms, reg=412.0ms, sess=Nonems, rrc=0.0ms, post_restart=Nonems, recovered=True, ip_changed=False
+    ue21: realloc=2433.38623046875ms, reg=158.0ms, sess=Nonems, rrc=0.0ms, post_restart=Nonems, recovered=True, ip_changed=False
+    ue22: realloc=2740.38623046875ms, reg=43.0ms, sess=Nonems, rrc=0.0ms, post_restart=Nonems, recovered=True, ip_changed=False
+    ue23: realloc=3387.38623046875ms, reg=329.0ms, sess=Nonems, rrc=0.0ms, post_restart=Nonems, recovered=True, ip_changed=False
+    ue24: realloc=4137.38623046875ms, reg=677.0ms, sess=Nonems, rrc=0.0ms, post_restart=Nonems, recovered=True, ip_changed=False
+    ue25: realloc=1378.38623046875ms, reg=28.0ms, sess=Nonems, rrc=0.0ms, post_restart=Nonems, recovered=True, ip_changed=False
+    ue26: realloc=2051.38623046875ms, reg=325.0ms, sess=Nonems, rrc=0.0ms, post_restart=Nonems, recovered=True, ip_changed=False
+    ue27: realloc=2433.38623046875ms, reg=337.0ms, sess=Nonems, rrc=0.0ms, post_restart=Nonems, recovered=True, ip_changed=False
+    ue28: realloc=2727.38623046875ms, reg=296.0ms, sess=Nonems, rrc=0.0ms, post_restart=Nonems, recovered=True, ip_changed=False
+    ue29: realloc=2974.38623046875ms, reg=151.0ms, sess=Nonems, rrc=0.0ms, post_restart=Nonems, recovered=True, ip_changed=False
+    ue30: realloc=3385.38623046875ms, reg=213.0ms, sess=Nonems, rrc=0.0ms, post_restart=Nonems, recovered=True, ip_changed=False
+    ue31: realloc=1081.38623046875ms, reg=43.0ms, sess=Nonems, rrc=0.0ms, post_restart=Nonems, recovered=True, ip_changed=False
+    ue32: realloc=1684.38623046875ms, reg=248.0ms, sess=Nonems, rrc=0.0ms, post_restart=Nonems, recovered=True, ip_changed=False
+

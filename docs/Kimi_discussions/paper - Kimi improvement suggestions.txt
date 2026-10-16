@@ -1,0 +1,59 @@
+1. Critical Issues (Must Fix)
+A. The bibliography is completely wrong
+Your refs.bib is filled with Wireless Sensor Network / IoT energy-harvesting papers (Dâmaso, Oukas, Zamalloa, etc.) that have no connection to 5G core networks, OAI, or Open5GS. Only a handful of the 50+ entries are actually cited in the text.
+Fix: Replace the .bib file with relevant literature: OAI documentation, Open5GS papers, 3GPP slicing standards, and the few relevant papers you do cite (Reddy, Vetsos, Nikaein, etc.). Remove all unused entries. This alone will save space and prevent immediate rejection for lack of domain awareness.
+B. Remove template artifacts
+
+    The \tocauthor field still contains template names: "Jeffrey Dean, David Grove, Craig Chambers..."
+    Portuguese comments are left in the Introduction (%O artigo é de ferramentas...). Delete them.
+    The \title and \author blocks are fine, but clean up any leftover \BibTeX redefinitions.
+
+C. The title promises an evaluation you do not deliver
+You call it "Comparative Evaluation", but there are no quantitative results (no throughput, latency, CPU/RAM, setup time, or signaling delay measurements). The paper is actually a deployment/reproducibility study with troubleshooting notes.
+Fix: Either (1) add a small measurement campaign (even basic iperf3 throughput and ping latency between the two stacks), or (2) reframe the title and contribution as "A Reproducibility Study and Deployment Comparison" or "Practical Troubleshooting Protocols for...".
+2. Cutting to 10 Pages (Where to Trim ~3 Pages)
+Table
+Section	Current Problem	How to Cut
+Abstract	Mentions 6G standardization and "native AI orchestration" that the paper never addresses.	Remove speculative 6G/AI claims. State exactly what you compare and what you fix (GTP-U, PHY timing, slice alignment).
+Introduction	Verbose tool descriptions; Portuguese comments; redundant motivation.	Cut to 1 page. Remove sentences like "Emulating Mobile Networks involves creating a virtualized, software-based representation..." — reviewers know this.
+Related Work	Nearly empty (ends mid-paragraph with commented-out old text).	Write 1 solid page comparing 3–4 relevant papers (e.g., Reddy, Vetsos, the BEN 2025 paper, and one OAI benchmark). Focus on what they miss (granular troubleshooting).
+Methodology	Basic explanations of YAML, Docker, MongoDB, TUN interfaces, Node.js.	Assume the reader knows these. Cut tool-tutorial text. Focus on architectural differences (modular vs. monolithic, TUN vs. RFSim, YAML vs. SQL slicing logic).
+Installation	Step-by-step bash commands and config snippets take ~1.5 pages.	Move detailed commands to your GitHub repos. In the paper, keep Table 1 (Platform Summary) and a condensed Table 2 (Best Practices). Summarize fixes in 2–3 sentences each.
+Results / Troubleshooting	Verbose narrative of "we found that..." around routing and min_rxtxtime.	Collapse into a single structured table: Layer	Symptom	Root Cause	Fix. This is more readable and saves ~1 page.
+Research Directions	Highly speculative (ML agents, Kubernetes, 6G CNF, HiL).	Delete this section entirely. It reads like a wish list. If you must, reduce to 3–4 sentences in the Conclusion.
+Conclusion	Repeats introduction claims.	One tight paragraph summarizing the trade-off (Open5GS/UERANSIM = agility; OAI = fidelity), plus one sentence on artifact availability.
+Net effect: Removing the speculative future-work section (~0.7 pages), moving bash commands to repos (~0.8 pages), trimming tool tutorials (~0.7 pages), and tightening prose (~0.8 pages) gets you to 10 pages cleanly.
+3. Quality and Relevance Improvements
+A. Ground the 6G claims or remove them
+The abstract and introduction mention 6G standardization, but every technical detail is about 5G SA. Unless you are explicitly testing a 6G-ready feature (e.g., AI/ML orchestration, sub-THz, or semantic communication), this looks speculative.
+Suggestion: Replace "evolution towards 6G standardization" with "evolution towards advanced 5G and beyond-5G research", or justify exactly which 6G requirement (e.g., massive connectivity, network slicing) your testbed addresses.
+B. Strengthen the actual comparison
+Right now you compare installation effort and troubleshooting. That is valid, but shallow. Add one comparative dimension with numbers, even if simple:
+Table
+Metric	Open5GS/UERANSIM	OAI E2E
+Time to first PDU session	~X min	~Y min
+Baseline UDP throughput	~A Mbps	~B Mbps
+CPU cores required	2	4
+Lines of config changed	~20	~80
+If you cannot run measurements before submission, add a column to Table 1 for "Representative Use Case" and be explicit about which research question each stack answers.
+C. Clarify the "friction points" contribution
+Your best unique content is the troubleshooting of GTP-U routing, slice identity alignment, and PHY timing. Lead with this. In the Introduction, state: "Unlike prior work that treats deployment as a black box, we document the specific kernel-level and configuration-level fixes required to stabilize these stacks." This is a legitimate and useful contribution.
+D. Fix the OAI / FlexRIC / xApps claim
+Section 3.2 mentions FlexRIC and xApps/rApps as an OAI advantage, but you do not demonstrate or configure them. This is speculative. Either remove it or add a sentence: "While OAI's codebase supports FlexRIC integration, its evaluation is left for future work."
+4. Other Comments
+
+    GitHub artifact advertising: The footnotes linking to your repos are good, but also add a standard "Artifact Availability" paragraph in the Conclusion or a footnote on the first page. Conference reviewers increasingly check this.
+    Table formatting: Table 2 (EmulBestPractices) is strong but slightly too wide. If you shorten the text as suggested above, it will fit better.
+    Identity format mismatch: The decimal-vs-hexadecimal SD mismatch (Section 3.2) is a nice, granular insight. Keep this, but move it to the troubleshooting table rather than burying it in prose.
+    Citation consistency: Make sure every in-text citation (\cite{...}) has a corresponding entry in the new bibliography. Currently many cited papers (e.g., 10.1145/3716554.3716570, reddy2023open) are present, but dozens of unused bib entries clutter the file.
+
+Suggested Revised Structure (10 Pages)
+
+    Introduction (1 page) — Motivation, gap, contribution statement.
+    Related Work (1 page) — 3–4 relevant papers; highlight the "black box" gap.
+    Methodology (1.5 pages) — Architectural overview of both stacks; Table 1.
+    Deployment Friction Points (2 pages) — GTP-U conflicts, slice alignment, PHY timing; condensed fixes.
+    Troubleshooting Protocols (1.5 pages) — Structured table (Table 2) + 2–3 illustrative examples.
+    Discussion: Agility vs. Fidelity (1 page) — Qualitative trade-offs; who should use which.
+    Conclusion (0.5 page)
+    References (~1.5 pages)

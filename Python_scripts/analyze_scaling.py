@@ -56,6 +56,26 @@ FOLDER_TO_MODE = {
     "08_n14-mobility": "n14-mobility",
 }
 TIER_COLORS = {6: "#4C78A8", 12: "#F58518", 24: "#54A24B", 48: "#B279A2"}
+# Explicit colors for every campaign tier. The previous fallback indexed a
+# palette with `tier % 8` — but all tiers above 48 (96/192/216/240/248/256/
+# 264/288/312/336/384/488) are multiples of 8, so they ALL mapped to the
+# same slot and fig3 rendered a single rose color. An explicit map has no
+# such arithmetic accidents; the golden-ratio fallback covers future tiers.
+TIER_COLORS.update({
+    96: "#E45756", 192: "#72B7B2", 216: "#F2CF5B", 240: "#9D755D",
+    248: "#BAB0AC", 256: "#FF9DA6", 264: "#8CD17D", 288: "#B6992D",
+    312: "#499894", 336: "#86BCB6", 384: "#EECA3B", 488: "#79706E",
+    512: "#D37295",
+})
+
+
+def tier_color(tier: int) -> str:
+    if tier in TIER_COLORS:
+        return TIER_COLORS[tier]
+    # Golden-ratio hue walk: well-spread, deterministic, works for any tier.
+    from matplotlib.colors import hsv_to_rgb
+    h = (tier * 0.61803398875) % 1.0
+    return hsv_to_rgb((h, 0.65, 0.75))
 
 
 # ---------------------------------------------------------------------------
@@ -92,18 +112,58 @@ def discover_campaigns(results_root: Path):
 
 
 def discover_exp8_reps(results_root: Path):
-    """{tier: [n14 runs]} from results/Exp8_<N>ue_*reps/ folders."""
+    """{tier: [n14 runs]} from Exp8 repetition folders.
+
+    Tolerant matching: folder name must contain 'exp8' (any case) and a
+    '<N>ue' tier token, anywhere in the name; folders may be direct children
+    of results/ or one level deeper. Runs count if their mode contains 'n14'
+    (case-insensitive). Prints one diagnostic line per candidate folder so a
+    silent 'none' is impossible.
+    """
     reps = {}
-    for d in sorted(results_root.iterdir()):
-        m = re.search(r"Exp8_(\d+)ue_\d+reps", d.name)
-        if not d.is_dir() or not m:
-            continue
-        tier = int(m.group(1))
-        runs = []
-        for jf in sorted(d.rglob("*.json")):
-            runs.extend(r for r in load_json_runs(jf)
-                        if r.get("mode") == "n14-mobility")
-        reps.setdefault(tier, []).extend(runs)
+
+    def _add_runs(json_files, origin):
+        runs, modes_seen = [], set()
+        for jf in json_files:
+            for r in load_json_runs(jf):
+                modes_seen.add(r.get("mode", "?"))
+                if "n14" in str(r.get("mode", "")).lower():
+                    runs.append(r)
+        return runs, modes_seen
+
+    # Layout A: folders whose name contains 'exp8' + '<N>ue'
+    folders = [d for d in sorted(results_root.rglob("*"))
+               if d.is_dir() and re.search(r"exp8", d.name, re.I)
+               and re.search(r"(\d+)\s*ue", d.name, re.I)]
+    for d in folders:
+        tier = int(re.search(r"(\d+)\s*ue", d.name, re.I).group(1))
+        runs, modes_seen = _add_runs(sorted(d.rglob("*.json")), d.name)
+        if runs:
+            reps.setdefault(tier, []).extend(runs)
+            print(f"[INFO] Exp8 reps: {d.name}/ -> {len(runs)} n14 run(s), "
+                  f"tier {tier} UEs")
+        else:
+            print(f"[WARN] Exp8 folder '{d.name}' matched but yielded 0 n14 "
+                  f"runs (modes found: {sorted(modes_seen) or 'no JSONs'})")
+
+    # Layout B: single-run files exp8_<N>ue_rep<R>.json directly under results/
+    files = [f for f in sorted(results_root.glob("*.json"))
+             if re.search(r"exp8_(\d+)\s*ue", f.name, re.I)]
+    for f in files:
+        tier = int(re.search(r"exp8_(\d+)\s*ue", f.name, re.I).group(1))
+        runs, modes_seen = _add_runs([f], f.name)
+        if runs:
+            reps.setdefault(tier, []).extend(runs)
+            print(f"[INFO] Exp8 reps: {f.name} -> {len(runs)} n14 run(s), "
+                  f"tier {tier} UEs")
+        else:
+            print(f"[WARN] Exp8 file '{f.name}' matched but yielded 0 n14 "
+                  f"runs (modes found: {sorted(modes_seen)})")
+
+    if not folders and not files:
+        print("[WARN] No Exp8 repetition folders/files found under "
+              f"{results_root} (looked for 'exp8' + '<N>ue' in folder names "
+              "and exp8_<N>ue_*.json files)")
     return reps
 
 
@@ -240,13 +300,13 @@ def fig3_queueing_ramp(campaigns, exp8_reps, outdir):
                 csv_rows.append([tier, rank / n, f"{reg:.0f}"])
         if xs:
             xs, ys = np.array(xs), np.array(ys)
-            ax.scatter(xs, ys, s=14, alpha=0.35, color=TIER_COLORS.get(tier),
+            ax.scatter(xs, ys, s=14, alpha=0.35, color=tier_color(tier),
                        label=f"{tier} UEs ({len(runs)} runs, pooled)")
             # median trend line per rank decile (makes the ramp readable)
             bins = np.clip((xs * 10).astype(int), 0, 9)
             mx = [np.median(xs[bins == b]) for b in range(10) if (bins == b).any()]
             my = [np.median(ys[bins == b]) for b in range(10) if (bins == b).any()]
-            ax.plot(mx, my, color=TIER_COLORS.get(tier), linewidth=2.2)
+            ax.plot(mx, my, color=tier_color(tier), linewidth=2.2)
     ax.set_xlabel("Finish rank within run (normalized)")
     ax.set_ylabel("Registration + N14 exchange latency (ms)")
     ax.set_title("N14 queueing ramp: per-UE core-side latency (pooled runs)")

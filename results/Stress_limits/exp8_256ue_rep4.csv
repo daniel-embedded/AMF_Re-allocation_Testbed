@@ -1,0 +1,2 @@
+run_mode,target_amf,ue,recovered,realloc_lat_ms,reg_lat_ms,sess_lat_ms,rrc_lat_ms,post_restart_lat_ms,ip_changed,old_ip,new_ip,gnb2_selected,mobility_reg,initial_fallback,session_continuity,n14_context_transfer,agg_realloc_mean,agg_realloc_std,agg_realloc_p95,agg_recovered,error,timestamp
+,,,False,,,,,,False,,,,,,,,,,,0,gnb2 NG Setup failed,

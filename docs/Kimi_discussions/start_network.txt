@@ -1,0 +1,138 @@
+#!/bin/bash
+# start_network.sh - Phased startup for dual-gNB Open5GS
+
+set -e
+cd "$HOME/docker-open5gs"
+
+COMPOSE="docker compose -f compose-files/network-slicing/docker-compose.yaml --env-file=.env"
+
+echo "[Phase 1] Starting core network..."
+$COMPOSE up -d amf1 amf2 smf1 smf2 upf1 upf2 nrf pcf udr sctp-proxy sctp-proxy2
+
+echo "[Phase 1a] Waiting for SMF registration (120s)..."
+sleep 120 # Waiting for SMF registration (120s)..."
+
+echo "[Phase 2] Start BOTH gNBs..."
+$COMPOSE up -d gnb1 gnb2
+
+echo "[Phase 2a] Waiting for gNBs' loading (30s)..."
+sleep 30 # Waiting for gNBs' loading (30s)..."
+
+# Verify both are healthy
+docker logs gnb1 --tail 3 | grep "NG Setup procedure is successful"
+docker logs gnb2 --tail 3 | grep "NG Setup procedure is successful"
+
+
+#echo "[Phase 3] Verifying SMF is discoverable..."
+#if docker logs amf1 --tail 50 | grep -q "No SMF Instance"; then
+#    echo "[WARN] SMF not ready yet, waiting 30s more..."
+#    sleep 30
+#fi
+
+#echo "[Phase 4] Starting gnb1..."
+#$COMPOSE up -d gnb1
+#sleep 5
+
+echo "[Phase 3] Starting all UEs (gnb2 is NOT in depends_on, so it won't auto-start)..."
+$COMPOSE up -d ue1 ue2 ue3 ue4 ue5 ue6
+sleep 10
+
+echo "[Phase 4] Checking UE registration..."
+for ue in ue1 ue2 ue3 ue4 ue5 ue6; do
+  if docker logs "$ue" --tail 20 | grep -q "Initial Registration is successful"; then
+    echo "  ✓ $ue registered"
+  else
+    echo "  ✗ $ue NOT registered, retrying once..."
+    docker restart "$ue"
+    sleep 5
+    if docker logs "$ue" --tail 20 | grep -q "Initial Registration is successful"; then
+      echo "  ✓ $ue registered after retry"
+    else
+      echo "  ✗ $ue still failing, check logs manually"
+    fi
+  fi
+done
+
+#echo "[Phase 7] Starting gnb2 (network is now stable)..."
+#$COMPOSE up -d gnb2
+#sleep 5
+
+#echo "[Phase 8] Waiting for gnb2 NG Setup..."
+#for i in {1..15}; do
+#  if docker logs gnb2 --tail 5 | grep -q "NG Setup procedure is successful"; then
+#    echo "  ✓ gnb2 ready"
+#    break
+#  fi
+#  sleep 2
+#done
+
+echo "[DONE] Network should be stable."
+
+~/docker-open5gs$ ./start_network.sh
+[Phase 1] Starting core network...
+[+] Running 15/15
+ ✔ Network open5gs        Created                                                                                                                                                        0.1s 
+ ✔ Container upf1         Started                                                                                                                                                        0.3s 
+ ✔ Container nrf          Started                                                                                                                                                        0.2s 
+ ✔ Container upf2         Started                                                                                                                                                        0.3s 
+ ✔ Container db           Started                                                                                                                                                        0.2s 
+ ✔ Container ausf         Started                                                                                                                                                        0.4s 
+ ✔ Container udm          Started                                                                                                                                                        0.3s 
+ ✔ Container smf1         Started                                                                                                                                                        0.4s 
+ ✔ Container smf2         Started                                                                                                                                                        0.4s 
+ ✔ Container pcf          Started                                                                                                                                                        0.4s 
+ ✔ Container udr          Started                                                                                                                                                        0.3s 
+ ✔ Container amf1         Started                                                                                                                                                        0.5s 
+ ✔ Container amf2         Started                                                                                                                                                        0.5s 
+ ✔ Container sctp-proxy   Started                                                                                                                                                        0.7s 
+ ✔ Container sctp-proxy2  Started                                                                                                                                                        0.6s 
+[Phase 1a] Waiting for SMF registration (120s)...
+[Phase 2] Start BOTH gNBs...
+[+] Running 11/11
+ ✔ Container nrf          Running                                                                                                                                                        0.0s 
+ ✔ Container ausf         Running                                                                                                                                                        0.0s 
+ ✔ Container db           Running                                                                                                                                                        0.0s 
+ ✔ Container udm          Running                                                                                                                                                        0.0s 
+ ✔ Container pcf          Running                                                                                                                                                        0.0s 
+ ✔ Container amf2         Running                                                                                                                                                        0.0s 
+ ✔ Container amf1         Running                                                                                                                                                        0.0s 
+ ✔ Container sctp-proxy2  Healthy                                                                                                                                                        0.5s 
+ ✔ Container sctp-proxy   Running                                                                                                                                                        0.0s 
+ ✔ Container gnb2         Started                                                                                                                                                        0.7s 
+ ✔ Container gnb1         Started                                                                                                                                                        0.1s 
+[Phase 2a] Waiting for gNBs' loading (30s)...
+[2026-08-10 13:28:30.289] [ngap] [info] NG Setup procedure is successful
+[2026-08-10 13:28:30.813] [ngap] [info] NG Setup procedure is successful
+[Phase 3] Starting all UEs (gnb2 is NOT in depends_on, so it won't auto-start)...
+[+] Running 15/15
+ ✔ Container nrf         Running                                                                                                                                                         0.0s 
+ ✔ Container db          Running                                                                                                                                                         0.0s 
+ ✔ Container ausf        Running                                                                                                                                                         0.0s 
+ ✔ Container pcf         Running                                                                                                                                                         0.0s 
+ ✔ Container udm         Running                                                                                                                                                         0.0s 
+ ✔ Container amf2        Running                                                                                                                                                         0.0s 
+ ✔ Container amf1        Running                                                                                                                                                         0.0s 
+ ✔ Container sctp-proxy  Running                                                                                                                                                         0.0s 
+ ✔ Container gnb1        Running                                                                                                                                                         0.0s 
+ ✔ Container ue1         Started                                                                                                                                                         0.3s 
+ ✔ Container ue5         Started                                                                                                                                                         0.3s 
+ ✔ Container ue6         Started                                                                                                                                                         0.3s 
+ ✔ Container ue4         Started                                                                                                                                                         0.3s 
+ ✔ Container ue2         Started                                                                                                                                                         0.3s 
+ ✔ Container ue3         Started                                                                                                                                                         0.3s 
+[Phase 4] Checking UE registration...
+  ✓ ue1 registered
+  ✓ ue2 registered
+  ✓ ue3 registered
+  ✓ ue4 registered
+  ✓ ue5 registered
+  ✓ ue6 registered
+[DONE] Network should be stable.
+hindem@Hindem:~/docker-open5gs$ ./Restarting_6_UEs.sh
+  ✓ ue1 registered
+  ✓ ue2 registered
+  ✓ ue3 registered
+  ✓ ue4 registered
+  ✓ ue5 registered
+  ✓ ue6 registered
+[DONE] Network should be stable.

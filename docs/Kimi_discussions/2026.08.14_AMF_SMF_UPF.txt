@@ -1,0 +1,753 @@
+  amf1:
+    container_name: amf1
+    image: "ghcr.io/borjis131/amf:${OPEN5GS_VERSION}"
+    command: "-c /etc/open5gs/custom/amf1.yaml"
+    networks:
+      open5gs:
+        aliases:
+          - amf1.open5gs.org
+    configs:
+      - source: amf1_config
+        target: /etc/open5gs/custom/amf1.yaml
+#    volumes: # DeepSeek suggestion
+#      - ../../configs/network-slicing/amf1.yaml:/etc/open5gs/custom/amf1.yaml
+    depends_on:
+      - nrf
+      - ausf
+      - udm
+      - pcf
+
+  amf2:
+    container_name: amf2
+    image: "ghcr.io/borjis131/amf:${OPEN5GS_VERSION}"
+    command: "-c /etc/open5gs/custom/amf2.yaml"
+    networks:
+      open5gs:
+        aliases:
+          - amf2.open5gs.org
+    configs:
+      - source: amf2_config
+        target: /etc/open5gs/custom/amf2.yaml
+#    volumes: # DeepSeek suggestion
+#      - ../../configs/network-slicing/amf2.yaml:/etc/open5gs/custom/amf2.yaml
+    depends_on:
+      - nrf
+      - ausf
+      - udm
+      - pcf
+      
+  smf1:
+    container_name: smf1
+    image: "ghcr.io/borjis131/smf:${OPEN5GS_VERSION}"
+    command: "-c /etc/open5gs/custom/smf1.yaml"
+    networks:
+      open5gs:
+        aliases:
+          - smf1.open5gs.org
+    configs:
+      - source: smf1_config
+        target: /etc/open5gs/custom/smf1.yaml
+    depends_on:
+      - nrf
+      - upf1
+
+  smf2:
+    container_name: smf2
+    image: "ghcr.io/borjis131/smf:${OPEN5GS_VERSION}"
+    command: "-c /etc/open5gs/custom/smf2.yaml"
+    networks:
+      open5gs:
+        aliases:
+          - smf2.open5gs.org
+    configs:
+      - source: smf2_config
+        target: /etc/open5gs/custom/smf2.yaml
+    depends_on:
+      - nrf
+      - upf2
+
+  upf1:
+    container_name: upf1
+    image: "ghcr.io/borjis131/upf:${OPEN5GS_VERSION}"
+    command: "-c /etc/open5gs/custom/upf1.yaml"
+    networks:
+      open5gs:
+        aliases:
+          - upf1.open5gs.org
+    configs:
+      - source: upf1_config
+        target: /etc/open5gs/custom/upf1.yaml
+    privileged: true
+    cap_add:
+      - NET_ADMIN
+
+  upf2:
+    container_name: upf2
+    image: "ghcr.io/borjis131/upf:${OPEN5GS_VERSION}"
+    command: "-c /etc/open5gs/custom/upf2.yaml"
+    networks:
+      open5gs:
+        aliases:
+          - upf2.open5gs.org
+    configs:
+      - source: upf2_config
+        target: /etc/open5gs/custom/upf2.yaml
+    privileged: true
+    cap_add:
+      - NET_ADMIN
+
+logger:
+  file:
+    path: /var/log/open5gs/amf1.log
+
+global:
+  max:
+    ue: 1024
+    peer: 64
+
+amf:
+  sbi:
+    server:
+      - address: amf1.open5gs.org
+        port: 80
+    client:
+      nrf:
+        - uri: http://nrf.open5gs.org:80
+  ngap:
+    server:
+      - address: amf1.open5gs.org
+        port: 38412
+  guami:
+    - plmn_id:
+        mcc: 001
+        mnc: 01
+      amf_id:
+        region: 2
+        set: 1
+  tai:
+    - plmn_id:
+        mcc: 001
+        mnc: 01
+      tac: 1
+    - plmn_id:
+        mcc: 001
+        mnc: 01
+      tac: 2
+  plmn_support:
+    - plmn_id:
+        mcc: 001
+        mnc: 01
+      s_nssai:
+        - sst: 1
+          sd: 000001
+        - sst: 1
+          sd: 000002
+  security:
+      integrity_order : [ NIA2, NIA1, NIA0 ]
+      ciphering_order : [ NEA0, NEA1, NEA2 ]
+  network_name:
+    full: Open5GS
+  amf_name: open5gs-amf1
+  time:
+    t3512:
+      value: 540
+      
+logger:
+  file:
+    path: /var/log/open5gs/amf2.log
+
+global:
+  max:
+    ue: 1024
+    peer: 64
+
+amf:
+  sbi:
+    server:
+      - address: amf2.open5gs.org
+        port: 80
+    client:
+      nrf:
+        - uri: http://nrf.open5gs.org:80
+  ngap:
+    server:
+      - address: amf2.open5gs.org
+        port: 38413
+  guami:
+    - plmn_id:
+        mcc: 001
+        mnc: 01
+      amf_id:
+        region: 2
+        set: 2
+  tai:
+    - plmn_id:
+        mcc: 001
+        mnc: 01
+      tac: 1
+    - plmn_id:
+        mcc: 001
+        mnc: 01
+      tac: 2
+  plmn_support:
+    - plmn_id:
+        mcc: 001
+        mnc: 01
+      s_nssai:
+        - sst: 1
+          sd: 000001
+        - sst: 1
+          sd: 000002
+  security:
+      integrity_order : [ NIA2, NIA1, NIA0 ]
+      ciphering_order : [ NEA0, NEA1, NEA2 ]
+  network_name:
+    full: Open5GS
+  amf_name: open5gs-amf2
+  time:
+    t3512:
+      value: 540
+
+logger:
+  file:
+    path: /var/log/open5gs/smf1.log
+
+global:
+
+smf:
+  sbi:
+    server:
+      - address: smf1.open5gs.org
+        port: 80
+    client:
+      nrf:
+        - uri: http://nrf.open5gs.org:80
+  pfcp:
+    server:
+      - address: smf1.open5gs.org
+    client:
+      upf:
+        - address: upf1.open5gs.org
+  gtpu:
+    server:
+      - address: smf1.open5gs.org
+  session:
+    - subnet: 10.45.0.0/16
+      gateway: 10.45.0.1
+  dns:
+    - 8.8.8.8
+    - 8.8.4.4
+  mtu: 1400
+  info:
+    - s_nssai:
+      - sst: 1
+        sd: 000001
+        dnn:
+          - internet
+      tai:
+        - plmn_id:
+            mcc: 001
+            mnc: 01
+          tac: 1
+
+logger:
+  file:
+    path: /var/log/open5gs/smf2.log
+
+global:
+
+smf:
+  sbi:
+    server:
+      - address: smf2.open5gs.org
+        port: 80
+    client:
+      nrf:
+        - uri: http://nrf.open5gs.org:80
+#        - uri: http://nrf1.open5gs.org:81
+  pfcp:
+    server:
+      - address: smf2.open5gs.org
+    client:
+      upf:
+        - address: upf2.open5gs.org
+  gtpu:
+    server:
+      - address: smf2.open5gs.org
+  session:
+    - subnet: 10.46.0.0/16
+      gateway: 10.46.0.1
+  dns:
+    - 8.8.8.8
+    - 8.8.4.4
+  mtu: 1400
+  info:
+    - s_nssai:
+      - sst: 1
+        sd: 000002
+        dnn:
+          - internet
+      tai:
+        - plmn_id:
+            mcc: 001
+            mnc: 01
+#          tac: 1
+          tac: 2
+
+logger:
+  file:
+    path: /var/log/open5gs/upf.log
+
+global:
+
+upf:
+  pfcp:
+    server:
+      - address: upf1.open5gs.org
+    client:
+  gtpu:
+    server:
+      - address: upf1.open5gs.org
+  session:
+    - subnet: 10.45.0.0/16
+      gateway: 10.45.0.1
+      dnn: internet
+
+logger:
+  file:
+    path: /var/log/open5gs/upf.log
+
+global:
+
+upf:
+  pfcp:
+    server:
+      - address: upf2.open5gs.org
+    client:
+  gtpu:
+    server:
+      - address: upf2.open5gs.org
+  session:
+    - subnet: 10.46.0.0/16
+      gateway: 10.46.0.1
+      dnn: internet
+
+~/docker-open5gs$ docker logs --since "2026-08-14T10:35:00" --until "2026-08-14T10:35:55.585" amf1
+Open5GS daemon v2.7.6
+
+08/14 13:35:00.272: [app] INFO: Configuration: '/etc/open5gs/custom/amf1.yaml' (../lib/app/ogs-init.c:144)
+08/14 13:35:00.272: [app] INFO: File Logging: '/var/log/open5gs/amf1.log' (../lib/app/ogs-init.c:147)
+08/14 13:35:00.276: [sbi] INFO: Setup NF EndPoint(fqdn) [nrf.open5gs.org:80] (../lib/sbi/context.c:459)
+08/14 13:35:00.276: [sbi] INFO: NF Service [namf-comm] (../lib/sbi/context.c:1994)
+08/14 13:35:00.279: [sbi] INFO: nghttp2_server() [http://amf1.open5gs.org]:80 (../lib/sbi/nghttp2-server.c:434)
+08/14 13:35:00.334: [amf] INFO: ngap_server() [10.33.33.7]:38412 (../src/amf/ngap-sctp.c:61)
+08/14 13:35:00.335: [sctp] INFO: AMF initialize...done (../src/amf/app.c:33)
+08/14 13:35:00.337: [sbi] INFO: [f28b2358-97e4-41f1-a04f-d15c69637d3a] NF registered [Heartbeat:10s] (../lib/sbi/nf-sm.c:295)
+08/14 13:35:00.339: [sbi] INFO: Setup NF EndPoint(fqdn) [nrf.open5gs.org:80] (../lib/sbi/nnrf-handler.c:955)
+08/14 13:35:00.339: [sbi] INFO: [f294f16c-97e4-41f1-bf4e-8f740387d1a8] Subscription created until 2026-08-15T13:35:00.338168+00:00 [duration:86400000000,validity:86400.000000,patch:43200.000000] (../lib/sbi/nnrf-handler.c:874)
+08/14 13:35:00.340: [sbi] INFO: Setup NF EndPoint(fqdn) [nrf.open5gs.org:80] (../lib/sbi/nnrf-handler.c:955)
+08/14 13:35:00.340: [sbi] INFO: [f294ff2c-97e4-41f1-bf4e-8f740387d1a8] Subscription created until 2026-08-15T13:35:00.338488+00:00 [duration:86400000000,validity:86400.000000,patch:43200.000000] (../lib/sbi/nnrf-handler.c:874)
+08/14 13:35:00.340: [sbi] INFO: Setup NF EndPoint(fqdn) [nrf.open5gs.org:80] (../lib/sbi/nnrf-handler.c:955)
+08/14 13:35:00.340: [sbi] INFO: [f29502e2-97e4-41f1-bf4e-8f740387d1a8] Subscription created until 2026-08-15T13:35:00.338576+00:00 [duration:86400000000,validity:86400.000000,patch:43200.000000] (../lib/sbi/nnrf-handler.c:874)
+08/14 13:35:00.340: [sbi] INFO: Setup NF EndPoint(fqdn) [nrf.open5gs.org:80] (../lib/sbi/nnrf-handler.c:955)
+08/14 13:35:00.340: [sbi] INFO: [f2950602-97e4-41f1-bf4e-8f740387d1a8] Subscription created until 2026-08-15T13:35:00.338656+00:00 [duration:86400000000,validity:86400.000000,patch:43200.000000] (../lib/sbi/nnrf-handler.c:874)
+08/14 13:35:00.340: [sbi] INFO: Setup NF EndPoint(fqdn) [nrf.open5gs.org:80] (../lib/sbi/nnrf-handler.c:955)
+08/14 13:35:00.340: [sbi] INFO: [f2950904-97e4-41f1-bf4e-8f740387d1a8] Subscription created until 2026-08-15T13:35:00.338732+00:00 [duration:86400000000,validity:86400.000000,patch:43200.000000] (../lib/sbi/nnrf-handler.c:874)
+08/14 13:35:00.340: [sbi] INFO: Setup NF EndPoint(fqdn) [nrf.open5gs.org:80] (../lib/sbi/nnrf-handler.c:955)
+08/14 13:35:00.340: [sbi] INFO: [f2950c06-97e4-41f1-bf4e-8f740387d1a8] Subscription created until 2026-08-15T13:35:00.338818+00:00 [duration:86400000000,validity:86400.000000,patch:43200.000000] (../lib/sbi/nnrf-handler.c:874)
+08/14 13:35:00.340: [sbi] INFO: Setup NF EndPoint(fqdn) [nrf.open5gs.org:80] (../lib/sbi/nnrf-handler.c:955)
+08/14 13:35:00.340: [sbi] INFO: [f29529a2-97e4-41f1-bf4e-8f740387d1a8] Subscription created until 2026-08-15T13:35:00.339576+00:00 [duration:86400000000,validity:86400.000000,patch:43200.000000] (../lib/sbi/nnrf-handler.c:874)
+08/14 13:35:00.342: [sbi] INFO: [f26c1c2e-97e4-41f1-8a8b-d18f777efdd7] (NRF-profile-get) NF registered (../lib/sbi/nf-sm.c:81)
+08/14 13:35:00.342: [sbi] INFO: Setup NF EndPoint(fqdn) [udm.open5gs.org:0] (../lib/sbi/context.c:2374)
+08/14 13:35:00.342: [sbi] INFO: Setup NF EndPoint(addr) [10.33.33.6:80] (../lib/sbi/context.c:2374)
+08/14 13:35:00.342: [sbi] INFO: Setup NF EndPoint(fqdn) [udm.open5gs.org:0] (../lib/sbi/context.c:2113)
+08/14 13:35:00.342: [sbi] INFO: Setup NF EndPoint(addr) [10.33.33.6:80] (../lib/sbi/context.c:2113)
+08/14 13:35:00.342: [sbi] INFO: Setup NF EndPoint(fqdn) [udm.open5gs.org:0] (../lib/sbi/context.c:2113)
+08/14 13:35:00.342: [sbi] INFO: Setup NF EndPoint(addr) [10.33.33.6:80] (../lib/sbi/context.c:2113)
+08/14 13:35:00.342: [sbi] INFO: Setup NF EndPoint(fqdn) [udm.open5gs.org:0] (../lib/sbi/context.c:2113)
+08/14 13:35:00.342: [sbi] INFO: Setup NF EndPoint(addr) [10.33.33.6:80] (../lib/sbi/context.c:2113)
+08/14 13:35:00.342: [sbi] INFO: [f26fc68a-97e4-41f1-b862-717f546d06b0] (NRF-profile-get) NF registered (../lib/sbi/nf-sm.c:81)
+08/14 13:35:00.342: [sbi] INFO: Setup NF EndPoint(fqdn) [ausf.open5gs.org:0] (../lib/sbi/context.c:2374)
+08/14 13:35:00.342: [sbi] INFO: Setup NF EndPoint(addr) [10.33.33.8:80] (../lib/sbi/context.c:2374)
+08/14 13:35:00.342: [sbi] INFO: Setup NF EndPoint(fqdn) [ausf.open5gs.org:0] (../lib/sbi/context.c:2113)
+08/14 13:35:00.342: [sbi] INFO: Setup NF EndPoint(addr) [10.33.33.8:80] (../lib/sbi/context.c:2113)
+08/14 13:35:00.343: [sbi] INFO: [f279ba00-97e4-41f1-9fcf-d1c2dbd98b68] (NRF-profile-get) NF registered (../lib/sbi/nf-sm.c:81)
+08/14 13:35:00.343: [sbi] INFO: Setup NF EndPoint(fqdn) [smf1.open5gs.org:0] (../lib/sbi/context.c:2374)
+08/14 13:35:00.343: [sbi] INFO: Setup NF EndPoint(addr) [10.33.33.9:80] (../lib/sbi/context.c:2374)
+08/14 13:35:00.343: [sbi] INFO: Setup NF EndPoint(fqdn) [smf1.open5gs.org:0] (../lib/sbi/context.c:2113)
+08/14 13:35:00.343: [sbi] INFO: Setup NF EndPoint(addr) [10.33.33.9:80] (../lib/sbi/context.c:2113)
+08/14 13:35:00.344: [sbi] INFO: [f27b0234-97e4-41f1-a5fe-11cd21215d42] (NRF-profile-get) NF registered (../lib/sbi/nf-sm.c:81)
+08/14 13:35:00.344: [sbi] INFO: Setup NF EndPoint(fqdn) [smf2.open5gs.org:0] (../lib/sbi/context.c:2374)
+08/14 13:35:00.344: [sbi] INFO: Setup NF EndPoint(addr) [10.33.33.10:80] (../lib/sbi/context.c:2374)
+08/14 13:35:00.344: [sbi] INFO: Setup NF EndPoint(fqdn) [smf2.open5gs.org:0] (../lib/sbi/context.c:2113)
+08/14 13:35:00.344: [sbi] INFO: Setup NF EndPoint(addr) [10.33.33.10:80] (../lib/sbi/context.c:2113)
+08/14 13:35:00.745: [sbi] INFO: [f2d220dc-97e4-41f1-b38a-5310b230c3bd] (NRF-notify) NF registered (../lib/sbi/nnrf-handler.c:1140)
+08/14 13:35:00.745: [sbi] INFO: [f2d220dc-97e4-41f1-b38a-5310b230c3bd] (NRF-notify) NF Profile updated [type:PCF] (../lib/sbi/nnrf-handler.c:1154)
+08/14 13:35:00.745: [sbi] INFO: Setup NF EndPoint(fqdn) [pcf.open5gs.org:0] (../lib/sbi/context.c:2374)
+08/14 13:35:00.745: [sbi] INFO: Setup NF EndPoint(addr) [10.33.33.13:80] (../lib/sbi/context.c:2374)
+08/14 13:35:00.745: [sbi] INFO: Setup NF EndPoint(fqdn) [pcf.open5gs.org:0] (../lib/sbi/context.c:2113)
+08/14 13:35:00.745: [sbi] INFO: Setup NF EndPoint(addr) [10.33.33.13:80] (../lib/sbi/context.c:2113)
+08/14 13:35:05.573: [amf] INFO: gNB-N2 accepted[10.33.33.14]:41941 in ng-path module (../src/amf/ngap-sctp.c:113)
+08/14 13:35:05.573: [amf] INFO: gNB-N2 accepted[10.33.33.14] in master_sm module (../src/amf/amf-sm.c:894)
+08/14 13:35:05.584: [amf] INFO: [Added] Number of gNBs is now 1 (../src/amf/context.c:1277)
+08/14 13:35:05.584: [amf] INFO: gNB-N2[10.33.33.14] max_num_of_ostreams : 30 (../src/amf/amf-sm.c:941)
+08/14 13:35:05.584: [amf] INFO: gNB-N2[10.33.33.14] connection refused!!! (../src/amf/amf-sm.c:954)
+08/14 13:35:05.584: [amf] INFO: [Removed] Number of gNBs is now 0 (../src/amf/context.c:1305)
+08/14 13:35:07.657: [amf] INFO: gNB-N2 accepted[10.33.33.14]:52092 in ng-path module (../src/amf/ngap-sctp.c:113)
+08/14 13:35:07.657: [amf] INFO: gNB-N2 accepted[10.33.33.14] in master_sm module (../src/amf/amf-sm.c:894)
+08/14 13:35:07.663: [amf] INFO: [Added] Number of gNBs is now 1 (../src/amf/context.c:1277)
+08/14 13:35:07.663: [amf] INFO: gNB-N2[10.33.33.14] max_num_of_ostreams : 30 (../src/amf/amf-sm.c:941)
+08/14 13:35:08.158: [amf] INFO: gNB-N2[10.33.33.14] connection refused!!! (../src/amf/amf-sm.c:954)
+08/14 13:35:08.158: [amf] INFO: [Removed] Number of gNBs is now 0 (../src/amf/context.c:1305)
+08/14 13:35:09.745: [amf] INFO: gNB-N2 accepted[10.33.33.14]:58735 in ng-path module (../src/amf/ngap-sctp.c:113)
+08/14 13:35:09.745: [amf] INFO: gNB-N2 accepted[10.33.33.14] in master_sm module (../src/amf/amf-sm.c:894)
+08/14 13:35:09.749: [amf] INFO: [Added] Number of gNBs is now 1 (../src/amf/context.c:1277)
+08/14 13:35:09.749: [amf] INFO: gNB-N2[10.33.33.14] max_num_of_ostreams : 30 (../src/amf/amf-sm.c:941)
+08/14 13:35:10.246: [amf] INFO: gNB-N2[10.33.33.14] connection refused!!! (../src/amf/amf-sm.c:954)
+08/14 13:35:10.246: [amf] INFO: [Removed] Number of gNBs is now 0 (../src/amf/context.c:1305)
+08/14 13:35:11.830: [amf] INFO: gNB-N2 accepted[10.33.33.14]:43881 in ng-path module (../src/amf/ngap-sctp.c:113)
+08/14 13:35:11.830: [amf] INFO: gNB-N2 accepted[10.33.33.14] in master_sm module (../src/amf/amf-sm.c:894)
+08/14 13:35:11.840: [amf] INFO: [Added] Number of gNBs is now 1 (../src/amf/context.c:1277)
+08/14 13:35:11.840: [amf] INFO: gNB-N2[10.33.33.14] max_num_of_ostreams : 30 (../src/amf/amf-sm.c:941)
+08/14 13:35:12.331: [amf] INFO: gNB-N2[10.33.33.14] connection refused!!! (../src/amf/amf-sm.c:954)
+08/14 13:35:12.331: [amf] INFO: [Removed] Number of gNBs is now 0 (../src/amf/context.c:1305)
+08/14 13:35:13.918: [amf] INFO: gNB-N2 accepted[10.33.33.14]:45237 in ng-path module (../src/amf/ngap-sctp.c:113)
+08/14 13:35:13.918: [amf] INFO: gNB-N2 accepted[10.33.33.14] in master_sm module (../src/amf/amf-sm.c:894)
+08/14 13:35:13.923: [amf] INFO: [Added] Number of gNBs is now 1 (../src/amf/context.c:1277)
+08/14 13:35:13.923: [amf] INFO: gNB-N2[10.33.33.14] max_num_of_ostreams : 30 (../src/amf/amf-sm.c:941)
+08/14 13:35:13.923: [amf] INFO: gNB-N2[10.33.33.14] connection refused!!! (../src/amf/amf-sm.c:954)
+08/14 13:35:13.923: [amf] INFO: [Removed] Number of gNBs is now 0 (../src/amf/context.c:1305)
+08/14 13:35:15.999: [amf] INFO: gNB-N2 accepted[10.33.33.14]:58649 in ng-path module (../src/amf/ngap-sctp.c:113)
+08/14 13:35:15.999: [amf] INFO: gNB-N2 accepted[10.33.33.14] in master_sm module (../src/amf/amf-sm.c:894)
+08/14 13:35:16.004: [amf] INFO: [Added] Number of gNBs is now 1 (../src/amf/context.c:1277)
+08/14 13:35:16.004: [amf] INFO: gNB-N2[10.33.33.14] max_num_of_ostreams : 30 (../src/amf/amf-sm.c:941)
+08/14 13:35:16.004: [amf] INFO: gNB-N2[10.33.33.14] connection refused!!! (../src/amf/amf-sm.c:954)
+08/14 13:35:16.004: [amf] INFO: [Removed] Number of gNBs is now 0 (../src/amf/context.c:1305)
+08/14 13:35:18.073: [amf] INFO: gNB-N2 accepted[10.33.33.14]:35688 in ng-path module (../src/amf/ngap-sctp.c:113)
+08/14 13:35:18.073: [amf] INFO: gNB-N2 accepted[10.33.33.14] in master_sm module (../src/amf/amf-sm.c:894)
+08/14 13:35:18.077: [amf] INFO: [Added] Number of gNBs is now 1 (../src/amf/context.c:1277)
+08/14 13:35:18.077: [amf] INFO: gNB-N2[10.33.33.14] max_num_of_ostreams : 30 (../src/amf/amf-sm.c:941)
+08/14 13:35:18.077: [amf] INFO: gNB-N2[10.33.33.14] connection refused!!! (../src/amf/amf-sm.c:954)
+08/14 13:35:18.077: [amf] INFO: [Removed] Number of gNBs is now 0 (../src/amf/context.c:1305)
+08/14 13:35:20.151: [amf] INFO: gNB-N2 accepted[10.33.33.14]:59768 in ng-path module (../src/amf/ngap-sctp.c:113)
+08/14 13:35:20.151: [amf] INFO: gNB-N2 accepted[10.33.33.14] in master_sm module (../src/amf/amf-sm.c:894)
+08/14 13:35:20.155: [amf] INFO: [Added] Number of gNBs is now 1 (../src/amf/context.c:1277)
+08/14 13:35:20.155: [amf] INFO: gNB-N2[10.33.33.14] max_num_of_ostreams : 30 (../src/amf/amf-sm.c:941)
+08/14 13:35:20.652: [amf] INFO: gNB-N2[10.33.33.14] connection refused!!! (../src/amf/amf-sm.c:954)
+08/14 13:35:20.652: [amf] INFO: [Removed] Number of gNBs is now 0 (../src/amf/context.c:1305)
+08/14 13:35:22.231: [amf] INFO: gNB-N2 accepted[10.33.33.14]:39506 in ng-path module (../src/amf/ngap-sctp.c:113)
+08/14 13:35:22.231: [amf] INFO: gNB-N2 accepted[10.33.33.14] in master_sm module (../src/amf/amf-sm.c:894)
+08/14 13:35:22.237: [amf] INFO: [Added] Number of gNBs is now 1 (../src/amf/context.c:1277)
+08/14 13:35:22.237: [amf] INFO: gNB-N2[10.33.33.14] max_num_of_ostreams : 30 (../src/amf/amf-sm.c:941)
+08/14 13:35:22.733: [amf] INFO: gNB-N2[10.33.33.14] connection refused!!! (../src/amf/amf-sm.c:954)
+08/14 13:35:22.733: [amf] INFO: [Removed] Number of gNBs is now 0 (../src/amf/context.c:1305)
+08/14 13:35:24.327: [amf] INFO: gNB-N2 accepted[10.33.33.14]:53779 in ng-path module (../src/amf/ngap-sctp.c:113)
+08/14 13:35:24.327: [amf] INFO: gNB-N2 accepted[10.33.33.14] in master_sm module (../src/amf/amf-sm.c:894)
+08/14 13:35:24.336: [amf] INFO: [Added] Number of gNBs is now 1 (../src/amf/context.c:1277)
+08/14 13:35:24.336: [amf] INFO: gNB-N2[10.33.33.14] max_num_of_ostreams : 30 (../src/amf/amf-sm.c:941)
+08/14 13:35:24.336: [amf] INFO: gNB-N2[10.33.33.14] connection refused!!! (../src/amf/amf-sm.c:954)
+08/14 13:35:24.336: [amf] INFO: [Removed] Number of gNBs is now 0 (../src/amf/context.c:1305)
+08/14 13:35:26.410: [amf] INFO: gNB-N2 accepted[10.33.33.14]:59943 in ng-path module (../src/amf/ngap-sctp.c:113)
+08/14 13:35:26.410: [amf] INFO: gNB-N2 accepted[10.33.33.14] in master_sm module (../src/amf/amf-sm.c:894)
+08/14 13:35:26.417: [amf] INFO: [Added] Number of gNBs is now 1 (../src/amf/context.c:1277)
+08/14 13:35:26.418: [amf] INFO: gNB-N2[10.33.33.14] max_num_of_ostreams : 30 (../src/amf/amf-sm.c:941)
+08/14 13:35:26.911: [amf] INFO: gNB-N2[10.33.33.14] connection refused!!! (../src/amf/amf-sm.c:954)
+08/14 13:35:26.911: [amf] INFO: [Removed] Number of gNBs is now 0 (../src/amf/context.c:1305)
+08/14 13:35:28.482: [amf] INFO: gNB-N2 accepted[10.33.33.14]:35056 in ng-path module (../src/amf/ngap-sctp.c:113)
+08/14 13:35:28.482: [amf] INFO: gNB-N2 accepted[10.33.33.14] in master_sm module (../src/amf/amf-sm.c:894)
+08/14 13:35:28.488: [amf] INFO: [Added] Number of gNBs is now 1 (../src/amf/context.c:1277)
+08/14 13:35:28.488: [amf] INFO: gNB-N2[10.33.33.14] max_num_of_ostreams : 30 (../src/amf/amf-sm.c:941)
+08/14 13:35:28.983: [amf] INFO: gNB-N2[10.33.33.14] connection refused!!! (../src/amf/amf-sm.c:954)
+08/14 13:35:28.983: [amf] INFO: [Removed] Number of gNBs is now 0 (../src/amf/context.c:1305)
+08/14 13:35:30.558: [amf] INFO: gNB-N2 accepted[10.33.33.14]:57156 in ng-path module (../src/amf/ngap-sctp.c:113)
+08/14 13:35:30.558: [amf] INFO: gNB-N2 accepted[10.33.33.14] in master_sm module (../src/amf/amf-sm.c:894)
+08/14 13:35:30.562: [amf] INFO: [Added] Number of gNBs is now 1 (../src/amf/context.c:1277)
+08/14 13:35:30.562: [amf] INFO: gNB-N2[10.33.33.14] max_num_of_ostreams : 30 (../src/amf/amf-sm.c:941)
+08/14 13:35:31.059: [amf] INFO: gNB-N2[10.33.33.14] connection refused!!! (../src/amf/amf-sm.c:954)
+08/14 13:35:31.059: [amf] INFO: [Removed] Number of gNBs is now 0 (../src/amf/context.c:1305)
+08/14 13:35:32.660: [amf] INFO: gNB-N2 accepted[10.33.33.14]:42823 in ng-path module (../src/amf/ngap-sctp.c:113)
+08/14 13:35:32.660: [amf] INFO: gNB-N2 accepted[10.33.33.14] in master_sm module (../src/amf/amf-sm.c:894)
+08/14 13:35:32.665: [amf] INFO: [Added] Number of gNBs is now 1 (../src/amf/context.c:1277)
+08/14 13:35:32.665: [amf] INFO: gNB-N2[10.33.33.14] max_num_of_ostreams : 30 (../src/amf/amf-sm.c:941)
+08/14 13:35:33.161: [amf] INFO: gNB-N2[10.33.33.14] connection refused!!! (../src/amf/amf-sm.c:954)
+08/14 13:35:33.161: [amf] INFO: [Removed] Number of gNBs is now 0 (../src/amf/context.c:1305)
+08/14 13:35:34.735: [amf] INFO: gNB-N2 accepted[10.33.33.14]:45318 in ng-path module (../src/amf/ngap-sctp.c:113)
+08/14 13:35:34.735: [amf] INFO: gNB-N2 accepted[10.33.33.14] in master_sm module (../src/amf/amf-sm.c:894)
+08/14 13:35:34.741: [amf] INFO: [Added] Number of gNBs is now 1 (../src/amf/context.c:1277)
+08/14 13:35:34.741: [amf] INFO: gNB-N2[10.33.33.14] max_num_of_ostreams : 30 (../src/amf/amf-sm.c:941)
+08/14 13:35:35.235: [amf] INFO: gNB-N2[10.33.33.14] connection refused!!! (../src/amf/amf-sm.c:954)
+08/14 13:35:35.235: [amf] INFO: [Removed] Number of gNBs is now 0 (../src/amf/context.c:1305)
+08/14 13:35:36.824: [amf] INFO: gNB-N2 accepted[10.33.33.14]:43489 in ng-path module (../src/amf/ngap-sctp.c:113)
+08/14 13:35:36.824: [amf] INFO: gNB-N2 accepted[10.33.33.14] in master_sm module (../src/amf/amf-sm.c:894)
+08/14 13:35:36.829: [amf] INFO: [Added] Number of gNBs is now 1 (../src/amf/context.c:1277)
+08/14 13:35:36.829: [amf] INFO: gNB-N2[10.33.33.14] max_num_of_ostreams : 30 (../src/amf/amf-sm.c:941)
+08/14 13:35:36.829: [amf] INFO: gNB-N2[10.33.33.14] connection refused!!! (../src/amf/amf-sm.c:954)
+08/14 13:35:36.830: [amf] INFO: [Removed] Number of gNBs is now 0 (../src/amf/context.c:1305)
+08/14 13:35:38.913: [amf] INFO: gNB-N2 accepted[10.33.33.14]:60432 in ng-path module (../src/amf/ngap-sctp.c:113)
+08/14 13:35:38.913: [amf] INFO: gNB-N2 accepted[10.33.33.14] in master_sm module (../src/amf/amf-sm.c:894)
+08/14 13:35:38.917: [amf] INFO: [Added] Number of gNBs is now 1 (../src/amf/context.c:1277)
+08/14 13:35:38.917: [amf] INFO: gNB-N2[10.33.33.14] max_num_of_ostreams : 30 (../src/amf/amf-sm.c:941)
+08/14 13:35:39.413: [amf] INFO: gNB-N2[10.33.33.14] connection refused!!! (../src/amf/amf-sm.c:954)
+08/14 13:35:39.413: [amf] INFO: [Removed] Number of gNBs is now 0 (../src/amf/context.c:1305)
+08/14 13:35:41.008: [amf] INFO: gNB-N2 accepted[10.33.33.14]:54590 in ng-path module (../src/amf/ngap-sctp.c:113)
+08/14 13:35:41.008: [amf] INFO: gNB-N2 accepted[10.33.33.14] in master_sm module (../src/amf/amf-sm.c:894)
+08/14 13:35:41.014: [amf] INFO: [Added] Number of gNBs is now 1 (../src/amf/context.c:1277)
+08/14 13:35:41.014: [amf] INFO: gNB-N2[10.33.33.14] max_num_of_ostreams : 30 (../src/amf/amf-sm.c:941)
+08/14 13:35:41.509: [amf] INFO: gNB-N2[10.33.33.14] connection refused!!! (../src/amf/amf-sm.c:954)
+08/14 13:35:41.509: [amf] INFO: [Removed] Number of gNBs is now 0 (../src/amf/context.c:1305)
+08/14 13:35:43.115: [amf] INFO: gNB-N2 accepted[10.33.33.14]:55154 in ng-path module (../src/amf/ngap-sctp.c:113)
+08/14 13:35:43.115: [amf] INFO: gNB-N2 accepted[10.33.33.14] in master_sm module (../src/amf/amf-sm.c:894)
+08/14 13:35:43.120: [amf] INFO: [Added] Number of gNBs is now 1 (../src/amf/context.c:1277)
+08/14 13:35:43.120: [amf] INFO: gNB-N2[10.33.33.14] max_num_of_ostreams : 30 (../src/amf/amf-sm.c:941)
+08/14 13:35:43.120: [amf] INFO: gNB-N2[10.33.33.14] connection refused!!! (../src/amf/amf-sm.c:954)
+08/14 13:35:43.120: [amf] INFO: [Removed] Number of gNBs is now 0 (../src/amf/context.c:1305)
+08/14 13:35:45.179: [amf] INFO: gNB-N2 accepted[10.33.33.14]:52367 in ng-path module (../src/amf/ngap-sctp.c:113)
+08/14 13:35:45.179: [amf] INFO: gNB-N2 accepted[10.33.33.14] in master_sm module (../src/amf/amf-sm.c:894)
+08/14 13:35:45.183: [amf] INFO: [Added] Number of gNBs is now 1 (../src/amf/context.c:1277)
+08/14 13:35:45.183: [amf] INFO: gNB-N2[10.33.33.14] max_num_of_ostreams : 30 (../src/amf/amf-sm.c:941)
+08/14 13:35:45.680: [amf] INFO: gNB-N2[10.33.33.14] connection refused!!! (../src/amf/amf-sm.c:954)
+08/14 13:35:45.680: [amf] INFO: [Removed] Number of gNBs is now 0 (../src/amf/context.c:1305)
+08/14 13:35:47.254: [amf] INFO: gNB-N2 accepted[10.33.33.14]:36071 in ng-path module (../src/amf/ngap-sctp.c:113)
+08/14 13:35:47.254: [amf] INFO: gNB-N2 accepted[10.33.33.14] in master_sm module (../src/amf/amf-sm.c:894)
+08/14 13:35:47.260: [amf] INFO: [Added] Number of gNBs is now 1 (../src/amf/context.c:1277)
+08/14 13:35:47.260: [amf] INFO: gNB-N2[10.33.33.14] max_num_of_ostreams : 30 (../src/amf/amf-sm.c:941)
+08/14 13:35:47.260: [amf] INFO: gNB-N2[10.33.33.14] connection refused!!! (../src/amf/amf-sm.c:954)
+08/14 13:35:47.260: [amf] INFO: [Removed] Number of gNBs is now 0 (../src/amf/context.c:1305)
+08/14 13:35:49.327: [amf] INFO: gNB-N2 accepted[10.33.33.14]:49943 in ng-path module (../src/amf/ngap-sctp.c:113)
+08/14 13:35:49.327: [amf] INFO: gNB-N2 accepted[10.33.33.14] in master_sm module (../src/amf/amf-sm.c:894)
+08/14 13:35:49.331: [amf] INFO: [Added] Number of gNBs is now 1 (../src/amf/context.c:1277)
+08/14 13:35:49.331: [amf] INFO: gNB-N2[10.33.33.14] max_num_of_ostreams : 30 (../src/amf/amf-sm.c:941)
+08/14 13:35:49.828: [amf] INFO: gNB-N2[10.33.33.14] connection refused!!! (../src/amf/amf-sm.c:954)
+08/14 13:35:49.828: [amf] INFO: [Removed] Number of gNBs is now 0 (../src/amf/context.c:1305)
+08/14 13:35:51.400: [amf] INFO: gNB-N2 accepted[10.33.33.14]:57307 in ng-path module (../src/amf/ngap-sctp.c:113)
+08/14 13:35:51.400: [amf] INFO: gNB-N2 accepted[10.33.33.14] in master_sm module (../src/amf/amf-sm.c:894)
+08/14 13:35:51.406: [amf] INFO: [Added] Number of gNBs is now 1 (../src/amf/context.c:1277)
+08/14 13:35:51.406: [amf] INFO: gNB-N2[10.33.33.14] max_num_of_ostreams : 30 (../src/amf/amf-sm.c:941)
+08/14 13:35:51.902: [amf] INFO: gNB-N2[10.33.33.14] connection refused!!! (../src/amf/amf-sm.c:954)
+08/14 13:35:51.902: [amf] INFO: [Removed] Number of gNBs is now 0 (../src/amf/context.c:1305)
+08/14 13:35:53.483: [amf] INFO: gNB-N2 accepted[10.33.33.14]:45908 in ng-path module (../src/amf/ngap-sctp.c:113)
+08/14 13:35:53.483: [amf] INFO: gNB-N2 accepted[10.33.33.14] in master_sm module (../src/amf/amf-sm.c:894)
+08/14 13:35:53.489: [amf] INFO: [Added] Number of gNBs is now 1 (../src/amf/context.c:1277)
+08/14 13:35:53.489: [amf] INFO: gNB-N2[10.33.33.14] max_num_of_ostreams : 30 (../src/amf/amf-sm.c:941)
+08/14 13:35:53.984: [amf] INFO: gNB-N2[10.33.33.14] connection refused!!! (../src/amf/amf-sm.c:954)
+08/14 13:35:53.984: [amf] INFO: [Removed] Number of gNBs is now 0 (../src/amf/context.c:1305)
+08/14 13:35:55.580: [amf] INFO: gNB-N2 accepted[10.33.33.14]:45658 in ng-path module (../src/amf/ngap-sctp.c:113)
+08/14 13:35:55.580: [amf] INFO: gNB-N2 accepted[10.33.33.14] in master_sm module (../src/amf/amf-sm.c:894)
+08/14 13:35:55.585: [amf] INFO: [Added] Number of gNBs is now 1 (../src/amf/context.c:1277)
+
+~/docker-open5gs$ docker logs amf2
+Open5GS daemon v2.7.6
+
+08/14 13:35:00.274: [app] INFO: Configuration: '/etc/open5gs/custom/amf2.yaml' (../lib/app/ogs-init.c:144)
+08/14 13:35:00.274: [app] INFO: File Logging: '/var/log/open5gs/amf2.log' (../lib/app/ogs-init.c:147)
+08/14 13:35:00.277: [sbi] INFO: Setup NF EndPoint(fqdn) [nrf.open5gs.org:80] (../lib/sbi/context.c:459)
+08/14 13:35:00.278: [sbi] INFO: NF Service [namf-comm] (../lib/sbi/context.c:1994)
+08/14 13:35:00.279: [sbi] INFO: nghttp2_server() [http://amf2.open5gs.org]:80 (../lib/sbi/nghttp2-server.c:434)
+08/14 13:35:00.334: [amf] INFO: ngap_server() [10.33.33.11]:38413 (../src/amf/ngap-sctp.c:61)
+08/14 13:35:00.335: [sctp] INFO: AMF initialize...done (../src/amf/app.c:33)
+08/14 13:35:00.337: [sbi] INFO: [f28b7e34-97e4-41f1-9320-1f8b38fea5e4] NF registered [Heartbeat:10s] (../lib/sbi/nf-sm.c:295)
+08/14 13:35:00.340: [sbi] INFO: Setup NF EndPoint(fqdn) [nrf.open5gs.org:80] (../lib/sbi/nnrf-handler.c:955)
+08/14 13:35:00.340: [sbi] INFO: [f2950f6c-97e4-41f1-bf4e-8f740387d1a8] Subscription created until 2026-08-15T13:35:00.338895+00:00 [duration:86400000000,validity:86400.000000,patch:43200.000000] (../lib/sbi/nnrf-handler.c:874)
+08/14 13:35:00.340: [sbi] INFO: Setup NF EndPoint(fqdn) [nrf.open5gs.org:80] (../lib/sbi/nnrf-handler.c:955)
+08/14 13:35:00.340: [sbi] INFO: [f2951278-97e4-41f1-bf4e-8f740387d1a8] Subscription created until 2026-08-15T13:35:00.338973+00:00 [duration:86400000000,validity:86400.000000,patch:43200.000000] (../lib/sbi/nnrf-handler.c:874)
+08/14 13:35:00.340: [sbi] INFO: Setup NF EndPoint(fqdn) [nrf.open5gs.org:80] (../lib/sbi/nnrf-handler.c:955)
+08/14 13:35:00.340: [sbi] INFO: [f2951552-97e4-41f1-bf4e-8f740387d1a8] Subscription created until 2026-08-15T13:35:00.339045+00:00 [duration:86400000000,validity:86400.000000,patch:43200.000000] (../lib/sbi/nnrf-handler.c:874)
+08/14 13:35:00.340: [sbi] INFO: Setup NF EndPoint(fqdn) [nrf.open5gs.org:80] (../lib/sbi/nnrf-handler.c:955)
+08/14 13:35:00.340: [sbi] INFO: [f2952e7a-97e4-41f1-bf4e-8f740387d1a8] Subscription created until 2026-08-15T13:35:00.339690+00:00 [duration:86400000000,validity:86400.000000,patch:43200.000000] (../lib/sbi/nnrf-handler.c:874)
+08/14 13:35:00.340: [sbi] INFO: Setup NF EndPoint(fqdn) [nrf.open5gs.org:80] (../lib/sbi/nnrf-handler.c:955)
+08/14 13:35:00.340: [sbi] INFO: [f295312c-97e4-41f1-bf4e-8f740387d1a8] Subscription created until 2026-08-15T13:35:00.339758+00:00 [duration:86400000000,validity:86400.000000,patch:43200.000000] (../lib/sbi/nnrf-handler.c:874)
+08/14 13:35:00.340: [sbi] INFO: Setup NF EndPoint(fqdn) [nrf.open5gs.org:80] (../lib/sbi/nnrf-handler.c:955)
+08/14 13:35:00.340: [sbi] INFO: [f2953348-97e4-41f1-bf4e-8f740387d1a8] Subscription created until 2026-08-15T13:35:00.339812+00:00 [duration:86400000000,validity:86400.000000,patch:43200.000000] (../lib/sbi/nnrf-handler.c:874)
+08/14 13:35:00.340: [sbi] INFO: Setup NF EndPoint(fqdn) [nrf.open5gs.org:80] (../lib/sbi/nnrf-handler.c:955)
+08/14 13:35:00.340: [sbi] INFO: [f29535dc-97e4-41f1-bf4e-8f740387d1a8] Subscription created until 2026-08-15T13:35:00.339876+00:00 [duration:86400000000,validity:86400.000000,patch:43200.000000] (../lib/sbi/nnrf-handler.c:874)
+08/14 13:35:00.342: [sbi] INFO: [f26c1c2e-97e4-41f1-8a8b-d18f777efdd7] (NRF-profile-get) NF registered (../lib/sbi/nf-sm.c:81)
+08/14 13:35:00.342: [sbi] INFO: Setup NF EndPoint(fqdn) [udm.open5gs.org:0] (../lib/sbi/context.c:2374)
+08/14 13:35:00.342: [sbi] INFO: Setup NF EndPoint(addr) [10.33.33.6:80] (../lib/sbi/context.c:2374)
+08/14 13:35:00.342: [sbi] INFO: Setup NF EndPoint(fqdn) [udm.open5gs.org:0] (../lib/sbi/context.c:2113)
+08/14 13:35:00.342: [sbi] INFO: Setup NF EndPoint(addr) [10.33.33.6:80] (../lib/sbi/context.c:2113)
+08/14 13:35:00.342: [sbi] INFO: Setup NF EndPoint(fqdn) [udm.open5gs.org:0] (../lib/sbi/context.c:2113)
+08/14 13:35:00.342: [sbi] INFO: Setup NF EndPoint(addr) [10.33.33.6:80] (../lib/sbi/context.c:2113)
+08/14 13:35:00.342: [sbi] INFO: Setup NF EndPoint(fqdn) [udm.open5gs.org:0] (../lib/sbi/context.c:2113)
+08/14 13:35:00.342: [sbi] INFO: Setup NF EndPoint(addr) [10.33.33.6:80] (../lib/sbi/context.c:2113)
+08/14 13:35:00.342: [sbi] INFO: [f26fc68a-97e4-41f1-b862-717f546d06b0] (NRF-profile-get) NF registered (../lib/sbi/nf-sm.c:81)
+08/14 13:35:00.342: [sbi] INFO: Setup NF EndPoint(fqdn) [ausf.open5gs.org:0] (../lib/sbi/context.c:2374)
+08/14 13:35:00.342: [sbi] INFO: Setup NF EndPoint(addr) [10.33.33.8:80] (../lib/sbi/context.c:2374)
+08/14 13:35:00.342: [sbi] INFO: Setup NF EndPoint(fqdn) [ausf.open5gs.org:0] (../lib/sbi/context.c:2113)
+08/14 13:35:00.342: [sbi] INFO: Setup NF EndPoint(addr) [10.33.33.8:80] (../lib/sbi/context.c:2113)
+08/14 13:35:00.343: [sbi] INFO: [f279ba00-97e4-41f1-9fcf-d1c2dbd98b68] (NRF-profile-get) NF registered (../lib/sbi/nf-sm.c:81)
+08/14 13:35:00.343: [sbi] INFO: Setup NF EndPoint(fqdn) [smf1.open5gs.org:0] (../lib/sbi/context.c:2374)
+08/14 13:35:00.343: [sbi] INFO: Setup NF EndPoint(addr) [10.33.33.9:80] (../lib/sbi/context.c:2374)
+08/14 13:35:00.343: [sbi] INFO: Setup NF EndPoint(fqdn) [smf1.open5gs.org:0] (../lib/sbi/context.c:2113)
+08/14 13:35:00.343: [sbi] INFO: Setup NF EndPoint(addr) [10.33.33.9:80] (../lib/sbi/context.c:2113)
+08/14 13:35:00.343: [sbi] INFO: [f27b0234-97e4-41f1-a5fe-11cd21215d42] (NRF-profile-get) NF registered (../lib/sbi/nf-sm.c:81)
+08/14 13:35:00.343: [sbi] INFO: Setup NF EndPoint(fqdn) [smf2.open5gs.org:0] (../lib/sbi/context.c:2374)
+08/14 13:35:00.343: [sbi] INFO: Setup NF EndPoint(addr) [10.33.33.10:80] (../lib/sbi/context.c:2374)
+08/14 13:35:00.343: [sbi] INFO: Setup NF EndPoint(fqdn) [smf2.open5gs.org:0] (../lib/sbi/context.c:2113)
+08/14 13:35:00.343: [sbi] INFO: Setup NF EndPoint(addr) [10.33.33.10:80] (../lib/sbi/context.c:2113)
+08/14 13:35:00.745: [sbi] INFO: [f2d220dc-97e4-41f1-b38a-5310b230c3bd] (NRF-notify) NF registered (../lib/sbi/nnrf-handler.c:1140)
+08/14 13:35:00.745: [sbi] INFO: [f2d220dc-97e4-41f1-b38a-5310b230c3bd] (NRF-notify) NF Profile updated [type:PCF] (../lib/sbi/nnrf-handler.c:1154)
+08/14 13:35:00.745: [sbi] INFO: Setup NF EndPoint(fqdn) [pcf.open5gs.org:0] (../lib/sbi/context.c:2374)
+08/14 13:35:00.745: [sbi] INFO: Setup NF EndPoint(addr) [10.33.33.13:80] (../lib/sbi/context.c:2374)
+08/14 13:35:00.745: [sbi] INFO: Setup NF EndPoint(fqdn) [pcf.open5gs.org:0] (../lib/sbi/context.c:2113)
+08/14 13:35:00.745: [sbi] INFO: Setup NF EndPoint(addr) [10.33.33.13:80] (../lib/sbi/context.c:2113)
+
+~/docker-open5gs$ docker logs smf1
+Open5GS daemon v2.7.6
+
+08/14 13:35:00.129: [app] INFO: Configuration: '/etc/open5gs/custom/smf1.yaml' (../lib/app/ogs-init.c:144)
+08/14 13:35:00.129: [app] INFO: File Logging: '/var/log/open5gs/smf1.log' (../lib/app/ogs-init.c:147)
+08/14 13:35:00.164: [sbi] INFO: Setup NF EndPoint(fqdn) [nrf.open5gs.org:80] (../lib/sbi/context.c:459)
+08/14 13:35:00.165: [smf] WARNING: No diameter configuration (../src/smf/fd-path.c:30)
+08/14 13:35:00.165: [smf] WARNING: No GTP-C configuration (../src/smf/gtp-path.c:256)
+08/14 13:35:00.165: [gtp] INFO: gtp_server() [10.33.33.9]:2152 (../lib/gtp/path.c:30)
+08/14 13:35:00.165: [pfcp] INFO: pfcp_server() [10.33.33.9]:8805 (../lib/pfcp/path.c:30)
+08/14 13:35:00.165: [sbi] INFO: NF Service [nsmf-pdusession] (../lib/sbi/context.c:1994)
+08/14 13:35:00.168: [sbi] INFO: nghttp2_server() [http://smf1.open5gs.org]:80 (../lib/sbi/nghttp2-server.c:434)
+08/14 13:35:00.168: [app] INFO: SMF initialize...done (../src/smf/app.c:31)
+08/14 13:35:00.169: [smf] INFO: PFCP associated [10.33.33.4]:8805 (../src/smf/pfcp-sm.c:188)
+08/14 13:35:00.172: [sbi] INFO: [f279ba00-97e4-41f1-9fcf-d1c2dbd98b68] NF registered [Heartbeat:10s] (../lib/sbi/nf-sm.c:295)
+08/14 13:35:00.173: [sbi] INFO: Setup NF EndPoint(fqdn) [nrf.open5gs.org:80] (../lib/sbi/nnrf-handler.c:955)
+08/14 13:35:00.173: [sbi] INFO: [f27bb80a-97e4-41f1-bf4e-8f740387d1a8] Subscription created until 2026-08-15T13:35:00.172826+00:00 [duration:86400000000,validity:86400.000000,patch:43200.000000] (../lib/sbi/nnrf-handler.c:874)
+08/14 13:35:00.173: [sbi] INFO: Setup NF EndPoint(fqdn) [nrf.open5gs.org:80] (../lib/sbi/nnrf-handler.c:955)
+08/14 13:35:00.173: [sbi] INFO: [f27bbd46-97e4-41f1-bf4e-8f740387d1a8] Subscription created until 2026-08-15T13:35:00.172944+00:00 [duration:86400000000,validity:86400.000000,patch:43200.000000] (../lib/sbi/nnrf-handler.c:874)
+08/14 13:35:00.173: [sbi] INFO: Setup NF EndPoint(fqdn) [nrf.open5gs.org:80] (../lib/sbi/nnrf-handler.c:955)
+08/14 13:35:00.173: [sbi] INFO: [f27bbe9a-97e4-41f1-bf4e-8f740387d1a8] Subscription created until 2026-08-15T13:35:00.172976+00:00 [duration:86400000000,validity:86400.000000,patch:43200.000000] (../lib/sbi/nnrf-handler.c:874)
+08/14 13:35:00.173: [sbi] INFO: Setup NF EndPoint(fqdn) [nrf.open5gs.org:80] (../lib/sbi/nnrf-handler.c:955)
+08/14 13:35:00.173: [sbi] INFO: [f27bc048-97e4-41f1-bf4e-8f740387d1a8] Subscription created until 2026-08-15T13:35:00.173019+00:00 [duration:86400000000,validity:86400.000000,patch:43200.000000] (../lib/sbi/nnrf-handler.c:874)
+08/14 13:35:00.173: [sbi] INFO: Setup NF EndPoint(fqdn) [nrf.open5gs.org:80] (../lib/sbi/nnrf-handler.c:955)
+08/14 13:35:00.173: [sbi] INFO: [f27bc1c4-97e4-41f1-bf4e-8f740387d1a8] Subscription created until 2026-08-15T13:35:00.173056+00:00 [duration:86400000000,validity:86400.000000,patch:43200.000000] (../lib/sbi/nnrf-handler.c:874)
+08/14 13:35:00.174: [sbi] INFO: [f26c1c2e-97e4-41f1-8a8b-d18f777efdd7] (NRF-profile-get) NF registered (../lib/sbi/nf-sm.c:81)
+08/14 13:35:00.174: [sbi] INFO: Setup NF EndPoint(fqdn) [udm.open5gs.org:0] (../lib/sbi/context.c:2374)
+08/14 13:35:00.174: [sbi] INFO: Setup NF EndPoint(addr) [10.33.33.6:80] (../lib/sbi/context.c:2374)
+08/14 13:35:00.174: [sbi] INFO: Setup NF EndPoint(fqdn) [udm.open5gs.org:0] (../lib/sbi/context.c:2113)
+08/14 13:35:00.174: [sbi] INFO: Setup NF EndPoint(addr) [10.33.33.6:80] (../lib/sbi/context.c:2113)
+08/14 13:35:00.174: [sbi] INFO: Setup NF EndPoint(fqdn) [udm.open5gs.org:0] (../lib/sbi/context.c:2113)
+08/14 13:35:00.174: [sbi] INFO: Setup NF EndPoint(addr) [10.33.33.6:80] (../lib/sbi/context.c:2113)
+08/14 13:35:00.174: [sbi] INFO: Setup NF EndPoint(fqdn) [udm.open5gs.org:0] (../lib/sbi/context.c:2113)
+08/14 13:35:00.174: [sbi] INFO: Setup NF EndPoint(addr) [10.33.33.6:80] (../lib/sbi/context.c:2113)
+08/14 13:35:00.338: [sbi] INFO: [f28b2358-97e4-41f1-a04f-d15c69637d3a] (NRF-notify) NF registered (../lib/sbi/nnrf-handler.c:1140)
+08/14 13:35:00.338: [sbi] INFO: [f28b2358-97e4-41f1-a04f-d15c69637d3a] (NRF-notify) NF Profile updated [type:AMF] (../lib/sbi/nnrf-handler.c:1154)
+08/14 13:35:00.338: [sbi] INFO: Setup NF EndPoint(fqdn) [amf1.open5gs.org:0] (../lib/sbi/context.c:2374)
+08/14 13:35:00.338: [sbi] INFO: Setup NF EndPoint(addr) [10.33.33.7:80] (../lib/sbi/context.c:2374)
+08/14 13:35:00.338: [sbi] INFO: Setup NF EndPoint(fqdn) [amf1.open5gs.org:0] (../lib/sbi/context.c:2113)
+08/14 13:35:00.338: [sbi] INFO: Setup NF EndPoint(addr) [10.33.33.7:80] (../lib/sbi/context.c:2113)
+08/14 13:35:00.338: [sbi] INFO: [f28b7e34-97e4-41f1-9320-1f8b38fea5e4] (NRF-notify) NF registered (../lib/sbi/nnrf-handler.c:1140)
+08/14 13:35:00.338: [sbi] INFO: [f28b7e34-97e4-41f1-9320-1f8b38fea5e4] (NRF-notify) NF Profile updated [type:AMF] (../lib/sbi/nnrf-handler.c:1154)
+08/14 13:35:00.338: [sbi] INFO: Setup NF EndPoint(fqdn) [amf2.open5gs.org:0] (../lib/sbi/context.c:2374)
+08/14 13:35:00.338: [sbi] INFO: Setup NF EndPoint(addr) [10.33.33.11:80] (../lib/sbi/context.c:2374)
+08/14 13:35:00.338: [sbi] INFO: Setup NF EndPoint(fqdn) [amf2.open5gs.org:0] (../lib/sbi/context.c:2113)
+08/14 13:35:00.338: [sbi] INFO: Setup NF EndPoint(addr) [10.33.33.11:80] (../lib/sbi/context.c:2113)
+08/14 13:35:00.744: [sbi] INFO: [f2d220dc-97e4-41f1-b38a-5310b230c3bd] (NRF-notify) NF registered (../lib/sbi/nnrf-handler.c:1140)
+08/14 13:35:00.744: [sbi] INFO: [f2d220dc-97e4-41f1-b38a-5310b230c3bd] (NRF-notify) NF Profile updated [type:PCF] (../lib/sbi/nnrf-handler.c:1154)
+08/14 13:35:00.744: [sbi] INFO: Setup NF EndPoint(fqdn) [pcf.open5gs.org:0] (../lib/sbi/context.c:2374)
+08/14 13:35:00.744: [sbi] INFO: Setup NF EndPoint(addr) [10.33.33.13:80] (../lib/sbi/context.c:2374)
+08/14 13:35:00.744: [sbi] INFO: Setup NF EndPoint(fqdn) [pcf.open5gs.org:0] (../lib/sbi/context.c:2113)
+08/14 13:35:00.744: [sbi] INFO: Setup NF EndPoint(addr) [10.33.33.13:80] (../lib/sbi/context.c:2113)
+08/14 13:39:19.195: [smf] INFO: [Added] Number of SMF-UEs is now 1 (../src/smf/context.c:1033)
+08/14 13:39:19.195: [smf] INFO: [Added] Number of SMF-Sessions is now 1 (../src/smf/context.c:3203)
+08/14 13:39:19.195: [smf] INFO: Setup NF EndPoint(fqdn) [amf1.open5gs.org:0] (../src/smf/nsmf-handler.c:274)
+08/14 13:39:19.195: [smf] INFO: Setup NF EndPoint(addr) [10.33.33.7:80] (../src/smf/nsmf-handler.c:274)
+08/14 13:39:19.196: [sbi] INFO: [f26c1c2e-97e4-41f1-8a8b-d18f777efdd7] Setup NF Instance [type:UDM] (../lib/sbi/path.c:307)
+08/14 13:39:19.207: [smf] INFO: Setup NF EndPoint(fqdn) [udm.open5gs.org:0] (../src/smf/nudm-handler.c:461)
+08/14 13:39:19.207: [smf] INFO: Setup NF EndPoint(addr) [10.33.33.6:80] (../src/smf/nudm-handler.c:461)
+08/14 13:39:19.208: [sbi] INFO: [f2d220dc-97e4-41f1-b38a-5310b230c3bd] Setup NF Instance [type:PCF] (../lib/sbi/path.c:307)
+08/14 13:39:19.216: [smf] INFO: Setup NF EndPoint(fqdn) [pcf.open5gs.org:0] (../src/smf/npcf-handler.c:367)
+08/14 13:39:19.216: [smf] INFO: Setup NF EndPoint(addr) [10.33.33.13:80] (../src/smf/npcf-handler.c:367)
+08/14 13:39:19.217: [smf] INFO: UE SUPI[imsi-001011234567893] DNN[internet] IPv4[10.45.0.2] IPv6[] (../src/smf/npcf-handler.c:586)
+08/14 13:39:19.218: [gtp] INFO: gtp_connect() [10.33.33.4]:2152 (../lib/gtp/path.c:60)
+08/14 13:39:19.220: [sbi] INFO: [f28b2358-97e4-41f1-a04f-d15c69637d3a] Setup NF Instance [type:AMF] (../lib/sbi/path.c:307)
+08/14 13:39:19.402: [sbi] INFO: [f26c1c2e-97e4-41f1-8a8b-d18f777efdd7] Setup NF Instance [type:UDM] (../lib/sbi/path.c:307)
+08/14 13:39:19.667: [smf] ERROR: Unknown message [214] (../src/smf/gsm-sm.c:1227)
+08/14 13:39:30.023: [smf] INFO: [Added] Number of SMF-UEs is now 2 (../src/smf/context.c:1033)
+08/14 13:39:30.023: [smf] INFO: [Added] Number of SMF-Sessions is now 2 (../src/smf/context.c:3203)
+08/14 13:39:30.023: [smf] INFO: Setup NF EndPoint(fqdn) [amf1.open5gs.org:0] (../src/smf/nsmf-handler.c:274)
+08/14 13:39:30.023: [smf] INFO: Setup NF EndPoint(addr) [10.33.33.7:80] (../src/smf/nsmf-handler.c:274)
+08/14 13:39:30.023: [sbi] INFO: [f26c1c2e-97e4-41f1-8a8b-d18f777efdd7] Setup NF Instance [type:UDM] (../lib/sbi/path.c:307)
+08/14 13:39:30.027: [smf] INFO: Setup NF EndPoint(fqdn) [udm.open5gs.org:0] (../src/smf/nudm-handler.c:461)
+08/14 13:39:30.027: [smf] INFO: Setup NF EndPoint(addr) [10.33.33.6:80] (../src/smf/nudm-handler.c:461)
+08/14 13:39:30.027: [sbi] INFO: [f2d220dc-97e4-41f1-b38a-5310b230c3bd] Setup NF Instance [type:PCF] (../lib/sbi/path.c:307)
+08/14 13:39:30.032: [smf] INFO: Setup NF EndPoint(fqdn) [pcf.open5gs.org:0] (../src/smf/npcf-handler.c:367)
+08/14 13:39:30.032: [smf] INFO: Setup NF EndPoint(addr) [10.33.33.13:80] (../src/smf/npcf-handler.c:367)
+08/14 13:39:30.032: [smf] INFO: UE SUPI[imsi-001011234567895] DNN[internet] IPv4[10.45.0.3] IPv6[] (../src/smf/npcf-handler.c:586)
+08/14 13:39:30.034: [sbi] INFO: [f28b2358-97e4-41f1-a04f-d15c69637d3a] Setup NF Instance [type:AMF] (../lib/sbi/path.c:307)
+08/14 13:39:30.233: [sbi] INFO: [f26c1c2e-97e4-41f1-8a8b-d18f777efdd7] Setup NF Instance [type:UDM] (../lib/sbi/path.c:307)
+08/14 13:39:30.612: [smf] ERROR: Unknown message [214] (../src/smf/gsm-sm.c:1227)
+
+~/docker-open5gs$ docker logs smf2
+Open5GS daemon v2.7.6
+
+08/14 13:35:00.129: [app] INFO: Configuration: '/etc/open5gs/custom/smf2.yaml' (../lib/app/ogs-init.c:144)
+08/14 13:35:00.129: [app] INFO: File Logging: '/var/log/open5gs/smf2.log' (../lib/app/ogs-init.c:147)
+08/14 13:35:00.172: [sbi] INFO: Setup NF EndPoint(fqdn) [nrf.open5gs.org:80] (../lib/sbi/context.c:459)
+08/14 13:35:00.172: [smf] WARNING: No diameter configuration (../src/smf/fd-path.c:30)
+08/14 13:35:00.172: [smf] WARNING: No GTP-C configuration (../src/smf/gtp-path.c:256)
+08/14 13:35:00.172: [gtp] INFO: gtp_server() [10.33.33.10]:2152 (../lib/gtp/path.c:30)
+08/14 13:35:00.172: [pfcp] INFO: pfcp_server() [10.33.33.10]:8805 (../lib/pfcp/path.c:30)
+08/14 13:35:00.172: [sbi] INFO: NF Service [nsmf-pdusession] (../lib/sbi/context.c:1994)
+08/14 13:35:00.172: [sbi] INFO: nghttp2_server() [http://smf2.open5gs.org]:80 (../lib/sbi/nghttp2-server.c:434)
+08/14 13:35:00.172: [app] INFO: SMF initialize...done (../src/smf/app.c:31)
+08/14 13:35:00.173: [smf] INFO: PFCP associated [10.33.33.5]:8805 (../src/smf/pfcp-sm.c:188)
+08/14 13:35:00.174: [sbi] INFO: [f27b0234-97e4-41f1-a5fe-11cd21215d42] NF registered [Heartbeat:10s] (../lib/sbi/nf-sm.c:295)
+08/14 13:35:00.174: [sbi] INFO: Setup NF EndPoint(fqdn) [nrf.open5gs.org:80] (../lib/sbi/nnrf-handler.c:955)
+08/14 13:35:00.174: [sbi] INFO: [f27bf9c8-97e4-41f1-bf4e-8f740387d1a8] Subscription created until 2026-08-15T13:35:00.174508+00:00 [duration:86400000000,validity:86400.000000,patch:43200.000000] (../lib/sbi/nnrf-handler.c:874)
+08/14 13:35:00.175: [sbi] INFO: Setup NF EndPoint(fqdn) [nrf.open5gs.org:80] (../lib/sbi/nnrf-handler.c:955)
+08/14 13:35:00.175: [sbi] INFO: [f27bfefa-97e4-41f1-bf4e-8f740387d1a8] Subscription created until 2026-08-15T13:35:00.174634+00:00 [duration:86400000000,validity:86400.000000,patch:43200.000000] (../lib/sbi/nnrf-handler.c:874)
+08/14 13:35:00.175: [sbi] INFO: Setup NF EndPoint(fqdn) [nrf.open5gs.org:80] (../lib/sbi/nnrf-handler.c:955)
+08/14 13:35:00.175: [sbi] INFO: [f27c012a-97e4-41f1-bf4e-8f740387d1a8] Subscription created until 2026-08-15T13:35:00.174688+00:00 [duration:86400000000,validity:86400.000000,patch:43200.000000] (../lib/sbi/nnrf-handler.c:874)
+08/14 13:35:00.175: [sbi] INFO: Setup NF EndPoint(fqdn) [nrf.open5gs.org:80] (../lib/sbi/nnrf-handler.c:955)
+08/14 13:35:00.175: [sbi] INFO: [f27c0756-97e4-41f1-bf4e-8f740387d1a8] Subscription created until 2026-08-15T13:35:00.174855+00:00 [duration:86400000000,validity:86400.000000,patch:43200.000000] (../lib/sbi/nnrf-handler.c:874)
+08/14 13:35:00.175: [sbi] INFO: Setup NF EndPoint(fqdn) [nrf.open5gs.org:80] (../lib/sbi/nnrf-handler.c:955)
+08/14 13:35:00.175: [sbi] INFO: [f27c09c2-97e4-41f1-bf4e-8f740387d1a8] Subscription created until 2026-08-15T13:35:00.174908+00:00 [duration:86400000000,validity:86400.000000,patch:43200.000000] (../lib/sbi/nnrf-handler.c:874)
+08/14 13:35:00.176: [sbi] INFO: [f26c1c2e-97e4-41f1-8a8b-d18f777efdd7] (NRF-profile-get) NF registered (../lib/sbi/nf-sm.c:81)
+08/14 13:35:00.176: [sbi] INFO: Setup NF EndPoint(fqdn) [udm.open5gs.org:0] (../lib/sbi/context.c:2374)
+08/14 13:35:00.176: [sbi] INFO: Setup NF EndPoint(addr) [10.33.33.6:80] (../lib/sbi/context.c:2374)
+08/14 13:35:00.176: [sbi] INFO: Setup NF EndPoint(fqdn) [udm.open5gs.org:0] (../lib/sbi/context.c:2113)
+08/14 13:35:00.176: [sbi] INFO: Setup NF EndPoint(addr) [10.33.33.6:80] (../lib/sbi/context.c:2113)
+08/14 13:35:00.176: [sbi] INFO: Setup NF EndPoint(fqdn) [udm.open5gs.org:0] (../lib/sbi/context.c:2113)
+08/14 13:35:00.176: [sbi] INFO: Setup NF EndPoint(addr) [10.33.33.6:80] (../lib/sbi/context.c:2113)
+08/14 13:35:00.176: [sbi] INFO: Setup NF EndPoint(fqdn) [udm.open5gs.org:0] (../lib/sbi/context.c:2113)
+08/14 13:35:00.176: [sbi] INFO: Setup NF EndPoint(addr) [10.33.33.6:80] (../lib/sbi/context.c:2113)
+08/14 13:35:00.338: [sbi] INFO: [f28b2358-97e4-41f1-a04f-d15c69637d3a] (NRF-notify) NF registered (../lib/sbi/nnrf-handler.c:1140)
+08/14 13:35:00.338: [sbi] INFO: [f28b2358-97e4-41f1-a04f-d15c69637d3a] (NRF-notify) NF Profile updated [type:AMF] (../lib/sbi/nnrf-handler.c:1154)
+08/14 13:35:00.338: [sbi] INFO: Setup NF EndPoint(fqdn) [amf1.open5gs.org:0] (../lib/sbi/context.c:2374)
+08/14 13:35:00.338: [sbi] INFO: Setup NF EndPoint(addr) [10.33.33.7:80] (../lib/sbi/context.c:2374)
+08/14 13:35:00.338: [sbi] INFO: Setup NF EndPoint(fqdn) [amf1.open5gs.org:0] (../lib/sbi/context.c:2113)
+08/14 13:35:00.338: [sbi] INFO: Setup NF EndPoint(addr) [10.33.33.7:80] (../lib/sbi/context.c:2113)
+08/14 13:35:00.338: [sbi] INFO: [f28b7e34-97e4-41f1-9320-1f8b38fea5e4] (NRF-notify) NF registered (../lib/sbi/nnrf-handler.c:1140)
+08/14 13:35:00.338: [sbi] INFO: [f28b7e34-97e4-41f1-9320-1f8b38fea5e4] (NRF-notify) NF Profile updated [type:AMF] (../lib/sbi/nnrf-handler.c:1154)
+08/14 13:35:00.338: [sbi] INFO: Setup NF EndPoint(fqdn) [amf2.open5gs.org:0] (../lib/sbi/context.c:2374)
+08/14 13:35:00.338: [sbi] INFO: Setup NF EndPoint(addr) [10.33.33.11:80] (../lib/sbi/context.c:2374)
+08/14 13:35:00.338: [sbi] INFO: Setup NF EndPoint(fqdn) [amf2.open5gs.org:0] (../lib/sbi/context.c:2113)
+08/14 13:35:00.338: [sbi] INFO: Setup NF EndPoint(addr) [10.33.33.11:80] (../lib/sbi/context.c:2113)
+08/14 13:35:00.744: [sbi] INFO: [f2d220dc-97e4-41f1-b38a-5310b230c3bd] (NRF-notify) NF registered (../lib/sbi/nnrf-handler.c:1140)
+08/14 13:35:00.744: [sbi] INFO: [f2d220dc-97e4-41f1-b38a-5310b230c3bd] (NRF-notify) NF Profile updated [type:PCF] (../lib/sbi/nnrf-handler.c:1154)
+08/14 13:35:00.744: [sbi] INFO: Setup NF EndPoint(fqdn) [pcf.open5gs.org:0] (../lib/sbi/context.c:2374)
+08/14 13:35:00.744: [sbi] INFO: Setup NF EndPoint(addr) [10.33.33.13:80] (../lib/sbi/context.c:2374)
+08/14 13:35:00.744: [sbi] INFO: Setup NF EndPoint(fqdn) [pcf.open5gs.org:0] (../lib/sbi/context.c:2113)
+08/14 13:35:00.744: [sbi] INFO: Setup NF EndPoint(addr) [10.33.33.13:80] (../lib/sbi/context.c:2113)
+
+~/docker-open5gs$ docker logs upf1
+Open5GS daemon v2.7.6
+
+08/14 13:35:00.027: [app] INFO: Configuration: '/etc/open5gs/custom/upf1.yaml' (../lib/app/ogs-init.c:144)
+08/14 13:35:00.027: [app] INFO: File Logging: '/var/log/open5gs/upf.log' (../lib/app/ogs-init.c:147)
+08/14 13:35:00.060: [pfcp] INFO: pfcp_server() [10.33.33.4]:8805 (../lib/pfcp/path.c:30)
+08/14 13:35:00.060: [gtp] INFO: gtp_server() [10.33.33.4]:2152 (../lib/gtp/path.c:30)
+08/14 13:35:00.060: [app] INFO: UPF initialize...done (../src/upf/app.c:31)
+08/14 13:35:00.166: [upf] INFO: PFCP associated [10.33.33.9]:8805 (../src/upf/pfcp-sm.c:168)
+08/14 13:39:19.217: [upf] INFO: [Added] Number of UPF-Sessions is now 1 (../src/upf/context.c:212)
+08/14 13:39:19.217: [gtp] INFO: gtp_connect() [10.33.33.9]:2152 (../lib/gtp/path.c:60)
+08/14 13:39:19.218: [upf] INFO: UE F-SEID[UP:0x3e CP:0x63d] APN[internet] PDN-Type[1] IPv4[10.45.0.2] IPv6[] (../src/upf/context.c:498)
+08/14 13:39:19.401: [gtp] INFO: gtp_connect() [10.33.33.16]:2152 (../lib/gtp/path.c:60)
+08/14 13:39:30.033: [upf] INFO: [Added] Number of UPF-Sessions is now 2 (../src/upf/context.c:212)
+08/14 13:39:30.033: [upf] INFO: UE F-SEID[UP:0x8bb CP:0x143] APN[internet] PDN-Type[1] IPv4[10.45.0.3] IPv6[] (../src/upf/context.c:498)
+
+~/docker-open5gs$ docker logs upf2
+Open5GS daemon v2.7.6
+
+08/14 13:35:00.027: [app] INFO: Configuration: '/etc/open5gs/custom/upf2.yaml' (../lib/app/ogs-init.c:144)
+08/14 13:35:00.027: [app] INFO: File Logging: '/var/log/open5gs/upf.log' (../lib/app/ogs-init.c:147)
+08/14 13:35:00.060: [pfcp] INFO: pfcp_server() [10.33.33.5]:8805 (../lib/pfcp/path.c:30)
+08/14 13:35:00.060: [gtp] INFO: gtp_server() [10.33.33.5]:2152 (../lib/gtp/path.c:30)
+08/14 13:35:00.060: [app] INFO: UPF initialize...done (../src/upf/app.c:31)
+08/14 13:35:00.172: [upf] INFO: PFCP associated [10.33.33.10]:8805 (../src/upf/pfcp-sm.c:168)

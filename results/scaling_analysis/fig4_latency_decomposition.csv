@@ -1,9 +1,0 @@
-mode,ues,radio_s,rrc_s,registration_s,session_s
-concurrent,6,4.380,0.000,0.290,0.401
-concurrent,12,5.534,0.000,0.329,0.389
-concurrent,24,8.759,0.000,0.470,0.328
-concurrent,48,12.973,0.000,0.447,0.282
-n14-mobility,6,2.642,0.000,0.032,0.000
-n14-mobility,12,2.778,0.000,0.162,0.000
-n14-mobility,24,2.764,0.000,0.256,0.000
-n14-mobility,48,2.845,0.000,0.213,0.000

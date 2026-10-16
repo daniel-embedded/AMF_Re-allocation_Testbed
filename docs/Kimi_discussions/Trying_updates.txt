@@ -1,0 +1,1449 @@
+docker-compose.yaml:
+
+services:
+  db:
+    container_name: db
+    image: "mongo:${MONGODB_VERSION}"
+    command: "mongod --bind_ip 0.0.0.0 --port 27017"
+    networks:
+      open5gs:
+        aliases:
+          - db.open5gs.org
+    volumes:
+      - db_data:/data/db
+      - db_config:/data/configdb
+    environment:
+      - GLIBC_TUNABLES=glibc.pthread.rseq=1
+    ports:
+      - "0.0.0.0:27017:27017/tcp"
+
+  webui:
+    container_name: webui
+    image: "ghcr.io/borjis131/webui:${OPEN5GS_VERSION}"
+    networks:
+      open5gs:
+        aliases:
+          - webui.open5gs.org
+    ports:
+      - "0.0.0.0:3000:9999/tcp"
+    environment:
+      - DB_URI=mongodb://db.open5gs.org:27017/open5gs
+    depends_on:
+      - db
+
+  sctp-proxy:
+    container_name: sctp-proxy
+    build:
+      context: ../../sctp_proxy
+      dockerfile: Dockerfile
+#    command: "tail -f /dev/null"
+    command: "python3 /app/sctp_proxy_v5.py"  # ← Auto-start the proxy
+    networks:
+      open5gs:
+        aliases:
+          - proxy.open5gs.org
+    ports:
+      - "38412:38412/sctp"
+      - "9999:9999/udp"
+      - "9100:9100/tcp"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock  # Required for container control
+    environment:
+      - DISABLE_AUTO_RESTART=1
+    depends_on:
+      - amf1
+      - amf2
+
+#  sctp-proxy:
+#    container_name: sctp-proxy
+#    image: python:3.11-slim
+#    # Keep container alive for debugging; we'll override command later
+#    command: "tail -f /dev/null"
+#    networks:
+#      open5gs:
+#        aliases:
+#          - proxy.open5gs.org
+#    ports:
+#      - "38412:38412/sctp"
+#      - "9999:9999/udp"
+#    volumes:
+#      - ../../sctp_proxy:/app
+#      - /var/run/docker.sock:/var/run/docker.sock  # Required for container control
+#    depends_on:
+#      - amf1
+#      - amf2
+
+  nrf:
+    container_name: nrf
+    image: "ghcr.io/borjis131/nrf:${OPEN5GS_VERSION}"
+    command: "-c /etc/open5gs/custom/nrf.yaml"
+    networks:
+      open5gs:
+        aliases:
+          - nrf.open5gs.org
+    configs:
+      - source: nrf_config
+        target: /etc/open5gs/custom/nrf.yaml
+#    healthcheck:
+#      test: ["CMD", "sh", "-c", "ss -tlnp | grep -q ':80'"]
+#      interval: 5s
+#      timeout: 3s
+#      retries: 5
+
+#  nrf1:
+#    container_name: nrf1
+#    image: "ghcr.io/borjis131/nrf:${OPEN5GS_VERSION}"
+#    command: "-c /etc/open5gs/custom/nrf1.yaml"
+#    networks:
+#      open5gs:
+#        aliases:
+#          - nrf1.open5gs.org
+#    configs:
+#      - source: nrf1_config
+#        target: /etc/open5gs/custom/nrf1.yaml
+
+  ausf:
+    container_name: ausf
+    image: "ghcr.io/borjis131/ausf:${OPEN5GS_VERSION}"
+    command: "-c /etc/open5gs/custom/ausf.yaml"
+    networks:
+      open5gs:
+        aliases:
+          - ausf.open5gs.org
+    configs:
+      - source: ausf_config
+        target: /etc/open5gs/custom/ausf.yaml
+    depends_on:
+      - nrf
+#      - nrf1
+
+  udm:
+    container_name: udm
+    image: "ghcr.io/borjis131/udm:${OPEN5GS_VERSION}"
+    command: "-c /etc/open5gs/custom/udm.yaml"
+    networks:
+      open5gs:
+        aliases:
+          - udm.open5gs.org
+    configs:
+      - source: udm_config
+        target: /etc/open5gs/custom/udm.yaml
+    depends_on:
+      - nrf
+#      - nrf1
+
+  udr:
+    container_name: udr
+    image: "ghcr.io/borjis131/udr:${OPEN5GS_VERSION}"
+    command: "-c /etc/open5gs/custom/udr.yaml"
+    restart: unless-stopped
+    networks:
+      open5gs:
+        aliases:
+          - udr.open5gs.org
+    configs:
+      - source: udr_config
+        target: /etc/open5gs/custom/udr.yaml
+    depends_on:
+      - db
+      - nrf
+#      - nrf1
+
+  nssf:
+    container_name: nssf
+    image: "ghcr.io/borjis131/nssf:${OPEN5GS_VERSION}"
+    command: "-c /etc/open5gs/custom/nssf.yaml"
+    networks:
+      open5gs:
+        aliases:
+          - nssf.open5gs.org
+    configs:
+      - source: nssf_config
+        target: /etc/open5gs/custom/nssf.yaml
+    depends_on:
+      - nrf
+#      - nrf1
+
+  bsf:
+    container_name: bsf
+    image: "ghcr.io/borjis131/bsf:${OPEN5GS_VERSION}"
+    command: "-c /etc/open5gs/custom/bsf.yaml"
+    networks:
+      open5gs:
+        aliases:
+          - bsf.open5gs.org
+    configs:
+      - source: bsf_config
+        target: /etc/open5gs/custom/bsf.yaml
+    depends_on:
+      - nrf
+#      - nrf1
+
+  pcf:
+    container_name: pcf
+    image: "ghcr.io/borjis131/pcf:${OPEN5GS_VERSION}"
+    command: "-c /etc/open5gs/custom/pcf.yaml"
+    restart: unless-stopped
+    networks:
+      open5gs:
+        aliases:
+          - pcf.open5gs.org
+    configs:
+      - source: pcf_config
+        target: /etc/open5gs/custom/pcf.yaml
+    depends_on:
+      - db
+      - nrf
+#      - nrf1
+
+  amf1:
+    container_name: amf1
+    image: "ghcr.io/borjis131/amf:${OPEN5GS_VERSION}"
+    command: "-c /etc/open5gs/custom/amf1.yaml"
+    networks:
+      open5gs:
+        aliases:
+          - amf1.open5gs.org
+    configs:
+      - source: amf1_config
+        target: /etc/open5gs/custom/amf1.yaml
+#    volumes: # DeepSeek suggestion
+#      - ../../configs/network-slicing/amf1.yaml:/etc/open5gs/custom/amf1.yaml
+    depends_on:
+      - nrf
+      - ausf
+      - udm
+      - pcf
+
+  amf2:
+    container_name: amf2
+    image: "ghcr.io/borjis131/amf:${OPEN5GS_VERSION}"
+    command: "-c /etc/open5gs/custom/amf2.yaml"
+    networks:
+      open5gs:
+        aliases:
+          - amf2.open5gs.org
+    configs:
+      - source: amf2_config
+        target: /etc/open5gs/custom/amf2.yaml
+#    volumes: # DeepSeek suggestion
+#      - ../../configs/network-slicing/amf2.yaml:/etc/open5gs/custom/amf2.yaml
+    depends_on:
+      - nrf
+      - ausf
+      - udm
+      - pcf
+      
+  smf1:
+    container_name: smf1
+    image: "ghcr.io/borjis131/smf:${OPEN5GS_VERSION}"
+    command: "-c /etc/open5gs/custom/smf1.yaml"
+    networks:
+      open5gs:
+        aliases:
+          - smf1.open5gs.org
+    configs:
+      - source: smf1_config
+        target: /etc/open5gs/custom/smf1.yaml
+    depends_on:
+      - nrf
+      - upf1
+
+  smf2:
+    container_name: smf2
+    image: "ghcr.io/borjis131/smf:${OPEN5GS_VERSION}"
+    command: "-c /etc/open5gs/custom/smf2.yaml"
+    networks:
+      open5gs:
+        aliases:
+          - smf2.open5gs.org
+    configs:
+      - source: smf2_config
+        target: /etc/open5gs/custom/smf2.yaml
+    depends_on:
+      - nrf
+      - upf2
+
+  upf1:
+    container_name: upf1
+    image: "ghcr.io/borjis131/upf:${OPEN5GS_VERSION}"
+    command: "-c /etc/open5gs/custom/upf1.yaml"
+    networks:
+      open5gs:
+        aliases:
+          - upf1.open5gs.org
+    configs:
+      - source: upf1_config
+        target: /etc/open5gs/custom/upf1.yaml
+    privileged: true
+    cap_add:
+      - NET_ADMIN
+
+  upf2:
+    container_name: upf2
+    image: "ghcr.io/borjis131/upf:${OPEN5GS_VERSION}"
+    command: "-c /etc/open5gs/custom/upf2.yaml"
+    networks:
+      open5gs:
+        aliases:
+          - upf2.open5gs.org
+    configs:
+      - source: upf2_config
+        target: /etc/open5gs/custom/upf2.yaml
+    privileged: true
+    cap_add:
+      - NET_ADMIN
+
+  gnb1:
+    container_name: gnb1
+    image: "ghcr.io/borjis131/gnb:v3.2.7"
+    command: "-c /UERANSIM/config/gnb1.yaml"
+    networks:
+      open5gs:
+        aliases:
+          - gnb1.ueransim.org
+    configs:
+      - source: gnb1_config
+        target: /UERANSIM/config/gnb1.yaml
+    depends_on:
+      - amf1
+#      - amf2
+      - smf1
+      - smf2
+      - pcf
+      - udr
+      - sctp-proxy
+
+  gnb2:
+    container_name: gnb2
+    image: "ghcr.io/borjis131/gnb:v3.2.7"
+    command: "-c /UERANSIM/config/gnb2.yaml"
+    networks:
+      open5gs:
+        aliases:
+          - gnb2.ueransim.org
+    configs:
+      - source: gnb2_config
+        target: /UERANSIM/config/gnb2.yaml
+    depends_on:
+#      - amf1
+      - amf2
+      - smf1
+      - smf2
+      - pcf
+      - udr
+      - sctp-proxy
+
+  ue1:
+    container_name: ue1
+    image: "ghcr.io/borjis131/ue:v3.2.7"
+    command: "-c /UERANSIM/config/ue1.yaml"
+    networks:
+      open5gs:
+        aliases:
+          - ue1.ueransim.org
+#    configs:
+#      - source: ue1_config
+#        target: /UERANSIM/config/ue1.yaml
+    volumes:
+      - ../../configs/network-slicing/:/UERANSIM/config/
+    privileged: true
+    cap_add:
+      - NET_ADMIN
+    depends_on:
+      - gnb1
+#      - gnb2
+
+  ue2:
+    container_name: ue2
+    image: "ghcr.io/borjis131/ue:v3.2.7"
+    command: "-c /UERANSIM/config/ue2.yaml"
+    networks:
+      open5gs:
+        aliases:
+          - ue2.ueransim.org
+#    configs:
+#      - source: ue2_config
+#        target: /UERANSIM/config/ue2.yaml
+    volumes:
+      - ../../configs/network-slicing/:/UERANSIM/config/
+    privileged: true
+    cap_add:
+      - NET_ADMIN
+    depends_on:
+      - gnb1
+#      - gnb2
+
+  ue3:
+    container_name: ue3
+    image: "ghcr.io/borjis131/ue:v3.2.7"
+    command: "-c /UERANSIM/config/ue3.yaml"
+    networks:
+      open5gs:
+        aliases:
+          - ue3.ueransim.org
+#    configs:
+#      - source: ue3_config
+#        target: /UERANSIM/config/ue3.yaml
+    volumes:
+      - ../../configs/network-slicing/:/UERANSIM/config/
+    privileged: true
+    cap_add:
+      - NET_ADMIN
+    depends_on:
+      - gnb1
+
+  ue4:
+    container_name: ue4
+    image: "ghcr.io/borjis131/ue:v3.2.7"
+    command: "-c /UERANSIM/config/ue4.yaml"
+    networks:
+      open5gs:
+        aliases:
+          - ue4.ueransim.org
+#    configs:
+#      - source: ue4_config
+#        target: /UERANSIM/config/ue4.yaml
+    volumes:
+      - ../../configs/network-slicing/:/UERANSIM/config/
+    privileged: true
+    cap_add:
+      - NET_ADMIN
+    depends_on:
+      - gnb1
+
+  ue5:
+    container_name: ue5
+    image: "ghcr.io/borjis131/ue:v3.2.7"
+    command: "-c /UERANSIM/config/ue5.yaml"
+    networks:
+      open5gs:
+        aliases:
+          - ue5.ueransim.org
+#    configs:
+#      - source: ue5_config
+#        target: /UERANSIM/config/ue5.yaml
+    volumes:
+      - ../../configs/network-slicing/:/UERANSIM/config/
+    privileged: true
+    cap_add:
+      - NET_ADMIN
+    depends_on:
+      - gnb1
+
+  ue6:
+    container_name: ue6
+    image: "ghcr.io/borjis131/ue:v3.2.7"
+    command: "-c /UERANSIM/config/ue6.yaml"
+    networks:
+      open5gs:
+        aliases:
+          - ue6.ueransim.org
+#    configs:
+#      - source: ue6_config
+#        target: /UERANSIM/config/ue6.yaml
+    volumes:
+      - ../../configs/network-slicing/:/UERANSIM/config/
+    privileged: true
+    cap_add:
+      - NET_ADMIN
+    depends_on:
+      - gnb1
+
+
+networks:
+  open5gs:
+    name: open5gs
+    driver: bridge
+    driver_opts:
+      com.docker.network.bridge.name: br-ogs
+    ipam:
+      config:
+        - subnet: 10.33.33.0/24
+
+volumes:
+  db_data:
+    name: open5gs_db_data
+    labels:
+      org.open5gs.mongodb_version: ${MONGODB_VERSION}
+  db_config:
+    name: open5gs_db_config
+    labels:
+      org.open5gs.mongodb_version: ${MONGODB_VERSION}
+
+configs:
+  nrf_config:
+    file: ../../configs/network-slicing/nrf.yaml
+  nrf1_config:
+    file: ../../configs/network-slicing/nrf1.yaml
+  ausf_config:
+    file: ../../configs/network-slicing/ausf.yaml
+  udm_config:
+    file: ../../configs/network-slicing/udm.yaml
+  udr_config:
+    file: ../../configs/network-slicing/udr.yaml
+  nssf_config:
+    file: ../../configs/network-slicing/nssf.yaml
+  bsf_config:
+    file: ../../configs/network-slicing/bsf.yaml
+  pcf_config:
+    file: ../../configs/network-slicing/pcf.yaml
+  amf1_config:
+    file: ../../configs/network-slicing/amf1.yaml
+  amf2_config:
+    file: ../../configs/network-slicing/amf2.yaml
+  smf1_config:
+    file: ../../configs/network-slicing/smf1.yaml
+  smf2_config:
+    file: ../../configs/network-slicing/smf2.yaml
+  upf1_config:
+    file: ../../configs/network-slicing/upf1.yaml
+  upf2_config:
+    file: ../../configs/network-slicing/upf2.yaml
+  gnb1_config:
+    file: ../../configs/network-slicing/gnb1.yaml
+  gnb2_config:
+    file: ../../configs/network-slicing/gnb2.yaml
+  ue1_config:
+    file: ../../configs/network-slicing/ue1.yaml
+  ue2_config:
+    file: ../../configs/network-slicing/ue2.yaml
+  ue3_config:
+    file: ../../configs/network-slicing/ue3.yaml
+  ue4_config:
+    file: ../../configs/network-slicing/ue4.yaml
+  ue5_config:
+    file: ../../configs/network-slicing/ue5.yaml
+  ue6_config:
+    file: ../../configs/network-slicing/ue6.yaml
+
+gnb2.yaml:
+
+mcc: '001'
+mnc: '01'
+
+nci: '0x000000011'
+idLength: 32
+#tac: 1
+tac: 2
+
+linkIp: gnb2.ueransim.org
+ngapIp: gnb2.ueransim.org
+gtpIp: gnb2.ueransim.org
+
+amfConfigs:
+  - address: proxy.open5gs.org
+    port: 38412
+#  - address: amf1.open5gs.org
+#    port: 38412
+#  - address: amf2.open5gs.org
+#    port: 38413
+
+slices:
+  - sst: 1
+    sd: 0x000001
+  - sst: 1
+    sd: 0x000002
+
+ignoreStreamIds: true
+
+ue1.yaml:
+
+supi: 'imsi-001011234567891'
+mcc: '001'
+mnc: '01'
+
+key: '465B5CE8B199B49FAA5F0A2EE238A6BC'
+op: 'E8ED289DEBA952E4283B54E88E6183CA'
+opType: 'OPC'
+amf: '8000'
+imei: '356938035643803'
+imeiSv: '4370816125816151'
+
+gnbSearchList:
+  - gnb1.ueransim.org
+  - gnb2.ueransim.org
+
+uacAic:
+  mps: false
+  mcs: false
+
+uacAcc:
+  normalClass: 0
+  class11: false
+  class12: false
+  class13: false
+  class14: false
+  class15: false
+
+sessions:
+  - type: 'IPv4'
+    apn: 'internet'
+    slice:
+      sst: 1
+      sd: 0x000001
+#      sd: 0x000002
+
+configured-nssai:
+  - sst: 1
+    sd: 0x000001
+  - sst: 1
+    sd: 0x000002
+
+default-nssai:
+  - sst: 1
+    sd: 0x000001
+#    sd: 0x000002
+
+integrity:
+  IA1: true
+  IA2: true
+  IA3: true
+
+ciphering:
+  EA1: true
+  EA2: true
+  EA3: true
+
+integrityMaxRate:
+  uplink: 'full'
+  downlink: 'full'
+
+ue3.yaml:
+
+supi: 'imsi-001011234567893'
+mcc: '001'
+mnc: '01'
+key: '465B5CE8B199B49FAA5F0A2EE238A6BC'
+op: 'E8ED289DEBA952E4283B54E88E6183CA'
+opType: 'OPC'
+amf: '8000'
+imei: '356938035643805'
+imeiSv: '4370816125816153'
+gnbSearchList:
+  - gnb1.ueransim.org
+  - gnb2.ueransim.org
+uacAic:
+  mps: false
+  mcs: false
+uacAcc:
+  normalClass: 0
+  class11: false
+  class12: false
+  class13: false
+  class14: false
+  class15: false
+sessions:
+  - type: 'IPv4'
+    apn: 'internet'
+    slice:
+      sst: 1
+      sd: 0x000001
+configured-nssai:
+  - sst: 1
+    sd: 0x000001
+  - sst: 1
+    sd: 0x000002
+default-nssai:
+  - sst: 1
+    sd: 0x000001
+integrity:
+  IA1: true
+  IA2: true
+  IA3: true
+ciphering:
+  EA1: true
+  EA2: true
+  EA3: true
+integrityMaxRate:
+  uplink: 'full'
+  downlink: 'full'
+
+run_all_experiments_v2.sh:
+
+#!/usr/bin/bash
+# =============================================================================
+# run_all_experiments_v2.sh
+# Automated workflow for AMF re-allocation experiments (7 modes).
+#
+# New in v2:
+#   06_split_gnb_simultaneous : AMF2 switch + gNB2 start + restart second-half UEs
+#                               (all triggered together)
+#   07_split_gnb_sequential   : AMF2 switch first, wait for recovery, then
+#                               gNB2 start + restart second-half UEs
+#
+# The orchestrator computes new metrics (rrc_latency_ms, post_restart_latency_ms)
+# automatically; this script only drives the sequencing.
+# =============================================================================
+
+set -uo pipefail
+
+# ---------------------------------------------------------------------------
+# Configuration
+# ---------------------------------------------------------------------------
+ORCHESTRATOR="python3 sctp_proxy/amf_orchestrator_v5.py"
+UE_POOL="ue1,ue2,ue3,ue4,ue5,ue6"
+GNB_POOL_SINGLE="gnb1"
+GNB_POOL_BOTH="gnb1,gnb2"
+WAIT_BEFORE=10
+WAIT_AFTER=60
+COOLDOWN=30
+
+# ---------------------------------------------------------------------------
+# Determine output root directory
+# ---------------------------------------------------------------------------
+TIMESTAMP=$(date +"%Y.%m.%d_%H-%M-%S")
+CUSTOM_LABEL="${1:-}"
+
+if [ -n "$CUSTOM_LABEL" ]; then
+    ROOT_DIR="results/${TIMESTAMP}_${CUSTOM_LABEL}"
+else
+    ROOT_DIR="results/${TIMESTAMP}"
+fi
+mkdir -p "$ROOT_DIR"
+
+# Subdirectories for each experiment
+DIR_SEQ="$ROOT_DIR/01_sequential"
+DIR_CONC="$ROOT_DIR/02_concurrent"
+DIR_BF="$ROOT_DIR/03_backforth"
+DIR_PART="$ROOT_DIR/04_partial"
+DIR_GNB="$ROOT_DIR/05_isolate_gnb"
+DIR_SPLIT_SIM="$ROOT_DIR/06_split_gnb_simultaneous"
+DIR_SPLIT_SEQ="$ROOT_DIR/07_split_gnb_sequential"
+
+for d in "$DIR_SEQ" "$DIR_CONC" "$DIR_BF" "$DIR_PART" "$DIR_GNB" "$DIR_SPLIT_SIM" "$DIR_SPLIT_SEQ"; do
+    mkdir -p "$d"
+done
+
+# ---------------------------------------------------------------------------
+# Helper functions
+# ---------------------------------------------------------------------------
+
+ensure_amf1() {
+    echo "[CHECK] Ensuring proxy is on AMF1..."
+    STATUS=$($ORCHESTRATOR --command status 2>/dev/null || echo "ERROR")
+    if echo "$STATUS" | grep -q "Backend: amf1"; then
+        echo "[OK] Proxy already on AMF1"
+        return 0
+    fi
+    echo "[INFO] Switching proxy back to AMF1..."
+    $ORCHESTRATOR --command switch --target amf1
+    sleep 3
+}
+
+ensure_gnb2_stopped() {
+    echo "[CHECK] Ensuring gnb2 is stopped for clean baseline..."
+    if sudo docker ps --format "{{.Names}}" | grep -q "^gnb2$"; then
+        echo "[INFO] Stopping gnb2..."
+        sudo docker stop gnb2 >/dev/null 2>&1
+        sleep 2
+    fi
+    echo "[OK] gnb2 is not running"
+}
+
+run_experiment() {
+    local name="$1"
+    local cmd="$2"
+    local outdir="$3"
+    local extra_args="${4:-}"
+
+    echo ""
+    echo "======================================================================"
+    echo "  EXPERIMENT: $name"
+    echo "  Output: $outdir"
+    echo "======================================================================"
+
+    # Experiments 1–5 and 6–7 all need AMF1 baseline, except back-forth
+    if [ "$name" != "backforth" ]; then
+        ensure_amf1
+    fi
+
+    # Split-gNB experiments need a clean gnb2 state before they begin
+    if [[ "$name" == split_gnb* ]]; then
+        ensure_gnb2_stopped
+    fi
+
+    echo "[WAIT] Stabilizing for ${WAIT_BEFORE}s before $name..."
+    sleep "$WAIT_BEFORE"
+
+    eval "$cmd $extra_args --output-dir \"$outdir\" --basename amf_realloc"
+
+    if [ $? -eq 0 ]; then
+        echo "[DONE] $name completed. Results in: $outdir"
+    else
+        echo "[WARN] $name may have encountered an error. Check logs above."
+    fi
+
+    echo "[WAIT] Cooldown ${COOLDOWN}s before next experiment..."
+    sleep "$COOLDOWN"
+}
+
+# ---------------------------------------------------------------------------
+# Main workflow
+# ---------------------------------------------------------------------------
+
+echo "======================================================================"
+echo "  AMF Re-allocation Experiment Workflow v2"
+echo "  Root output: $ROOT_DIR"
+echo "======================================================================"
+
+# Verify orchestrator exists
+if [ ! -f "sctp_proxy/amf_orchestrator_v5.py" ]; then
+    echo "[ERROR] sctp_proxy/amf_orchestrator_v5.py not found!"
+    echo "        Please ensure the updated orchestrator is in place."
+    exit 1
+fi
+
+# Verify proxy is reachable
+STATUS=$($ORCHESTRATOR --command status 2>/dev/null || echo "ERROR")
+if echo "$STATUS" | grep -q "ERROR"; then
+    echo "[ERROR] Cannot reach sctp-proxy. Is it running?"
+    exit 1
+fi
+
+# ---------------------------------------------------------------------------
+# 1) SEQUENTIAL (stagger = 5 s)
+# ---------------------------------------------------------------------------
+run_experiment "SEQUENTIAL (stagger=5s)" \
+    "$ORCHESTRATOR --command sequential --target amf2 --wait-before $WAIT_BEFORE --wait-after $WAIT_AFTER --stagger 5 --ue-pool $UE_POOL --gnb-pool $GNB_POOL_SINGLE" \
+    "$DIR_SEQ"
+
+# ---------------------------------------------------------------------------
+# 2) CONCURRENT
+# ---------------------------------------------------------------------------
+run_experiment "CONCURRENT" \
+    "$ORCHESTRATOR --command concurrent --target amf2 --wait-before $WAIT_BEFORE --wait-after $WAIT_AFTER --ue-pool $UE_POOL --gnb-pool $GNB_POOL_SINGLE" \
+    "$DIR_CONC"
+
+# ---------------------------------------------------------------------------
+# 3) BACK-FORTH (4 cycles: AMF2 -> AMF1 -> AMF2 -> AMF1)
+# ---------------------------------------------------------------------------
+run_experiment "BACK-FORTH (4 cycles)" \
+    "$ORCHESTRATOR --command backforth --wait-before $WAIT_BEFORE --wait-after $WAIT_AFTER --cooldown $COOLDOWN --repeat 4 --ue-pool $UE_POOL --gnb-pool $GNB_POOL_SINGLE" \
+    "$DIR_BF"
+
+# ---------------------------------------------------------------------------
+# 4) PARTIAL (only 3 UEs restarted)
+# ---------------------------------------------------------------------------
+run_experiment "PARTIAL (subset: ue1,ue2,ue3)" \
+    "$ORCHESTRATOR --command partial --target amf2 --wait-before $WAIT_BEFORE --wait-after $WAIT_AFTER --ue-subset ue1,ue2,ue3 --ue-pool $UE_POOL --gnb-pool $GNB_POOL_SINGLE" \
+    "$DIR_PART"
+
+# ---------------------------------------------------------------------------
+# 5) ISOLATE-GNB (only gNB restarted)
+# ---------------------------------------------------------------------------
+run_experiment "ISOLATE-GNB" \
+    "$ORCHESTRATOR --command isolate-gnb --target amf2 --wait-before $WAIT_BEFORE --wait-after $WAIT_AFTER --ue-pool $UE_POOL --gnb-pool $GNB_POOL_SINGLE" \
+    "$DIR_GNB"
+
+# ---------------------------------------------------------------------------
+# 6) SPLIT-GNB SIMULTANEOUS
+#    AMF switch + gNB2 start + restart second-half UEs all together
+# ---------------------------------------------------------------------------
+run_experiment "SPLIT-GNB SIMULTANEOUS (ue4,ue5,ue6 -> gnb2)" \
+    "$ORCHESTRATOR --command split-gnb-simultaneous --target amf2 --wait-before $WAIT_BEFORE --wait-after $WAIT_AFTER --ue-pool $UE_POOL --gnb-pool $GNB_POOL_BOTH --ue-subset ue4,ue5,ue6" \
+    "$DIR_SPLIT_SIM"
+
+# ---------------------------------------------------------------------------
+# 7) SPLIT-GNB SEQUENTIAL
+#    AMF switch first, wait for recovery, then gNB2 phase
+# ---------------------------------------------------------------------------
+run_experiment "SPLIT-GNB SEQUENTIAL (ue4,ue5,ue6 -> gnb2)" \
+    "$ORCHESTRATOR --command split-gnb-sequential --target amf2 --wait-before $WAIT_BEFORE --wait-after $WAIT_AFTER --ue-pool $UE_POOL --gnb-pool $GNB_POOL_BOTH --ue-subset ue4,ue5,ue6" \
+    "$DIR_SPLIT_SEQ"
+
+# ---------------------------------------------------------------------------
+# Final cleanup
+# ---------------------------------------------------------------------------
+ensure_amf1
+ensure_gnb2_stopped
+
+# ---------------------------------------------------------------------------
+# Summary
+# ---------------------------------------------------------------------------
+echo ""
+echo "======================================================================"
+echo "  WORKFLOW COMPLETE"
+echo "======================================================================"
+echo ""
+echo "All results saved under: $ROOT_DIR"
+echo ""
+echo "Subdirectories:"
+echo "  01_sequential/              → Sequential mode (stagger=5s)"
+echo "  02_concurrent/              → Concurrent mode (all 6 UEs)"
+echo "  03_backforth/               → Back-forth consistency (4 cycles)"
+echo "  04_partial/                 → Partial re-allocation (3 UEs)"
+echo "  05_isolate_gnb/             → gNB-only restart"
+echo "  06_split_gnb_simultaneous/  → Split-gNB simultaneous"
+echo "  07_split_gnb_sequential/    → Split-gNB sequential"
+echo ""
+echo "Each folder contains:"
+echo "  amf_realloc.json          (raw data, now with rrc_latency_ms &"
+echo "                             post_restart_latency_ms where applicable)"
+echo "  amf_realloc.csv           (spreadsheet)"
+echo "  amf_realloc.tex           (LaTeX table)"
+echo "  amf_realloc_summary.txt   (human-readable summary)"
+echo ""
+echo "Next step:"
+echo "  ./generate_all_plots_v2.sh $ROOT_DIR"
+echo ""
+echo "======================================================================"
+
+Uncomplete, trucated amf_orchestrator_v5.py:
+
+#!/usr/bin/env python3
+"""
+amf_orchestrator_v5.py
+Multi-UE, multi-mode automated orchestrator for AMF re-allocation experiments.
+
+NEW in v5:
+  - split-gnb-simultaneous : AMF switch + gNB2 start + restart second-half UEs
+  - split-gnb-sequential   : AMF switch first, wait for recovery, then gNB2 phase
+  - Config backup/restore for UE gnbSearchList rewriting
+  - New metrics: rrc_latency_ms, post_restart_latency_ms, absolute timestamps
+  - --config-dir CLI flag (default: configs/network-slicing)
+
+Backward compatible: experiments 1-5 run identically to v4.
+"""
+
+import argparse
+import csv
+import json
+import os
+import re
+import socket
+import subprocess
+import sys
+import time
+import statistics
+from collections import defaultdict
+from datetime import datetime
+from pathlib import Path
+from typing import Dict, List, Optional, Tuple
+
+# -- Configuration ---------------------------------------------------
+DEFAULT_PROXY_HOST = "localhost"
+DEFAULT_PROXY_PORT = 9999
+DEFAULT_OUTPUT_DIR = "./results"
+DEFAULT_CONFIG_DIR = "configs/network-slicing"
+
+# Default UE pool for multi-UE experiments
+DEFAULT_UE_POOL = ["ue1", "ue2", "ue3", "ue4", "ue5", "ue6"]
+DEFAULT_GNB_POOL = ["gnb1"]
+
+CONTAINERS = {
+    "proxy": "sctp-proxy",
+}
+
+# -- Proxy Communication --------------------------------------------
+
+def send_proxy_cmd(cmd: str, host: str, port: int, timeout: float = 5.0) -> str:
+    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    sock.settimeout(timeout)
+    try:
+        sock.sendto(cmd.encode(), (host, port))
+        data, _ = sock.recvfrom(4096)
+        return data.decode().strip()
+    except socket.timeout:
+        return "ERROR: Timeout"
+    finally:
+        sock.close()
+
+
+def get_proxy_status(host: str, port: int) -> str:
+    return send_proxy_cmd("STATUS", host, port)
+
+
+def switch_proxy_backend(target: str, host: str, port: int) -> bool:
+    resp = send_proxy_cmd(f"SWITCH {target}", host, port)
+    return resp.startswith("OK")
+
+
+def get_proxy_metrics(host: str, port: int) -> str:
+    return send_proxy_cmd("METRICS", host, port)
+
+
+# -- Docker Helpers -------------------------------------------------
+
+def docker_logs(container: str, tail: int = 500) -> str:
+    result = subprocess.run(
+        ["sudo", "docker", "logs", "--tail", str(tail), container],
+        capture_output=True, text=True
+    )
+    return result.stdout
+
+
+def restart_container(container: str) -> bool:
+    result = subprocess.run(
+        ["sudo", "docker", "restart", container],
+        capture_output=True, text=True
+    )
+    if result.returncode != 0:
+        print(f"[ERROR] Failed to restart {container}: {result.stderr.strip()}")
+        return False
+    print(f"[Docker] Restarted {container}")
+    return True
+
+
+def container_running(container: str) -> bool:
+    result = subprocess.run(
+        ["sudo", "docker", "ps", "--format", "{{.Names}}", "--filter", f"name={container}"],
+        capture_output=True, text=True
+    )
+    return container in result.stdout
+
+
+def restart_all(containers: List[str], stagger_sec: float = 0.0):
+    """Restart a list of containers, optionally with stagger."""
+    for c in containers:
+        restart_container(c)
+        if stagger_sec > 0:
+            time.sleep(stagger_sec)
+
+
+# -- Log Parsers ----------------------------------------------------
+
+class LogParser:
+    UE_TS_RE = re.compile(r"\[(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3})\]")
+    UE_PATTERNS = {
+        "mm_deregistered": re.compile(r"UE switches to state \[MM-DEREGISTERED"),
+        "mm_registered": re.compile(r"UE switches to state \[MM-REGISTERED/NORMAL-SERVICE\]"),
+        "initial_registration": re.compile(r"Sending Initial Registration"),
+        "registration_success": re.compile(r"Initial Registration is successful"),
+        "pdu_session_success": re.compile(r"PDU Session establishment is successful"),
+        "tun_up": re.compile(r"Connection setup for PDU session\[.*\] is successful, TUN interface\[.*, (\d+\.\d+\.\d+\.\d+)\]"),
+        "cell_selection_fail": re.compile(r"Cell selection failure"),
+        "rrc_connected": re.compile(r"UE switches to state \[RRC-CONNECTED\]"),
+        "cm_connected": re.compile(r"UE switches to state \[CM-CONNECTED\]"),
+        "registration_reject": re.compile(r"Registration Reject|MM status received with cause"),
+    }
+
+    AMF_TS_RE = re.compile(r"(\d{2}/\d{2} \d{2}:\d{2}:\d{2}\.\d{3}):")
+    AMF_PATTERNS = {
+        "initial_ue_msg": re.compile(r"InitialUEMessage"),
+        "registration_complete": re.compile(r"Registration complete"),
+        "release_sm_context": re.compile(r"Release SM context"),
+        "amf_session_added": re.compile(r"Added\] Number of AMF-Sessions is now (\d+)"),
+        "amf_session_removed": re.compile(r"Removed\] Number of AMF-Sessions is now (\d+)"),
+        "gnb_ue_added": re.compile(r"Added\] Number of gNB-UEs is now (\d+)"),
+        "gnb_ue_removed": re.compile(r"Removed\] Number of gNB-UEs is now (\d+)"),
+        "known_ue": re.compile(r"known UE by"),
+        "holding_ng": re.compile(r"Holding NG Context"),
+        "clear_ng": re.compile(r"Clear NG Context"),
+    }
+
+    GNB_TS_RE = re.compile(r"\[(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3})\]")
+    GNB_PATTERNS = {
+        "sctp_connect": re.compile(r"SCTP connection established"),
+        "sctp_fail": re.compile(r"SCTP could not connect"),
+        "ng_setup_success": re.compile(r"NG Setup procedure is successful"),
+        "ng_setup_request": re.compile(r"Sending NG Setup Request"),
+        "rrc_setup": re.compile(r"RRC Setup for UE"),
+        "initial_nas": re.compile(r"Initial NAS message received"),
+        "initial_context_setup": re.compile(r"Initial Context Setup Request received"),
+        "pdu_setup": re.compile(r"PDU session resource\(s\) setup for UE"),
+        "ue_context_release": re.compile(r"UE Context Release Command received"),
+        "signal_lost": re.compile(r"signal lost"),
+        "signal_detected": re.compile(r"new signal detected"),
+    }
+
+    PROXY_SWITCH_RE = re.compile(
+        r"\[(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})\].*BACKEND SWITCH: .* -> (\w+)"
+    )
+
+    def parse_ue(self, text: str, ue_name: str = "ue") -> List[Dict]:
+        events = []
+        for line in text.splitlines():
+            m = self.UE_TS_RE.search(line)
+            if not m:
+                continue
+            ts = m.group(1)
+            for name, pat in self.UE_PATTERNS.items():
+                mm = pat.search(line)
+                if mm:
+                    ev = {"timestamp": ts, "source": ue_name, "event": name, "line": line.strip()}
+                    if name == "tun_up" and mm.lastindex:
+                        ev["ip"] = mm.group(1)
+                    events.append(ev)
+                    break
+        return events
+
+    def parse_amf(self, text: str, amf_name: str) -> List[Dict]:
+        events = []
+        for line in text.splitlines():
+            m = self.AMF_TS_RE.search(line)
+            if not m:
+                continue
+            ts_raw = m.group(1)
+            ts = f"2026-{ts_raw.replace('/', '-')}"
+            for name, pat in self.AMF_PATTERNS.items():
+                mm = pat.search(line)
+                if mm:
+                    ev = {"timestamp": ts, "source": amf_name, "event": name, "line": line.strip()}
+                    if mm.lastindex and name in ("amf_session_added", "amf_session_removed", "gnb_ue_added", "gnb_ue_removed"):
+                        ev["count"] = int(mm.group(1))
+                    events.append(ev)
+                    break
+        return events
+
+    def parse_gnb(self, text: str, gnb_name: str = "gnb1") -> List[Dict]:
+        events = []
+        for line in text.splitlines():
+            m = self.GNB_TS_RE.search(line)
+            if not m:
+                continue
+            ts = m.group(1)
+            for name, pat in self.GNB_PATTERNS.items():
+                if pat.search(line):
+                    events.append({"timestamp": ts, "source": gnb_name, "event": name, "line": line.strip()})
+                    break
+        return events
+
+    def parse_proxy_switch_time(self, text: str, target_amf: str) -> Optional[str]:
+        """Extract the most recent switch timestamp for target_amf from proxy logs."""
+        matches = self.PROXY_SWITCH_RE.findall(text)
+        if not matches:
+            return None
+        for ts_str, backend in reversed(matches):
+            if backend == target_amf:
+                return ts_str
+        return None
+
+# -- Metric Computer ------------------------------------------------
+
+class MetricComputer:
+    """Compute per-UE and aggregate metrics from parsed logs."""
+
+    @staticmethod
+    def _ts_to_ms(ts_str: str) -> float:
+        s = ts_str.strip()
+        for fmt in ("%Y-%m-%d %H:%M:%S.%f", "%Y-%m-%d %H:%M:%S"):
+            try:
+                dt = datetime.strptime(s, fmt)
+                return dt.timestamp() * 1000
+            except ValueError:
+                continue
+        return 0.0
+
+    @classmethod
+    def compute_ue_metrics(cls, ue_events: List[Dict], switch_time_ms: float, ue_name: str,
+                           restart_time_ms: Optional[float] = None) -> Dict:
+        m = {
+            "ue": ue_name,
+            "switch_time_ms": switch_time_ms,
+            "restart_time_ms": restart_time_ms,
+            "reallocation_latency_ms": None,
+            "registration_latency_ms": None,
+            "session_setup_latency_ms": None,
+            "rrc_latency_ms": None,
+            "post_restart_latency_ms": None,
+            "ip_changed": False,
+            "old_ip": None,
+            "new_ip": None,
+            "recovered": False,
+            "events": ue_events,
+            "registration_success_ms": None,
+            "initial_registration_ms": None,
+            "tun_up_ms": None,
+            "rrc_connected_ms": None,
+        }
+
+        sorted_events = sorted(ue_events, key=lambda e: cls._ts_to_ms(e["timestamp"]))
+        post_switch = [e for e in sorted_events if cls._ts_to_ms(e["timestamp"]) >= switch_time_ms]
+
+        # Find the LAST registration_success after the switch
+        reg_success_idx = None
+        for i in range(len(post_switch) - 1, -1, -1):
+            if post_switch[i]["event"] == "registration_success":
+                reg_success_idx = i
+                break
+
+        if reg_success_idx is None:
+            return m
+
+        reg_success_event = post_switch[reg_success_idx]
+        reg_success_ts = cls._ts_to_ms(reg_success_event["timestamp"])
+
+        # Walk backwards to find initial_registration in the same cycle
+        init_reg_event = None
+        for i in range(reg_success_idx - 1, -1, -1):
+            if post_switch[i]["event"] == "initial_registration":
+                init_reg_event = post_switch[i]
+                break
+
+        # Walk further back to find mm_deregistered that starts this cycle
+        cycle_start_idx = None
+        if init_reg_event is not None:
+            init_reg_ts = cls._ts_to_ms(init_reg_event["timestamp"])
+            for i in range(reg_success_idx - 1, -1, -1):
+                if post_switch[i]["event"] == "mm_deregistered":
+                    if cls._ts_to_ms(post_switch[i]["timestamp"]) <= init_reg_ts:
+                        cycle_start_idx = i
+                        break
+
+        # Walk forward to find tun_up after reg_success
+        tun_up_event = None
+        for i in range(reg_success_idx + 1, len(post_switch)):
+            if post_switch[i]["event"] == "tun_up":
+                tun_up_event = post_switch[i]
+                break
+
+        # Compute metrics
+        m["recovered"] = True
+        m["reallocation_latency_ms"] = reg_success_ts - switch_time_ms
+        m["registration_success_ms"] = reg_success_ts
+
+        if init_reg_event is not None:
+            m["registration_latency_ms"] = reg_success_ts - cls._ts_to_ms(init_reg_event["timestamp"])
+            m["initial_registration_ms"] = cls._ts_to_ms(init_reg_event["timestamp"])
+
+        if tun_up_event is not None:
+            m["session_setup_latency_ms"] = cls._ts_to_ms(tun_up_event["timestamp"]) - reg_success_ts
+            m["new_ip"] = tun_up_event.get("ip")
+            m["tun_up_ms"] = cls._ts_to_ms(tun_up_event["timestamp"])
+
+        # old_ip: last tun_up BEFORE the cycle-start mm_deregistered
+        if cycle_start_idx is not None:
+            cycle_start_ts = cls._ts_to_ms(post_switch[cycle_start_idx]["timestamp"])
+            pre_cycle = [e for e in sorted_events if cls._ts_to_ms(e["timestamp"]) < cycle_start_ts]
+            old_tuns = [e for e in pre_cycle if e["event"] == "tun_up"]
+            if old_tuns:
+                m["old_ip"] = old_tuns[-1].get("ip")
+
+        if m["old_ip"] and m["new_ip"]:
+            m["ip_changed"] = m["old_ip"] != m["new_ip"]
+
+        # RRC latency: rrc_connected between initial_registration and registration_success
+        rrc_event = None
+        if init_reg_event is not None:
+            init_reg_ts = cls._ts_to_ms(init_reg_event["timestamp"])
+            for i in range(reg_success_idx - 1, -1, -1):
+                if post_switch[i]["event"] == "rrc_connected":
+                    ts = cls._ts_to_ms(post_switch[i]["timestamp"])
+                    if init_reg_ts <= ts <= reg_success_ts:
+                        rrc_event = post_switch[i]
+                        break
+            if rrc_event:
+                m["rrc_latency_ms"] = cls._ts_to_ms(rrc_event["timestamp"]) - init_reg_ts
+                m["rrc_connected_ms"] = cls._ts_to_ms(rrc_event["timestamp"])
+
+        # Post-restart latency: from container restart to registration_success
+        if restart_time_ms is not None:
+            m["post_restart_latency_ms"] = reg_success_ts - restart_time_ms
+
+        return m
+
+    @classmethod
+    def compute_aggregate(cls, ue_results: List[Dict]) -> Dict:
+        """Compute mean, std, min, max, p95 across UE metrics."""
+        def _extract(key: str) -> List[float]:
+            return [r[key] for r in ue_results if r.get(key) is not None]
+
+        agg = {}
+        for key in ("reallocation_latency_ms", "registration_latency_ms", "session_setup_latency_ms",
+                    "rrc_latency_ms", "post_restart_latency_ms"):
+            vals = _extract(key)
+            if not vals:
+                agg[key] = {"mean": None, "std": None, "min": None, "max": None, "p95": None, "count": 0}
+                continue
+            vals_sorted = sorted(vals)
+            p95_idx = int(len(vals_sorted) * 0.95)
+            p95 = vals_sorted[min(p95_idx, len(vals_sorted) - 1)]
+            agg[key] = {
+                "mean": statistics.mean(vals),
+                "std": statistics.stdev(vals) if len(vals) > 1 else 0.0,
+                "min": min(vals),
+                "max": max(vals),
+                "p95": p95,
+                "count": len(vals),
+            }
+        agg["recovered_count"] = sum(1 for r in ue_results if r.get("recovered"))
+        agg["ip_changed_count"] = sum(1 for r in ue_results if r.get("ip_changed"))
+        return agg
+
+# -- Experiment Runner ----------------------------------------------
+
+class ExperimentRunner:
+    def __init__(self, proxy_host: str, proxy_port: int, output_dir: str,
+                 ue_pool: List[str], gnb_pool: List[str], config_dir: str = DEFAULT_CONFIG_DIR):
+        self.proxy_host = proxy_host
+        self.proxy_port = proxy_port
+        self.output_dir = Path(output_dir)
+        self.output_dir.mkdir(parents=True, exist_ok=True)
+        self.parser = LogParser()
+        self.computer = MetricComputer()
+        self.ue_pool = ue_pool
+        self.gnb_pool = gnb_pool
+        self.config_dir = Path(config_dir)
+        self._config_backups: Dict[str, str] = {}
+
+    # -- Config helpers -------------------------------------------------
+
+    def _ue_config_path(self, ue_name: str) -> Path:
+        return self.config_dir / f"{ue_name}.yaml"
+
+    def _backup_config(self, ue_name: str) -> str:
+        return self._ue_config_path(ue_name).read_text()
+
+    def _restore_config(self, ue_name: str, content: str):
+        self._ue_config_path(ue_name).write_text(content)
+
+    def _swap_gnb_order(self, ue_name: str, gnb2_first: bool = True):
+        path = self._ue_config_path(ue_name)
+        text = path.read_text()
+        if gnb2_first:
+            new_text = text.replace(
+                'gnbSearchList:\n  - gnb1.ueransim.org\n  - gnb2.ueransim.org',
+                'gnbSearchList:\n  - gnb2.ueransim.org\n  - gnb1.ueransim.org'
+            )
+        else:
+            new_text = text.replace(
+                'gnbSearchList:\n  - gnb2.ueransim.org\n  - gnb1.ueransim.org',
+                'gnbSearchList:\n  - gnb1.ueransim.org\n  - gnb2.ueransim.org'
+            )
+        path.write_text(new_text)
+
+    def _restart_container_tracked(self, container: str) -> Tuple[bool, float]:
+        t0 = time.time() * 1000
+        ok = restart_container(container)
+        return ok, t0
+
+    def _get_proxy_switch_time_ms(self, target_amf: str, retries: int = 5, delay: float = 0.5) -> Optional[float]:
+        for _ in range(retries):
+            raw = docker_logs("sctp-proxy", tail=100)
+            ts_str = self.parser.parse_proxy_switch_time(raw, target_amf)
+            if ts_str:
+                return self.computer._ts_to_ms(ts_str)
+            time.sleep(delay)
+        return None
+
+    # -- Log collection -------------------------------------------------
+
+    def collect_ue_logs(self, ue_name: str) -> List[Dict]:
+        raw = docker_logs(ue_name, tail=500)
+        return self.parser.parse_ue(raw, ue_name)
+
+    def collect_amf_logs(self, amf_name: str) -> List[Dict]:
+        raw = docker_logs(amf_name, tail=500)
+        return self.parser.parse_amf(raw, amf_name)
+
+    def collect_gnb_logs(self, gnb_name: str) -> List[Dict]:
+        raw = docker_logs(gnb_name, tail=500)
+        return self.parser.parse_gnb(raw, gnb_name)
+
+    def collect_all_logs(self, target_amf: str) -> Dict[str, List[Dict]]:
+        logs = {}
+        for ue in self.ue_pool:
+            logs[ue] = self.collect_ue_logs(ue)
+        for gnb in self.gnb_pool:
+            logs[gnb] = self.collect_gnb_logs(gnb)
+        logs["amf1"] = self.collect_amf_logs("amf1")
+        logs["amf2"] = self.collect_amf_logs("amf2")
+        return logs
+
+    # -- Recovery polling -----------------------------------------------
+
+    def wait_for_ue_recovery(self, ue_name: str, switch_time_ms: float,
+                             timeout: float, interval: float = 2.0,
+                             restart_time_ms: Optional[float] = None) -> Dict:
+        elapsed = 0.0
+        while elapsed < timeout:
+            time.sleep(interval)
+            elapsed += interval
+            ue_logs = self.collect_ue_logs(ue_name)
+            metrics = self.computer.compute_ue_metrics(ue_logs, switch_time_ms, ue_name, restart_time_ms)
+            if metrics.get("recovered"):
+                return metrics
+        return self.computer.compute_ue_metrics(self.collect_ue_logs(ue_name), switch_time_ms, ue_name, restart_time_ms)
+
+    def wait_for_all_recovery(self, switch_time_ms: float, timeout: float,
+                              interval: float = 2.0,
+                              restart_times: Optional[Dict[str, float]] = None) -> List[Dict]:
+        pending = set(self.ue_pool)
+        results = {}
+        elapsed = 0.0
+        while elapsed < timeout and pending:
+            time.sleep(interval)
+            elapsed += interval
+            for ue in list(pending):
+                ue_logs = self.collect_ue_logs(ue)
+                rt = restart_times.get(ue) if restart_times else None
+                metrics = self.computer.compute_ue_metrics(ue_logs, switch_time_ms, ue, rt)
+                if metrics.get("recovered"):
+                    results[ue] = metrics
+                    pending.remove(ue)
+                    lat = results[ue].get("reallocation_latency_ms")
+                    lat_str = f"{lat:.0f} ms" if lat is not None else "N/A"
+                    print(f"  -> {ue} re-registered (realloc latency: {lat_str})")
+        for ue in pending:
+            print(f"  [WARN] {ue} did not re-register within {timeout}s")
+            rt = restart_times.get(ue) if restart_times else None
+            results[ue] = self.computer.compute_ue_metrics(
+                self.collect_ue_logs(ue), switch_time_ms, ue, rt
+            )
+        return [results[ue] for ue in self.ue_pool]
+
+    def run_baseline_check(self) -> bool:
+        print("[1/5] Baseline check...")
+        if not container_running(CONTAINERS["proxy"]):
+            print("[ERROR] sctp-proxy container not running!")
+            return False
+        logs = self.collect_all_logs("amf1")
+        for ue in self.ue_pool:
+            ue_logs = logs.get(ue, [])
+            if not any(e["event"] == "mm_registered" for e in ue_logs):
+                print(f"[WARN] {ue} not currently registered. Proceeding anyway...")
+        return True
+
+    # ------------------------------------------------------------------
+    # Experiment modes
+    # ------------------------------------------------------------------
+
+    def run_sequential(self, target_amf: str, wait_before: float,
+                       wait_after: float, stagger: float = 0.0) -> Dict:
+        print(f"\n{'='*60}")
+        print(f"Mode: SEQUENTIAL | Target: {target_amf} | UEs: {self.ue_pool}")
+        print(f"{'='*60}")
+
+        if not self.run_baseline_check():
+            return {"error": "proxy not running"}
+
+        print(f"\n[2/5] Stabilizing for {wait_before}s...")
+        time.sleep(wait_before)
+
+        print(f"\n[3/5] Switching proxy to {target_amf}...")
+        if not switch_proxy_backend(target_amf, self.proxy_host, self.proxy_port):
+            print("[ERROR] Proxy switch failed!")
+            return {"error": "switch failed"}
+
+        time.sleep(1.0)
+        t0 = self._get_proxy_switch_time_ms(target_amf)
+        if t0 is None:
+            print("[WARN] Could not parse proxy switch time; falling back to host time")
+            t0 = time.time() * 1000
+        else:
+            print(f"[INFO] Proxy switch detected at {datetime.fromtimestamp(t0/1000).isoformat()}")
+
+        print(f"\n[4/5] Restarting gNB(s) -> UEs sequentially (stagger={stagger}s)...")
+        for gnb in self.gnb_pool:
+            restart_container(gnb)
+        if stagger > 0:
+            time.sleep(2)
+
+        results = []
+        for ue in self.ue_pool:
+            restart_container(ue)
+            if stagger > 0:
+                time.sleep(stagger)
+            res = self.wait_for_ue_recovery(ue, t0, timeout=wait_after)
+            results.append(res)
+
+        print(f"\n[5/5] Computing aggregate metrics...")
+        agg = self.computer.compute_aggregate(results)
+        return {
+            "mode": "sequential",
+            "target_amf": target_amf,
+            "switch_time_ms": t0,
+            "ue_results": results,
+            "aggregate": agg,
+            "

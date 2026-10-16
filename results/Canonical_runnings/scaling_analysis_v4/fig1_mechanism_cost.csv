@@ -1,0 +1,9 @@
+mode,mean_latency_s
+Sequential,57.056
+Concurrent,10.461
+Back-forth,10.655
+Partial,8.302
+Isolate-gNB,3.687
+Split simult.,15.339
+Split sequent.,16.858
+N14 mobility,2.980

@@ -1,0 +1,124 @@
+~/docker-open5gs$ python3 Python_scripts/container_ctl.py down
+[CMD] sudo docker compose -f compose-files/network-slicing/docker-compose.yaml --env-file .env down --remove-orphans
+[sudo] senha para hindem: 
+[+] Running 23/23
+ ✔ Container ue3          Removed                                                                                                                                                        0.4s 
+ ✔ Container ue5          Removed                                                                                                                                                        0.4s 
+ ✔ Container gnb2         Removed                                                                                                                                                        0.0s 
+ ✔ Container ue2          Removed                                                                                                                                                        0.4s 
+ ✔ Container smf1         Removed                                                                                                                                                        0.3s 
+ ✔ Container ue1          Removed                                                                                                                                                        0.3s 
+ ✔ Container smf2         Removed                                                                                                                                                        0.2s 
+ ✔ Container ue4          Removed                                                                                                                                                        0.4s 
+ ✔ Container udr          Removed                                                                                                                                                        0.3s 
+ ✔ Container ue6          Removed                                                                                                                                                        0.5s 
+ ✔ Container sctp-proxy2  Removed                                                                                                                                                       10.3s 
+ ✔ Container upf2         Removed                                                                                                                                                       10.2s 
+ ✔ Container upf1         Removed                                                                                                                                                       10.1s 
+ ✔ Container gnb1         Removed                                                                                                                                                        0.1s 
+ ✔ Container sctp-proxy   Removed                                                                                                                                                       10.3s 
+ ✔ Container amf1         Removed                                                                                                                                                       10.2s 
+ ✔ Container amf2         Removed                                                                                                                                                       10.2s 
+ ✔ Container pcf          Removed                                                                                                                                                        0.2s 
+ ✔ Container ausf         Removed                                                                                                                                                        0.1s 
+ ✔ Container udm          Removed                                                                                                                                                        0.2s 
+ ✔ Container nrf          Removed                                                                                                                                                        0.1s 
+ ✔ Container db           Removed                                                                                                                                                        0.2s 
+ ✔ Network open5gs        Removed                                                                                                                                                        0.2s 
+~/docker-open5gs$ ./start_network.sh
+[Phase 1] Starting core network...
+[+] Running 15/15
+ ✔ Network open5gs        Created                                                                                                                                                        0.1s 
+ ✔ Container db           Started                                                                                                                                                        0.2s 
+ ✔ Container upf2         Started                                                                                                                                                        0.3s 
+ ✔ Container nrf          Started                                                                                                                                                        0.2s 
+ ✔ Container upf1         Started                                                                                                                                                        0.3s 
+ ✔ Container smf1         Started                                                                                                                                                        0.5s 
+ ✔ Container smf2         Started                                                                                                                                                        0.3s 
+ ✔ Container ausf         Started                                                                                                                                                        0.3s 
+ ✔ Container udm          Started                                                                                                                                                        0.3s 
+ ✔ Container udr          Started                                                                                                                                                        0.3s 
+ ✔ Container pcf          Started                                                                                                                                                        0.3s 
+ ✔ Container amf2         Started                                                                                                                                                        0.5s 
+ ✔ Container amf1         Started                                                                                                                                                        0.5s 
+ ✔ Container sctp-proxy2  Started                                                                                                                                                        0.6s 
+ ✔ Container sctp-proxy   Started                                                                                                                                                        0.7s 
+[Phase 1a] Waiting for SMF registration (120s)...
+[Phase 2] Start BOTH gNBs...
+[+] Running 11/11
+ ✔ Container nrf          Running                                                                                                                                                        0.0s 
+ ✔ Container udm          Running                                                                                                                                                        0.0s 
+ ✔ Container db           Running                                                                                                                                                        0.0s 
+ ✔ Container ausf         Running                                                                                                                                                        0.0s 
+ ✔ Container pcf          Running                                                                                                                                                        0.0s 
+ ✔ Container amf1         Running                                                                                                                                                        0.0s 
+ ✔ Container amf2         Running                                                                                                                                                        0.0s 
+ ✔ Container sctp-proxy   Running                                                                                                                                                        0.0s 
+ ✔ Container gnb1         Started                                                                                                                                                        0.1s 
+ ✔ Container sctp-proxy2  Healthy                                                                                                                                                        0.5s 
+ ✔ Container gnb2         Started                                                                                                                                                        0.6s 
+[Phase 2a] Waiting for gNBs' loading (30s)...
+[2026-08-10 14:25:12.421] [ngap] [info] NG Setup procedure is successful
+[2026-08-10 14:25:12.935] [ngap] [info] NG Setup procedure is successful
+[Phase 3] Starting all UEs (gnb2 is NOT in depends_on, so it won't auto-start)...
+[+] Running 17/17
+ ✔ Container db           Running                                                                                                                                                        0.0s 
+ ✔ Container nrf          Running                                                                                                                                                        0.0s 
+ ✔ Container ausf         Running                                                                                                                                                        0.0s 
+ ✔ Container pcf          Running                                                                                                                                                        0.0s 
+ ✔ Container udm          Running                                                                                                                                                        0.0s 
+ ✔ Container amf2         Running                                                                                                                                                        0.0s 
+ ✔ Container amf1         Running                                                                                                                                                        0.0s 
+ ✔ Container sctp-proxy2  Healthy                                                                                                                                                        0.5s 
+ ✔ Container sctp-proxy   Running                                                                                                                                                        0.0s 
+ ✔ Container gnb1         Running                                                                                                                                                        0.0s 
+ ✔ Container gnb2         Running                                                                                                                                                        0.0s 
+ ✔ Container ue4          Started                                                                                                                                                        0.7s 
+ ✔ Container ue3          Started                                                                                                                                                        0.8s 
+ ✔ Container ue6          Started                                                                                                                                                        0.8s 
+ ✔ Container ue2          Started                                                                                                                                                        0.8s 
+ ✔ Container ue5          Started                                                                                                                                                        0.8s 
+ ✔ Container ue1          Started                                                                                                                                                        0.7s 
+[Phase 4] Checking UE registration...
+  ✓ ue1 registered
+  ✗ ue2 NOT registered, retrying once...
+ue2
+  ✗ ue2 still failing, check logs manually
+  ✗ ue3 NOT registered, retrying once...
+ue3
+  ✗ ue3 still failing, check logs manually
+  ✗ ue4 NOT registered, retrying once...
+ue4
+  ✗ ue4 still failing, check logs manually
+  ✗ ue5 NOT registered, retrying once...
+ue5
+  ✗ ue5 still failing, check logs manually
+  ✗ ue6 NOT registered, retrying once...
+ue6
+  ✗ ue6 still failing, check logs manually
+[DONE] Network should be stable.
+~/docker-open5gs$ sleep 120 && docker restart ue1 ue2 ue3 ue4 ue5 ue6
+ue1
+ue2
+ue3
+ue4
+ue5
+ue6
+~/docker-open5gs$ ./Restarting_6_UEs.sh
+  ✓ ue1 registered
+  ✗ ue2 NOT registered, retrying once...
+ue2
+  ✓ ue2 registered after retry
+  ✗ ue3 NOT registered, retrying once...
+ue3
+  ✗ ue3 still failing, check logs manually
+  ✗ ue4 NOT registered, retrying once...
+ue4
+  ✗ ue4 still failing, check logs manually
+  ✗ ue5 NOT registered, retrying once...
+ue5
+  ✗ ue5 still failing, check logs manually
+  ✗ ue6 NOT registered, retrying once...
+ue6
+  ✗ ue6 still failing, check logs manually
+[DONE] Network should be stable.
